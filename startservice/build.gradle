@@ -6,7 +6,7 @@ android {
 
 
     defaultConfig {
-        applicationId "com.example.startservice"
+        applicationId "com.digiarty.startservice"
         minSdkVersion 15
         targetSdkVersion 27
         versionCode 1
