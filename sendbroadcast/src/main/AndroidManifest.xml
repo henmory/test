@@ -1,22 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.digiarty.sendbroadcast">
 
+    <!--sender定义权限,表示我发送的广播是有权限的，即只有声明这个权限的reveiver可以接收我的广播-->
+    <permission android:name = "com.digiarty.phoneassistant.permission.receive_broadcast"/>
 
-    <permission android:name="com.digiarty.phoneassistant.permission.receive_broadcast"/>
+    <!--receiver声明权限，表示可以接收这个权限的广播-->
+    <uses-permission android:name="com.digiarty.phoneassistant.permission.receive_broadcast" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
 
-        <receiver android:name=".MyBroadcastReceiver"
-            android:permission="com.digiarty.phoneassistant.permission.receive_broadcast">
+        <!--receiver 不用刻意声明permission-->
+        <receiver
+            android:name=".MyBroadcastReceiver"
+            android:exported="true">
             <intent-filter>
-                <action android:name="digiarty.phoneassistant.startservice.broadcast"/>
+                <action android:name="digiarty.phoneassistant.startservice.broadcast" />
             </intent-filter>
         </receiver>
 
+        <activity
+            android:name=".MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </activity>
     </application>
+
 </manifest>

@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.digiarty.phoneassistant">
 
+    <!--receiver声明权限，表示可以接收这个权限的广播-->
+    <uses-permission android:name="com.digiarty.phoneassistant.permission.receive_broadcast" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -8,12 +11,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
-        <receiver android:name=".MyBroadcastReceiver">
+
+        <receiver android:name=".MyBroadcastReceiver"
+            android:exported="true">
             <intent-filter>
                 <action android:name="digiarty.phoneassistant.startservice.broadcast"/>
             </intent-filter>
         </receiver>
-        <service android:name=".MyService">
+
+        <!--exported = false 禁止其他应用开启服务-->
+        <service
+            android:exported="false"
+            android:name=".MyService">
             <intent-filter>
                 <action android:name="digiarty.phoneassistant.service.createsocket"/>
             </intent-filter>
