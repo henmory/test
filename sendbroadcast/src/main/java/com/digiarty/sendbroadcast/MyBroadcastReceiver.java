@@ -1,4 +1,4 @@
-package com.digiarty.test;
+package com.digiarty.sendbroadcast;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
