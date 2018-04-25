@@ -1,4 +1,4 @@
-package com.digiarty.phoneassistant;
+package com.digiarty.phoneassistant.boot;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -11,7 +11,9 @@ import android.util.Log;
  *
  * Created by：henmory
  *
- * Description:
+ * Description:广播接收器主要是接收广播，开启服务或者关闭服务
+ *              广播的发送需要权限，这就尽最大努力保证了软件的安全性
+ *              防止其他应用随意开启广播
  *
  *
  **/
@@ -19,22 +21,25 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 
     private final static String TAG = MyBroadcastReceiver.class.getSimpleName();
 
+    private final static String BROADCAST_START_ACTION = "com.digiarty.phoneassistant.broadcast.START_SERVICE";
+    private final static String BROADCAST_STOP_ACTION = "com.digiarty.phoneassistant.broadcast.STOP_SERVICE";
+
     @Override
     public void onReceive(Context context, Intent intent) {
         Log.d(TAG, "onReceive: ");
         String action = intent.getAction();
         Log.d(TAG, "onReceive: action = " + action);
+
         if (null != action){
 
-            Intent i = new Intent("com.digiarty.phoneassistant.service.START_LISTEN_CLIENT");
-            i.setPackage("com.digiarty.phoneassistant");
-
-            if (action.equalsIgnoreCase("com.digiarty.phoneassistant.broadcast.START_SERVICE")){
+            if (action.equalsIgnoreCase(BROADCAST_START_ACTION)){
                 Log.d(TAG, "onReceive: startService");
-                context.startService(i);
-            }else if (action.equalsIgnoreCase("com.digiarty.phoneassistant.broadcast.STOP_SERVICE")){
-                context.stopService(i);
+                context.startService(new Intent(context, MyService.class));
+
+            }else if (action.equalsIgnoreCase(BROADCAST_STOP_ACTION)){
                 Log.d(TAG, "onReceive: stopService");
+                context.stopService(new Intent(context, MyService.class));
+
             }else{
                 Log.d(TAG, "onReceive: 不能匹配action");
             }

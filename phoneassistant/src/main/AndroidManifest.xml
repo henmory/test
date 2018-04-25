@@ -12,8 +12,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
 
-
-        <receiver android:name=".MyBroadcastReceiver"
+        <!--1.开启服务广播 2.关闭服务广播-->
+        <!--adb shell am broadcast - -receiver-permission com.digiarty.phoneassistant.permission.receive_broadcast -a com.digiarty.phoneassistant.broadcast.START_SERVICE -n com.digiarty.phoneassistant/.MyBroadcastReceiver-->
+        <!--adb shell am broadcast - -receiver-permission com.digiarty.phoneassistant.permission.receive_broadcast -a com.digiarty.phoneassistant.broadcast.STOP_SERVICE -n com.digiarty.phoneassistant/.MyBroadcastReceiver-->
+        <!--receiver-permission 权限设置-->
+        <!-- -a 组件action-->
+        <!-- -n 组件类-->
+        <receiver android:name=".boot.MyBroadcastReceiver"
             android:exported="true">
             <intent-filter>
                 <action android:name="com.digiarty.phoneassistant.broadcast.START_SERVICE"/>
@@ -22,8 +27,9 @@
         </receiver>
 
         <!--exported = false 禁止其他应用开启服务-->
+        <!--该服务功能是开启服务器socket，监听相应端口-->
         <service android:exported="false"
-            android:name=".MyService">
+            android:name=".boot.MyService">
             <intent-filter>
                 <action android:name="com.digiarty.phoneassistant.service.START_LISTEN_CLIENT"/>
             </intent-filter>
