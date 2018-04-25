@@ -26,4 +26,10 @@ public class MyService extends Service {
         super.onCreate();
         System.out.println("on onCreate");
     }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        System.out.println("on onDestroy");
+    }
 }

@@ -3,6 +3,7 @@ package com.digiarty.phoneassistant;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 
 /***
  *
@@ -15,11 +16,32 @@ import android.content.Intent;
  *
  **/
 public class MyBroadcastReceiver extends BroadcastReceiver {
+
+    private final static String TAG = MyBroadcastReceiver.class.getSimpleName();
+
     @Override
     public void onReceive(Context context, Intent intent) {
-        System.out.println("onReceive");
-        Intent i = new Intent("digiarty.phoneassistant.service.createsocket");
-        i.setPackage("com.digiarty.phoneassistant");
-        context.startService(i);
+        Log.d(TAG, "onReceive: ");
+        String action = intent.getAction();
+        Log.d(TAG, "onReceive: action = " + action);
+        if (null != action){
+
+            Intent i = new Intent("com.digiarty.phoneassistant.service.START_LISTEN_CLIENT");
+            i.setPackage("com.digiarty.phoneassistant");
+
+            if (action.equalsIgnoreCase("com.digiarty.phoneassistant.broadcast.START_SERVICE")){
+                Log.d(TAG, "onReceive: startService");
+                context.startService(i);
+            }else if (action.equalsIgnoreCase("com.digiarty.phoneassistant.broadcast.STOP_SERVICE")){
+                context.stopService(i);
+                Log.d(TAG, "onReceive: stopService");
+            }else{
+                Log.d(TAG, "onReceive: 不能匹配action");
+            }
+
+        }else {
+            Log.d(TAG, "onReceive: intent.action is null");
+        }
+
     }
 }

@@ -12,19 +12,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme" >
 
+
         <receiver android:name=".MyBroadcastReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="digiarty.phoneassistant.startservice.broadcast"/>
+                <action android:name="com.digiarty.phoneassistant.broadcast.START_SERVICE"/>
+                <action android:name="com.digiarty.phoneassistant.broadcast.STOP_SERVICE"/>
             </intent-filter>
         </receiver>
 
         <!--exported = false 禁止其他应用开启服务-->
-        <service
-            android:exported="false"
+        <service android:exported="false"
             android:name=".MyService">
             <intent-filter>
-                <action android:name="digiarty.phoneassistant.service.createsocket"/>
+                <action android:name="com.digiarty.phoneassistant.service.START_LISTEN_CLIENT"/>
             </intent-filter>
         </service>
     </application>
