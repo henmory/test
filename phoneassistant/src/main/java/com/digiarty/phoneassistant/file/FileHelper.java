@@ -1,4 +1,4 @@
-package com.example.log.file;
+package com.digiarty.phoneassistant.file;
 
 import java.io.File;
 
@@ -24,10 +24,8 @@ public class FileHelper {
         if (!destDirName.endsWith(File.separator)) {
             destDirName = destDirName + File.separator;
         }
-        //创建目录
-        boolean b = dir.mkdirs();
-        System.out.println(b);
-        if (b) {
+
+        if (dir.mkdirs()) {
             System.out.println("创建目录" + destDirName + "成功！");
             return true;
         } else {

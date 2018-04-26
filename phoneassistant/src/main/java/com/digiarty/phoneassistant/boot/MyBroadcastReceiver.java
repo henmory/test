@@ -7,6 +7,9 @@ import android.util.Log;
 
 import com.digiarty.phoneassistant.global.GlobalApplication;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /***
  *
  * Created on：2018/4/23
@@ -21,35 +24,32 @@ import com.digiarty.phoneassistant.global.GlobalApplication;
  **/
 public class MyBroadcastReceiver extends BroadcastReceiver {
 
-    private final static String TAG = MyBroadcastReceiver.class.getSimpleName();
+    //定义日志对象
+    private static Logger logger = LoggerFactory.getLogger(MyBroadcastReceiver.class);
 
-    private final static String BROADCAST_START_ACTION = GlobalApplication.getGlobalPackageName() + "broadcast.START_SERVICE";
-//    private final static String BROADCAST_START_ACTION = "com.digiarty.phoneassistant.broadcast.START_SERVICE";
-//    private final static String BROADCAST_STOP_ACTION = "com.digiarty.phoneassistant.broadcast.STOP_SERVICE";
-    private final static String BROADCAST_STOP_ACTION = GlobalApplication.getGlobalPackageName() + "broadcast.STOP_SERVICE";
+    private final static String BROADCAST_START_ACTION = GlobalApplication.getGlobalPackageName() + ".broadcast.START_SERVICE";
+    private final static String BROADCAST_STOP_ACTION = GlobalApplication.getGlobalPackageName() + ".broadcast.STOP_SERVICE";
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        Log.d(TAG, "onReceive: ");
         String action = intent.getAction();
-        Log.d(TAG, "onReceive: action = " + action);
-
+        logger.debug("action = " + action);
         if (null != action){
 
             if (action.equalsIgnoreCase(BROADCAST_START_ACTION)){
-                Log.d(TAG, "onReceive: startService");
+                logger.debug("startService");
                 context.startService(new Intent(context, MyService.class));
 
             }else if (action.equalsIgnoreCase(BROADCAST_STOP_ACTION)){
-                Log.d(TAG, "onReceive: stopService");
+                logger.debug("stopService");
                 context.stopService(new Intent(context, MyService.class));
 
             }else{
-                Log.d(TAG, "onReceive: 不能匹配action");
+                logger.debug("不能匹配 action");
             }
 
         }else {
-            Log.d(TAG, "onReceive: intent.action is null");
+            logger.debug("intent.action is null");
         }
 
     }

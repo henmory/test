@@ -4,6 +4,9 @@ import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /***
  *
  * Created on：2018/4/23
@@ -15,6 +18,8 @@ import android.os.IBinder;
  *
  **/
 public class MyService extends Service {
+    private static Logger logger = LoggerFactory.getLogger(MyService.class);
+
     public MyService() {
     }
 
@@ -33,12 +38,12 @@ public class MyService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        System.out.println("on onCreate");
+        logger.debug("on onCreate");
     }
 
     @Override
     public void onDestroy() {
         super.onDestroy();
-        System.out.println("on onDestroy");
+        logger.debug("on onDestroy");
     }
 }
