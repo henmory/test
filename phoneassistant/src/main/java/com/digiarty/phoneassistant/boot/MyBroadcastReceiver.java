@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.digiarty.phoneassistant.global.GlobalApplication;
+
 /***
  *
  * Created on：2018/4/23
@@ -21,8 +23,10 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 
     private final static String TAG = MyBroadcastReceiver.class.getSimpleName();
 
-    private final static String BROADCAST_START_ACTION = "com.digiarty.phoneassistant.broadcast.START_SERVICE";
-    private final static String BROADCAST_STOP_ACTION = "com.digiarty.phoneassistant.broadcast.STOP_SERVICE";
+    private final static String BROADCAST_START_ACTION = GlobalApplication.getGlobalPackageName() + "broadcast.START_SERVICE";
+//    private final static String BROADCAST_START_ACTION = "com.digiarty.phoneassistant.broadcast.START_SERVICE";
+//    private final static String BROADCAST_STOP_ACTION = "com.digiarty.phoneassistant.broadcast.STOP_SERVICE";
+    private final static String BROADCAST_STOP_ACTION = GlobalApplication.getGlobalPackageName() + "broadcast.STOP_SERVICE";
 
     @Override
     public void onReceive(Context context, Intent intent) {

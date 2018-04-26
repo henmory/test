@@ -13,8 +13,8 @@
         android:theme="@style/AppTheme" >
 
         <!--1.开启服务广播 2.关闭服务广播-->
-        <!--adb shell am broadcast - -receiver-permission com.digiarty.phoneassistant.permission.receive_broadcast -a com.digiarty.phoneassistant.broadcast.START_SERVICE -n com.digiarty.phoneassistant/.MyBroadcastReceiver-->
-        <!--adb shell am broadcast - -receiver-permission com.digiarty.phoneassistant.permission.receive_broadcast -a com.digiarty.phoneassistant.broadcast.STOP_SERVICE -n com.digiarty.phoneassistant/.MyBroadcastReceiver-->
+        <!--adb shell am broadcast - -receiver-permission com.digiarty.phoneassistant.permission.receive_broadcast -a com.digiarty.phoneassistant.broadcast.START_SERVICE -n com.digiarty.phoneassistant/.boot.MyBroadcastReceiver-->
+        <!--adb shell am broadcast - -receiver-permission com.digiarty.phoneassistant.permission.receive_broadcast -a com.digiarty.phoneassistant.broadcast.STOP_SERVICE -n com.digiarty.phoneassistant/.boot.MyBroadcastReceiver-->
         <!--receiver-permission 权限设置-->
         <!-- -a 组件action-->
         <!-- -n 组件类-->

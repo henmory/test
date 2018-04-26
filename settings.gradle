@@ -1,1 +1,1 @@
-include ':sendbroadcast', ':startservice', ':phoneassistant'
+include ':sendbroadcast', ':startservice', ':phoneassistant', ':start_intent_service'
