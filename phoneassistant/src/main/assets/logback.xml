@@ -8,7 +8,7 @@
     <property name="CONTEXT_NAME" value="MyApplication" />
 
     <!--声明一个属性,用来指定log文件存放的路径-->
-    <property name="LOG_DIR" value="/storage/emulated/0/com.example.log/log" />
+    <property name="LOG_DIR" value="/storage/emulated/0/Android/data/com.example.log" />
 
     <!-- 上下文名称：<contextName>, 每个logger都关联到logger上下文，
         默认上下文名称为“default”。但可以使用<contextName>设置成其他名字，用于区分不同应用程序的记录。
