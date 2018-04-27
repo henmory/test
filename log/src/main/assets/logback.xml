@@ -8,7 +8,7 @@
     <property name="CONTEXT_NAME" value="MyApplication" />
 
     <!--声明一个属性,用来指定log文件存放的路径-->
-    <property name="LOG_DIR" value="/storage/emulated/0/com.example.log/log" />
+    <property name="LOG_DIR" value="/storage/emulated/0/Documents/log" />
 
     <!-- 上下文名称：<contextName>, 每个logger都关联到logger上下文，
         默认上下文名称为“default”。但可以使用<contextName>设置成其他名字，用于区分不同应用程序的记录。
@@ -63,14 +63,14 @@
             <!-- 窗口索引最小值 -->
             <minIndex>1</minIndex>
             <!-- 窗口索引最大值 -->
-            <maxIndex>3</maxIndex>
+            <maxIndex>1</maxIndex>
 
         </rollingPolicy>
 
         <!-- 激活滚动的条件。 -->
         <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
             <!-- 活动文件的大小，默认值是10MB -->
-            <maxFileSize>30MB</maxFileSize>
+            <maxFileSize>10MB</maxFileSize>
         </triggeringPolicy>
 
         <!-- 对记录事件进行格式化。 -->
