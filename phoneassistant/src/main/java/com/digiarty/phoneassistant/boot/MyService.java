@@ -46,4 +46,5 @@ public class MyService extends Service {
         super.onDestroy();
         logger.debug("on onDestroy");
     }
+
 }

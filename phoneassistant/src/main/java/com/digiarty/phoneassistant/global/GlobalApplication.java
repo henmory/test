@@ -43,8 +43,6 @@ public class GlobalApplication extends Application {
     }
 
     private void createLogDirectoryInMyApplicationExternalDirectory(){
-//        String path = Environment.DIRECTORY_DOWNLOADS + "log/";
-//        createDir(path);
         File path = Environment.getExternalStorageDirectory();
         String abPath = path.getAbsolutePath() + "/" + globalPackageName;
         System.out.println("log path = " + abPath);

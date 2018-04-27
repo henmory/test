@@ -1,12 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.digiarty.phoneassistant">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
-    <!--receiver声明权限，表示可以接收这个权限的广播-->
+    <!-- receiver声明权限，表示可以接收这个权限的广播 -->
     <uses-permission android:name="com.digiarty.phoneassistant.permission.receive_broadcast" />
-
+    <!--声明可以发送的权限广播-->
+    <permission android:name="com.digiarty.phoneassistant.permission.receive_broadcast"/>
     <application
         android:name=".global.GlobalApplication"
         android:allowBackup="true"
@@ -14,29 +16,42 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme" >
+        android:theme="@style/AppTheme">
 
-        <!--1.开启服务广播 2.关闭服务广播-->
-        <!--adb shell am broadcast - -receiver-permission com.digiarty.phoneassistant.permission.receive_broadcast -a com.digiarty.phoneassistant.broadcast.START_SERVICE -n com.digiarty.phoneassistant/.boot.MyBroadcastReceiver-->
-        <!--adb shell am broadcast - -receiver-permission com.digiarty.phoneassistant.permission.receive_broadcast -a com.digiarty.phoneassistant.broadcast.STOP_SERVICE -n com.digiarty.phoneassistant/.boot.MyBroadcastReceiver-->
-        <!--receiver-permission 权限设置-->
-        <!-- -a 组件action-->
-        <!-- -n 组件类-->
-        <receiver android:name=".boot.MyBroadcastReceiver"
+        <!-- 1.开启服务广播 2.关闭服务广播 -->
+        <!-- adb shell am broadcast - -receiver-permission com.digiarty.phoneassistant.permission.receive_broadcast -a com.digiarty.phoneassistant.broadcast.START_SERVICE -n com.digiarty.phoneassistant/.boot.MyBroadcastReceiver -->
+        <!-- adb shell am broadcast - -receiver-permission com.digiarty.phoneassistant.permission.receive_broadcast -a com.digiarty.phoneassistant.broadcast.STOP_SERVICE -n com.digiarty.phoneassistant/.boot.MyBroadcastReceiver -->
+        <!-- receiver-permission 权限设置 -->
+        <!-- -a 组件action -->
+        <!-- -n 组件类 -->
+        <receiver
+            android:name=".boot.MyBroadcastReceiver"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.digiarty.phoneassistant.broadcast.START_SERVICE"/>
-                <action android:name="com.digiarty.phoneassistant.broadcast.STOP_SERVICE"/>
+                <action android:name="com.digiarty.phoneassistant.broadcast.START_SERVICE" />
+                <action android:name="com.digiarty.phoneassistant.broadcast.STOP_SERVICE" />
             </intent-filter>
         </receiver>
 
-        <!--exported = false 禁止其他应用开启服务-->
-        <!--该服务功能是开启服务器socket，监听相应端口-->
-        <service android:exported="false"
-            android:name=".boot.MyService">
+        <!-- exported = false 禁止其他应用开启服务 -->
+        <!-- 该服务功能是开启服务器socket，监听相应端口 -->
+        <service
+            android:name=".boot.MyService"
+            android:exported="false">
             <intent-filter>
-                <action android:name="com.digiarty.phoneassistant.service.START_LISTEN_CLIENT"/>
+                <action android:name="com.digiarty.phoneassistant.service.START_LISTEN_CLIENT" />
             </intent-filter>
         </service>
+
+        <activity
+            android:name=".activity.MainActivity"
+            android:label="@string/title_activity_main"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
     </application>
+
 </manifest>

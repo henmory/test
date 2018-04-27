@@ -45,7 +45,7 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
                 context.stopService(new Intent(context, MyService.class));
 
             }else{
-                logger.debug("不能匹配 action");
+                logger.debug("不能匹配 action" + action);
             }
 
         }else {
