@@ -1,5 +1,9 @@
 package com.digiarty.phoneassistant.file;
 
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 
 /***
@@ -32,6 +36,10 @@ public class FileHelper {
             System.out.println("创建目录" + destDirName + "失败！");
             return false;
         }
+    }
+
+    public static Logger initlogFile(Class<?> clazz){
+        return LoggerFactory.getLogger(clazz);
     }
 
 

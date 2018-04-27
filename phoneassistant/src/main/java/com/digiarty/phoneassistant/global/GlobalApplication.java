@@ -30,7 +30,7 @@ public class GlobalApplication extends Application {
         super.onCreate();
         getGlobalMessages();
         Log.d(TAG, "onCreate: packageName = " + globalPackageName);
-        createLogDirectoryInMyApplicationExternalDirectory();
+//        createLogDirectoryInMyApplicationExternalDirectory();
     }
 
     private void getGlobalMessages() {
@@ -42,11 +42,11 @@ public class GlobalApplication extends Application {
         return globalPackageName;
     }
 
-    private void createLogDirectoryInMyApplicationExternalDirectory(){
-        File path = Environment.getExternalStorageDirectory();
-        String abPath = path.getAbsolutePath() + "/" + globalPackageName;
-        System.out.println("log path = " + abPath);
-        FileHelper.createDir(abPath);
-    }
+//    private void createLogDirectoryInMyApplicationExternalDirectory(){
+//        File path = Environment.getExternalStorageDirectory();
+//        String abPath = path.getAbsolutePath() + "/" + globalPackageName;
+//        System.out.println("log path = " + abPath);
+//        FileHelper.createDir(abPath);
+//    }
 
 }
