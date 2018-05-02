@@ -4,11 +4,13 @@
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <!-- receiver声明权限，表示可以接收这个权限的广播 -->
     <uses-permission android:name="com.digiarty.phoneassistant.permission.receive_broadcast" />
     <!--声明可以发送的权限广播-->
     <permission android:name="com.digiarty.phoneassistant.permission.receive_broadcast"/>
+
     <application
         android:name=".global.GlobalApplication"
         android:allowBackup="true"
@@ -33,15 +35,19 @@
             </intent-filter>
         </receiver>
 
+
         <!-- exported = false 禁止其他应用开启服务 -->
         <!-- 该服务功能是开启服务器socket，监听相应端口 -->
         <service
-            android:name=".boot.MyService"
+            android:name=".boot.MyIntentService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.digiarty.phoneassistant.service.START_LISTEN_CLIENT" />
+                <action android:name="com.digiarty.phoneassistant.service.STOP_LISTEN_CLIENT" />
             </intent-filter>
         </service>
+
+
 
         <activity
             android:name=".activity.MainActivity"

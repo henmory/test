@@ -38,11 +38,15 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
 
             if (action.equalsIgnoreCase(BROADCAST_START_ACTION)){
                 logger.debug("startService");
-                context.startService(new Intent(context, MyService.class));
+                Intent intent1 = new Intent();
+                intent1.setAction(MyIntentService.getStartService());
+//                intent1.setClassName(GlobalApplication.getGlobalPackageName() + ,"MyIntentService");
+                intent1.setPackage(GlobalApplication.getGlobalPackageName());
+                context.startService(intent1);
 
             }else if (action.equalsIgnoreCase(BROADCAST_STOP_ACTION)){
                 logger.debug("stopService");
-                context.stopService(new Intent(context, MyService.class));
+                context.stopService(new Intent(context, MyIntentService.class));
 
             }else{
                 logger.debug("不能匹配 action" + action);
