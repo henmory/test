@@ -1,8 +1,10 @@
 package com.digiarty.phoneassistant.activity;
 
 import android.Manifest;
+import android.annotation.TargetApi;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.annotation.NonNull;
@@ -14,13 +16,14 @@ import android.util.Log;
 import com.digiarty.phoneassistant.R;
 import com.digiarty.phoneassistant.file.FileHelper;
 import com.digiarty.phoneassistant.global.GlobalApplication;
+
 import org.slf4j.Logger;
 
 
 import java.io.File;
 
 
-public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback{
+public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
     private final static String TAG = MainActivity.class.getSimpleName();
 
@@ -117,7 +120,14 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private void createLogDirectoryInPublicDocuments() {
 
         Log.d("MainActivity", "createLogDirectoryInPublicDocuments: 开始创建");
-        File path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        File path = null;
+
+//        path.mkdirs();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+        } else {
+            path = Environment.getExternalStoragePublicDirectory("Documents");
+        }
         String abPath = path.getAbsolutePath() + "/" + GlobalApplication.getGlobalPackageName();
         System.out.println("文件路径为 = " + abPath);
         FileHelper.createDir(abPath);

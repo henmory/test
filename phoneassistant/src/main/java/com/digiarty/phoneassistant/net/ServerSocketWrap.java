@@ -28,8 +28,6 @@ import java.net.Socket;
 public class ServerSocketWrap {
     private static Logger logger = LoggerFactory.getLogger(ServerSocketWrap.class);
 
-    private final static String TAG = ServerSocketWrap.class.getSimpleName();
-
     private static BufferedInputStream bis;
     private static BufferedOutputStream bos;
     //查一下怎么设置tcp缓存区大小和socket默认的缓存区
@@ -45,7 +43,8 @@ public class ServerSocketWrap {
         try {
             serverSocket = new ServerSocket(port);
             if (null != serverSocket){
-                logger.debug("监听socketIP = " + serverSocket.getInetAddress().getHostAddress() + "port= " + serverSocket.getLocalPort());
+                getServerSocketInformationCreatedBySystemDefault(serverSocket);
+                logger.debug("监听socketIP = " + ServerConfig.getServerIp() + "port= " + ServerConfig.getServerPort());
             }else{
                 logger.debug("ServerSocket 为空");
             }
@@ -55,6 +54,14 @@ public class ServerSocketWrap {
             return null;
         }
         return serverSocket;
+    }
+
+    public static int getServerSocketInformationCreatedBySystemDefault(ServerSocket serverSocket){
+        int port = serverSocket.getLocalPort();
+        String host = serverSocket.getInetAddress().getHostAddress();
+        ServerConfig.setServerIp(host);
+        ServerConfig.setServerPort(port);
+        return port;
     }
 
 

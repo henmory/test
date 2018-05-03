@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?><!-- scan:当此属性设置为true时，配置文件如果发生改变，将会被重新加载，默认值为true。
      scanPeriod:设置监测配置文件是否有修改的时间间隔，如果没有给出时间单位，默认单位是毫秒。当scan为true时，此属性生效。默认的时间间隔为1分钟。
      debug:当此属性设置为true时，将打印出logback内部日志信息，实时查看logback运行状态。默认值为false。 -->
-<configuration debug="true" scan="true" scanPeriod="60 seconds">
+<configuration debug="false" scan="true" scanPeriod="60 seconds">
 
     <!-- 上下文变量设置,用来定义变量值,其中name的值是变量的名称，value的值时变量定义的值。
         通过<property>定义的值会被插入到logger上下文中。定义变量后，可以使“${}”来使用变量。 -->
@@ -30,7 +30,7 @@
         <!-- 对日志进行格式化。 -->
         <encoder>
             <pattern>
-                %d{yyyy-MM-dd HH:mm:ss.SSS}|%level|%class|%thread|%method|%line|%msg%n
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [flag = ${CONTEXT_NAME}] [%level] [class = %class] [current_thread = %thread] [method = %method] [lineNumber = %line] %msg%n
             </pattern>
         </encoder>
     </appender>
@@ -77,7 +77,9 @@
         <encoder>
             <charset>UTF-8</charset>
             <Pattern>
-                %d{yyyy-MM-dd HH:mm:ss.SSS}|%level|%class|%thread|%method|%line|%msg%n
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%level] [class = %class] [current_thread = %thread] [method = %method] [lineNumber = %line] %msg%n
+
+                <!--%d{yyyy-MM-dd HH:mm:ss.SSS}|%level|%class|%thread|%method|%line|%msg%n-->
             </Pattern>
         </encoder>
     </appender>
