@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 
 import java.io.File;
 
-
+@Deprecated
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
     private static final int PERMISSION_REQUEST_WRITE_EXTERNAL_STORAGE = 0;
     private final static String TAG = MainActivity.class.getSimpleName();
@@ -31,7 +31,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        createFileOnExternalStorage();
+//        createFileOnExternalStorage();
+        finish();
     }
 
 

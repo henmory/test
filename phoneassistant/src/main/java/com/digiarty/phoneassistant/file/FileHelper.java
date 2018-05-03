@@ -16,6 +16,7 @@ import java.io.File;
  *
  *
  **/
+@Deprecated
 public class FileHelper {
 
 

@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import com.digiarty.phoneassistant.file.FileHelper;
+import com.digiarty.phoneassistant.log.FileLog;
 
 import java.io.File;
 
@@ -30,7 +31,7 @@ public class GlobalApplication extends Application {
         super.onCreate();
         getGlobalMessages();
         Log.d(TAG, "onCreate: packageName = " + globalPackageName);
-//        createLogDirectoryInMyApplicationExternalDirectory();
+        FileLog.createLogFileDirOnExternalPrivateStorage(this);
     }
 
     private void getGlobalMessages() {
@@ -42,11 +43,5 @@ public class GlobalApplication extends Application {
         return globalPackageName;
     }
 
-//    private void createLogDirectoryInMyApplicationExternalDirectory(){
-//        File path = Environment.getExternalStorageDirectory();
-//        String abPath = path.getAbsolutePath() + "/" + globalPackageName;
-//        System.out.println("log path = " + abPath);
-//        FileHelper.createDir(abPath);
-//    }
 
 }
