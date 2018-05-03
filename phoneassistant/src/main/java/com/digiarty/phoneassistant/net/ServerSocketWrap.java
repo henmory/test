@@ -65,7 +65,7 @@ public class ServerSocketWrap {
     }
 
 
-    public static Socket creatSocketForNewConnection(ServerSocket serverSocket) {
+    public static Socket listenAndCreatSocketForNewConnection(ServerSocket serverSocket) {
 
         Socket socket = null;
         try {

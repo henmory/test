@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 import static java.lang.Boolean.FALSE;
@@ -30,13 +31,18 @@ public class CommunicateWithPCTask implements Runnable {
 
     private Boolean socketFlag = FALSE;
 
+
     public CommunicateWithPCTask(Socket socket) {
+
         socketToCommunicateWithPC = socket;
 
     }
 
     @Override
     public void run() {
+
+
+
         Thread.currentThread().setName("与客户端进行socket通信的线程");
         logger.debug("线程id = " + Thread.currentThread().getId() + "的线程开始启动，进行socket通信");
         getInputOutPutStream();
@@ -103,6 +109,8 @@ public class CommunicateWithPCTask implements Runnable {
     private boolean writeDatasToPC(OutputStream outputStream,byte[] datas){
         return ServerSocketWrap.writeDatasToOutputStream(outputStream, datas);
     }
+
+
 
     private void closeSocketOfCommunicating(){
         closeInputOutPutStread();

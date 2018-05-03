@@ -18,7 +18,7 @@ public class ServerConfig {
 
 
 
-    private static int SERVER_PORT = 0;//自动分配
+    private static int SERVER_PORT = 10086;//自动分配
 
     public static void setServerIp(String serverIp) {
         SERVER_IP = serverIp;

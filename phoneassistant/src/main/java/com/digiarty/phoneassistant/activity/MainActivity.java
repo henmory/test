@@ -124,16 +124,16 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         File path = null;
 
 //        path.mkdirs();
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
-        } else {
-            path = Environment.getExternalStoragePublicDirectory("Documents");
-        }
-        String abPath = path.getAbsolutePath() + "/" + GlobalApplication.getGlobalPackageName();
-        System.out.println("文件路径为 = " + abPath);
-        FileHelper.createDir(abPath);
-        Logger l = FileHelper.initlogFile(MainActivity.class);
-        l.debug("ok");
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+//            path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS);
+//        } else {
+//            path = Environment.getExternalStoragePublicDirectory("Documents");
+//        }
+//        String abPath = path.getAbsolutePath() + "/" + GlobalApplication.getGlobalPackageName();
+//        System.out.println("文件路径为 = " + abPath);
+//        FileHelper.createDir(abPath);
+//        Logger l = FileHelper.initlogFile(MainActivity.class);
+//        l.debug("ok");
     }
 
 

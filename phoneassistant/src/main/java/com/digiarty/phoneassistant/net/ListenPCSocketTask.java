@@ -33,8 +33,8 @@ public class ListenPCSocketTask {
     public static void startListenPCSocketConnect() {
 
         ServerSocket serverSocket = createServerSocketForPCToConnect(ServerConfig.getServerPort());
-        if (null != serverSocket){
-            logger.debug("服务器socket信息: serverSocket = " +serverSocket.toString());
+        if (null != serverSocket) {
+            logger.debug("服务器socket信息: serverSocket = " + serverSocket.toString());
         }
         mExecutorService = Executors.newCachedThreadPool();  //创建一个线程池
 
@@ -43,21 +43,8 @@ public class ListenPCSocketTask {
             serverListenSocketFlag = TRUE;
 
             while (serverListenSocketFlag) {
-
-                    Socket socketToCommunicateWithPC = createSocketForPCToCommunicate(serverSocket);
-                    if (socketToCommunicateWithPC != null) {
-                        logger.debug("为客户端新创建的socket信息: socketToCommunicateWithClient = " +  socketToCommunicateWithPC.toString());
-                    }else{
-                        logger.debug("与客户端通信的socket创建为空");
-                    }
-                    logger.debug("为客户端创建socket");
-                    if (null != socketToCommunicateWithPC) {
-                        mExecutorService.execute(new CommunicateWithPCTask(socketToCommunicateWithPC)); //启动一个新的线程来处理连接
-                    } else {
-                        logger.debug("为客户端创建socket失败");
-                        break;
-                    }
-
+                Socket socketToCommunicateWithPC = listenPCConnectAndCreateNewSocketForPCConnection(serverSocket);
+                mExecutorService.execute(new CommunicateWithPCTask(socketToCommunicateWithPC)); //启动一个新的线程来处理连接
             }
             mExecutorService.shutdown();
             serverListenSocketFlag = FALSE;
@@ -65,14 +52,29 @@ public class ListenPCSocketTask {
         }
     }
 
-    public static ServerSocket createServerSocketForPCToConnect(int port){
+    private static Socket listenPCConnectAndCreateNewSocketForPCConnection(ServerSocket serverSocket){
+
+        Socket socketToCommunicateWithPC = listenAndCreateSocketForPCToCommunicate(serverSocket);
+        logger.debug("出现新的PC连接,为其创建新的socket");
+
+        if (socketToCommunicateWithPC != null) {
+            logger.debug("新创建的socket信息: socketToCommunicateWithClient = " +  socketToCommunicateWithPC.toString());
+        }else{
+            logger.debug("新创建socket失败");
+        }
+        return socketToCommunicateWithPC;
+    }
+
+    public static ServerSocket createServerSocketForPCToConnect(int port) {
         return ServerSocketWrap.createSocketForListen(port);
     }
 
-    public static Socket createSocketForPCToCommunicate(ServerSocket serverSocket){
-        return ServerSocketWrap.creatSocketForNewConnection(serverSocket);
+    public static Socket listenAndCreateSocketForPCToCommunicate(ServerSocket serverSocket){
+        return ServerSocketWrap.listenAndCreatSocketForNewConnection(serverSocket);
     }
-    public static void closeListenSocket(ServerSocket serverSocket){
+
+
+    public static void closeListenSocket(ServerSocket serverSocket) {
         ServerSocketWrap.closeListenSocket(serverSocket);
     }
 
