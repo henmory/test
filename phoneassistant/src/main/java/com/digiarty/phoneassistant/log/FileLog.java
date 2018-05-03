@@ -2,7 +2,7 @@ package com.digiarty.phoneassistant.log;
 
 import android.content.Context;
 
-import com.digiarty.phoneassistant.file.Storage;
+import com.digiarty.phoneassistant.file.AndroidStorage;
 
 import java.io.File;
 
@@ -21,7 +21,7 @@ public class FileLog {
     private static final String LOG_FILE_DIR = "log";
 
     public static void createLogFileDirOnExternalPrivateStorage(Context context){
-        File path = Storage.ExternalStorage.createDirInFilesDir(context, null, LOG_FILE_DIR);
+        File path = AndroidStorage.ExternalStorage.createDirInFilesDir(context, null, LOG_FILE_DIR);
         if (null != path){
             String abPath = path.getAbsolutePath();
             System.out.println("log path = " + abPath);

@@ -3,9 +3,8 @@ package com.digiarty.phoneassistant.boot;
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
-import com.digiarty.phoneassistant.net.ServerListeningClientTask;
+import com.digiarty.phoneassistant.net.ListenPCSocketTask;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +49,7 @@ public class MyIntentService extends IntentService {
         if (action.equalsIgnoreCase(START_SERVICE)){
             logger.debug("开启服务action");
             logger.debug("开启安卓端socket，监听客户端的链接");
-            ServerListeningClientTask.androidServerStartListenForClientConnect();
+            ListenPCSocketTask.startListenPCSocketConnect();
         }else{
             logger.debug("无效的服务action");
         }

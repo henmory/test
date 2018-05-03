@@ -23,7 +23,7 @@ import static android.os.Environment.getExternalStorageState;
  * Created by CJS on 2017/2/28 11:22.
  */
 
-public class Storage {
+public class AndroidStorage {
 
     /**
      * 内部存储

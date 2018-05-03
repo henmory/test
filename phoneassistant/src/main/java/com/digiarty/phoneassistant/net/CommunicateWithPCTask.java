@@ -1,7 +1,5 @@
 package com.digiarty.phoneassistant.net;
 
-import android.util.Log;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,17 +21,17 @@ import static java.lang.Boolean.TRUE;
  *
  *
  **/
-public class CommunicateWithClientTask implements Runnable {
-    private static Logger logger = LoggerFactory.getLogger(ServerListeningClientTask.class);
+public class CommunicateWithPCTask implements Runnable {
+    private static Logger logger = LoggerFactory.getLogger(ListenPCSocketTask.class);
 
-    private Socket socketToCommunicateWithClient;
+    private Socket socketToCommunicateWithPC;
     private InputStream inputStream;
     private OutputStream outputStream;
 
-    private Boolean serverHandleClientConnectSocketFlag = FALSE;
+    private Boolean socketFlag = FALSE;
 
-    public CommunicateWithClientTask(Socket socket) {
-        socketToCommunicateWithClient = socket;
+    public CommunicateWithPCTask(Socket socket) {
+        socketToCommunicateWithPC = socket;
 
     }
 
@@ -43,42 +41,42 @@ public class CommunicateWithClientTask implements Runnable {
         logger.debug("线程id = " + Thread.currentThread().getId() + "的线程开始启动，进行socket通信");
         getInputOutPutStream();
 
-        while(serverHandleClientConnectSocketFlag){
+        while(socketFlag){
 
-            if (!socketToCommunicateWithClient.isConnected()) {
+            if (!socketToCommunicateWithPC.isConnected()) {
                 logger.debug("接收数据前，连接已经断开");
                 break;
             }
             //先读后写
-            byte[] datas = readDatasFromClient(inputStream);
+            byte[] datas = readDatasFromPC(inputStream);
             if (null == datas){
                 break;
             }
-            boolean ret = writeDatasToSocket(outputStream,datas);
+            boolean ret = writeDatasToPC(outputStream,datas);
             if (!ret){
 
                 break;
             }
 
         }
-        serverHandleClientConnectSocketFlag = FALSE;
+        socketFlag = FALSE;
         closeSocketOfCommunicating();
         logger.debug("线程id = " + Thread.currentThread().getId() + "的线程销毁");
     }
 
     private void getInputOutPutStream(){
-        if (null != socketToCommunicateWithClient){
+        if (null != socketToCommunicateWithPC){
             try {
-                inputStream = socketToCommunicateWithClient.getInputStream();
-                outputStream = socketToCommunicateWithClient.getOutputStream();
-                serverHandleClientConnectSocketFlag = TRUE;
+                inputStream = socketToCommunicateWithPC.getInputStream();
+                outputStream = socketToCommunicateWithPC.getOutputStream();
+                socketFlag = TRUE;
             } catch (IOException e) {
                 e.printStackTrace();
-                serverHandleClientConnectSocketFlag = FALSE;
+                socketFlag = FALSE;
                 logger.debug("从socket获取输入输出流发生异常");
             }
         }else{
-            serverHandleClientConnectSocketFlag = FALSE;
+            socketFlag = FALSE;
             logger.debug("从socket获取输入输出流失败");
         }
     }
@@ -94,7 +92,7 @@ public class CommunicateWithClientTask implements Runnable {
         }
     }
 
-    private byte[] readDatasFromClient(InputStream inputStream){
+    private byte[] readDatasFromPC(InputStream inputStream){
         byte[] readDatas = ServerSocketWrap.readDatasFromInputStream(inputStream);
         if (null != readDatas){
             logger.debug("从客户端读取到的数据为:" + new String(readDatas));
@@ -102,12 +100,12 @@ public class CommunicateWithClientTask implements Runnable {
         return readDatas;
     }
 
-    private boolean writeDatasToSocket(OutputStream outputStream,byte[] datas){
+    private boolean writeDatasToPC(OutputStream outputStream,byte[] datas){
         return ServerSocketWrap.writeDatasToOutputStream(outputStream, datas);
     }
 
     private void closeSocketOfCommunicating(){
         closeInputOutPutStread();
-        ServerSocketWrap.closeSocket(socketToCommunicateWithClient);
+        ServerSocketWrap.closeSocket(socketToCommunicateWithPC);
     }
 }

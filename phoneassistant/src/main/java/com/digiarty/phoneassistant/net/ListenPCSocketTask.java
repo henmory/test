@@ -1,9 +1,5 @@
 package com.digiarty.phoneassistant.net;
 
-import android.util.Log;
-
-import com.digiarty.phoneassistant.boot.MyBroadcastReceiver;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,19 +21,18 @@ import static java.lang.Boolean.TRUE;
  *
  *
  **/
-public class ServerListeningClientTask {
+public class ListenPCSocketTask {
 
-    private static Logger logger = LoggerFactory.getLogger(ServerListeningClientTask.class);
+    private static Logger logger = LoggerFactory.getLogger(ListenPCSocketTask.class);
 
     private static ExecutorService mExecutorService = null; //线程池
 
     private static Boolean serverListenSocketFlag = FALSE;
 
-    private final static String TAG = ServerListeningClientTask.class.getSimpleName();
 
-    public static void androidServerStartListenForClientConnect() {
+    public static void startListenPCSocketConnect() {
 
-        ServerSocket serverSocket = createServerSocketForClientToConnect(ServerConfig.getServerPort());
+        ServerSocket serverSocket = createServerSocketForPCToConnect(ServerConfig.getServerPort());
         if (null != serverSocket){
             logger.debug("服务器socket信息: serverSocket = " +serverSocket.toString());
         }
@@ -49,15 +44,15 @@ public class ServerListeningClientTask {
 
             while (serverListenSocketFlag) {
 
-                    Socket socketToCommunicateWithClient = createSocketForClientToCommunicate(serverSocket);
-                    if (socketToCommunicateWithClient != null) {
-                        logger.debug("为客户端新创建的socket信息: socketToCommunicateWithClient = " +  socketToCommunicateWithClient.toString());
+                    Socket socketToCommunicateWithPC = createSocketForPCToCommunicate(serverSocket);
+                    if (socketToCommunicateWithPC != null) {
+                        logger.debug("为客户端新创建的socket信息: socketToCommunicateWithClient = " +  socketToCommunicateWithPC.toString());
                     }else{
                         logger.debug("与客户端通信的socket创建为空");
                     }
                     logger.debug("为客户端创建socket");
-                    if (null != socketToCommunicateWithClient) {
-                        mExecutorService.execute(new CommunicateWithClientTask(socketToCommunicateWithClient)); //启动一个新的线程来处理连接
+                    if (null != socketToCommunicateWithPC) {
+                        mExecutorService.execute(new CommunicateWithPCTask(socketToCommunicateWithPC)); //启动一个新的线程来处理连接
                     } else {
                         logger.debug("为客户端创建socket失败");
                         break;
@@ -70,11 +65,11 @@ public class ServerListeningClientTask {
         }
     }
 
-    public static ServerSocket createServerSocketForClientToConnect(int port){
+    public static ServerSocket createServerSocketForPCToConnect(int port){
         return ServerSocketWrap.createSocketForListen(port);
     }
 
-    public static Socket createSocketForClientToCommunicate(ServerSocket serverSocket){
+    public static Socket createSocketForPCToCommunicate(ServerSocket serverSocket){
         return ServerSocketWrap.creatSocketForNewConnection(serverSocket);
     }
     public static void closeListenSocket(ServerSocket serverSocket){
