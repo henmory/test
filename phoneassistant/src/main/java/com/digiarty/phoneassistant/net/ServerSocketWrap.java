@@ -12,8 +12,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 
 /***
  *
@@ -37,6 +39,17 @@ public class ServerSocketWrap {
 
     private static final int SIZE = 1024 * 8;
 
+    public static Socket createSocket(String hostIp, int port){
+        try {
+            InetAddress serveraddr = InetAddress.getByName(hostIp);
+            return new Socket(serveraddr, port);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     public static ServerSocket createSocketForListen(int port) {
 
         ServerSocket serverSocket;
@@ -44,7 +57,7 @@ public class ServerSocketWrap {
             serverSocket = new ServerSocket(port);
             if (null != serverSocket){
                 getServerSocketInformationCreatedBySystemDefault(serverSocket);
-                logger.debug("监听socketIP = " + ServerConfig.getServerIp() + "port= " + ServerConfig.getServerPort());
+                logger.debug("监听socketIP = " + ServerConfig.AndroidServerConfig.getServerIp() + "port= " + ServerConfig.AndroidServerConfig.getServerPort());
             }else{
                 logger.debug("ServerSocket 为空");
             }
@@ -56,12 +69,11 @@ public class ServerSocketWrap {
         return serverSocket;
     }
 
-    public static int getServerSocketInformationCreatedBySystemDefault(ServerSocket serverSocket){
+    public static void getServerSocketInformationCreatedBySystemDefault(ServerSocket serverSocket){
         int port = serverSocket.getLocalPort();
         String host = serverSocket.getInetAddress().getHostAddress();
-        ServerConfig.setServerIp(host);
-        ServerConfig.setServerPort(port);
-        return port;
+        ServerConfig.AndroidServerConfig.setServerIp(host);
+        ServerConfig.AndroidServerConfig.setServerPort(port);
     }
 
 

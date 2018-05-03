@@ -32,7 +32,7 @@ public class MyIntentService extends IntentService {
      *
      */
     public MyIntentService() {
-        super("监听客户端接入的线程");
+        super("监听PC接入的线程");
     }
 
     @Override

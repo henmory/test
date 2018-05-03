@@ -1,12 +1,13 @@
 package com.digiarty.phoneassistant.net;
 
+import com.digiarty.phoneassistant.utils.ByteOrderUtils;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.ServerSocket;
 import java.net.Socket;
 
 import static java.lang.Boolean.FALSE;
@@ -14,7 +15,7 @@ import static java.lang.Boolean.TRUE;
 
 /***
  *
- * Created on：28/04/2018
+ * Created on：03/05/2018
  *
  * Created by：henmory
  *
@@ -22,59 +23,71 @@ import static java.lang.Boolean.TRUE;
  *
  *
  **/
-public class CommunicateWithPCTask implements Runnable {
-    private static Logger logger = LoggerFactory.getLogger(ListenPCSocketTask.class);
+public class LongConnectionTask implements Runnable{
+    private static Logger logger = LoggerFactory.getLogger(LongConnectionTask.class);
 
-    private Socket socketToCommunicateWithPC;
+    private Socket longSocket;
     private InputStream inputStream;
     private OutputStream outputStream;
-
     private Boolean socketFlag = FALSE;
-
-
-    public CommunicateWithPCTask(Socket socket) {
-
-        socketToCommunicateWithPC = socket;
-
-    }
 
     @Override
     public void run() {
 
+        Thread.currentThread().setName("长连接线程");
+        logger.debug("线程id = " + Thread.currentThread().getId() + "的线程开始启动，先发送android端服务的端口号，之后监听pc端心跳");
 
+        longSocket = createSocket(ServerConfig.PCServerConfig.getServerIp(), ServerConfig.PCServerConfig.getServerPort());
+        if (null == longSocket){
+            logger.debug("创建长连接socket失败");
+            // TODO: 03/05/2018 杀死应用吧,重新开始
+            logger.debug("线程id = " + Thread.currentThread().getId() + "的线程销毁");
+            return;
+        }
+        logger.debug("创建长连接成功");
+        socketFlag = TRUE;
 
-        Thread.currentThread().setName("与PC进行socket通信的线程");
-        logger.debug("线程id = " + Thread.currentThread().getId() + "的线程开始启动，进行socket通信");
         getInputOutPutStream();
 
-        while(socketFlag){
+        boolean ret = sendAndroidServerPortToPC();
+        if (!ret){
+            closeSocketOfCommunicating();
+            logger.debug("线程id = " + Thread.currentThread().getId() + "的线程销毁");
+            return;
+        }
 
-            if (!socketToCommunicateWithPC.isConnected()) {
+        while(socketFlag){
+            if (!longSocket.isConnected()) {
                 logger.debug("接收数据前，连接已经断开");
                 break;
             }
-            //先读后写
+
             byte[] datas = readDatasFromPC(inputStream);
             if (null == datas){
                 break;
             }
-            boolean ret = writeDatasToPC(outputStream,datas);
-            if (!ret){
 
+            //先写后读
+            boolean ret1 = writeDatasToPC(outputStream, new String("收到心跳包").getBytes());
+            if (!ret1){
                 break;
             }
 
         }
-        socketFlag = FALSE;
         closeSocketOfCommunicating();
         logger.debug("线程id = " + Thread.currentThread().getId() + "的线程销毁");
+
+    }
+
+    private Socket createSocket(String ip, int serverPort){
+        return ServerSocketWrap.createSocket(ip, serverPort);
     }
 
     private void getInputOutPutStream(){
-        if (null != socketToCommunicateWithPC){
+        if (null != longSocket){
             try {
-                inputStream = socketToCommunicateWithPC.getInputStream();
-                outputStream = socketToCommunicateWithPC.getOutputStream();
+                inputStream = longSocket.getInputStream();
+                outputStream = longSocket.getOutputStream();
                 socketFlag = TRUE;
             } catch (IOException e) {
                 e.printStackTrace();
@@ -87,6 +100,12 @@ public class CommunicateWithPCTask implements Runnable {
         }
     }
 
+    private void closeSocketOfCommunicating(){
+        socketFlag = FALSE;
+        closeInputOutPutStread();
+        ServerSocketWrap.closeSocket(longSocket);
+    }
+
     public void closeInputOutPutStread(){
         if (null != inputStream || null != outputStream){
             try {
@@ -96,6 +115,10 @@ public class CommunicateWithPCTask implements Runnable {
                 e.printStackTrace();
             }
         }
+    }
+    private boolean sendAndroidServerPortToPC(){
+        boolean ret = writeDatasToPC(outputStream, ByteOrderUtils.int2byte(ServerConfig.AndroidServerConfig.getServerPort()));
+        return ret;
     }
 
     private byte[] readDatasFromPC(InputStream inputStream){
@@ -108,12 +131,5 @@ public class CommunicateWithPCTask implements Runnable {
 
     private boolean writeDatasToPC(OutputStream outputStream,byte[] datas){
         return ServerSocketWrap.writeDatasToOutputStream(outputStream, datas);
-    }
-
-
-
-    private void closeSocketOfCommunicating(){
-        closeInputOutPutStread();
-        ServerSocketWrap.closeSocket(socketToCommunicateWithPC);
     }
 }
