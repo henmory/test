@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 //        createFileOnExternalStorage();
-        FileLog.createFileOnExternalPrivateStorage(this);
+//        FileLog.createFileOnExternalPrivateStorage(this);
         finish();
     }
 

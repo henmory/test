@@ -11,6 +11,7 @@ import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
 import com.example.log.file.FileHelper;
+import com.example.log.log.FileLog;
 
 import java.io.File;
 
@@ -36,6 +37,8 @@ public class GlobalApplication extends Application {
         getGlobalMessages();
         Log.d(TAG, "onCreate: packageName = " + globalPackageName);
 //        createLogDirectoryInPublicDocuments();
+        FileLog.createFileOnExternalPrivateStorage(this);
+
     }
 
     private void getGlobalMessages() {
