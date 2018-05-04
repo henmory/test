@@ -32,7 +32,7 @@ public class ListenPCSocketTask {
 
     public static void startListenPCSocketConnect() {
 
-        ServerSocket serverSocket = createServerSocketForPCToConnect(ServerConfig.AndroidServerConfig.getServerPort());
+        ServerSocket serverSocket = createServerSocketForPCToConnect(ServerConfig.AndroidConfig.getPort());
         if (null != serverSocket) {
             logger.debug("服务器socket信息: serverSocket = " + serverSocket.toString());
         } else {
@@ -42,7 +42,7 @@ public class ListenPCSocketTask {
         }
 
         mExecutorService = Executors.newCachedThreadPool();  //创建一个线程池
-        sendAndroidServerPortToPC(serverSocket.getLocalPort());
+//        sendAndroidServerPortToPC(serverSocket.getLocalPort());
 
         logger.debug("服务的socket创建完成，等待客户端接入");
         serverListenSocketFlag = TRUE;
@@ -83,7 +83,7 @@ public class ListenPCSocketTask {
     }
 
     private static void sendAndroidServerPortToPC(int serverPort){
-        ServerConfig.AndroidServerConfig.setServerPort(serverPort);
+        ServerConfig.AndroidConfig.setPort(serverPort);
         mExecutorService.execute(new LongConnectionTask());
     }
 

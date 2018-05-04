@@ -14,40 +14,50 @@ public class ServerConfig {
 
 
 
-    public static class AndroidServerConfig{
-        private static String SERVER_IP = "";
+    public static class AndroidConfig{
+        private static String IP = "";
 
-        private static int SERVER_PORT = 10086;//自动分配
+        private static int PORT = 10086;//自动分配
 
-        public static void setServerIp(String serverIp) {
-            SERVER_IP = serverIp;
+        public static void setIp(String serverIp) {
+            IP = serverIp;
         }
-        public static String getServerIp() {
-            return SERVER_IP;
+        public static String getIp() {
+            return IP;
         }
 
-        public static void setServerPort(int serverPort) {
-            SERVER_PORT = serverPort;
+        public static void setPort(int serverPort) {
+            PORT = serverPort;
         }
-        public static int getServerPort() {
-            return SERVER_PORT;
+        public static int getPort() {
+            return PORT;
         }
     }
 
-    public static class PCServerConfig{
-        private static String SERVER_IP = "";
-
-        private static int SERVER_PORT = 0;//自动分配
+    public static class PCConfig{
 
 
-        public static String getServerIp() {
-            return SERVER_IP;
+        private static String IP = "";
+
+
+        private static int PORT = 0;//自动分配
+        public static void setIP(String IP) {
+            PCConfig.IP = IP;
+        }
+
+        public static String getIp() {
+            return IP;
         }
 
 
-        public static int getServerPort() {
-            return SERVER_PORT;
+        public static int getPort() {
+            return PORT;
         }
+
+        public static void setPort(int port) {
+            PORT = port;
+        }
+
     }
 
 

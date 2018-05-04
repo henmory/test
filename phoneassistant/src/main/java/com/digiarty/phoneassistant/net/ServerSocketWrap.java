@@ -57,7 +57,7 @@ public class ServerSocketWrap {
             serverSocket = new ServerSocket(port);
             if (null != serverSocket){
                 getServerSocketInformationCreatedBySystemDefault(serverSocket);
-                logger.debug("监听socketIP = " + ServerConfig.AndroidServerConfig.getServerIp() + "port= " + ServerConfig.AndroidServerConfig.getServerPort());
+                logger.debug("监听socketIP = " + ServerConfig.AndroidConfig.getIp() + "port= " + ServerConfig.AndroidConfig.getPort());
             }else{
                 logger.debug("ServerSocket 为空");
             }
@@ -72,8 +72,8 @@ public class ServerSocketWrap {
     public static void getServerSocketInformationCreatedBySystemDefault(ServerSocket serverSocket){
         int port = serverSocket.getLocalPort();
         String host = serverSocket.getInetAddress().getHostAddress();
-        ServerConfig.AndroidServerConfig.setServerIp(host);
-        ServerConfig.AndroidServerConfig.setServerPort(port);
+        ServerConfig.AndroidConfig.setIp(host);
+        ServerConfig.AndroidConfig.setPort(port);
     }
 
 
