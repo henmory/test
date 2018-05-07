@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
  *
  *
  **/
+@Deprecated
 public class MyIntentService extends IntentService {
     private static Logger logger = LoggerFactory.getLogger(MyIntentService.class);
 

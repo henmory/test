@@ -1,10 +1,16 @@
 package com.digiarty.phoneassistant.global;
 
 import android.app.Application;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+import com.digiarty.phoneassistant.R;
+import com.digiarty.phoneassistant.activity.MyNotification;
+import com.digiarty.phoneassistant.boot.MyService;
 import com.digiarty.phoneassistant.log.FileLog;
 import com.digiarty.phoneassistant.net.NetTaskManager;
 
@@ -28,6 +34,7 @@ import org.slf4j.Logger;
 public class GlobalApplication extends Application {
 
     private final static String TAG = GlobalApplication.class.getSimpleName();
+
     private Logger logger;
     private static String globalPackageName;
     private static Handler mainHandler;
@@ -56,6 +63,7 @@ public class GlobalApplication extends Application {
         FileLog.createLogFileDirOnExternalPrivateStorage(this);
         mainHandler = new GlobalHandler();
         logger = LoggerFactory.getLogger(GlobalApplication.class);
+        MyNotification.createNotificationChannelForGlobalApplication(this);
     }
 
 
@@ -103,6 +111,7 @@ public class GlobalApplication extends Application {
         message.what = GlobalApplication.MSG_CLOSE_APP;
         mainHandler.sendMessage(message);
     }
+
 
 
 

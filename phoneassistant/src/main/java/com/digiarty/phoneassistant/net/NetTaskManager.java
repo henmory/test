@@ -79,8 +79,8 @@ public class NetTaskManager {
     }
 
     public static void notifyNetTaskManagerClearAllTask(){
-        Message message = Message.obtain();
-        message.what = GlobalApplication.MSG_CLEAR_TASKS_RESOURCE;
-        GlobalApplication.getMainHandler().sendMessage(message);
+//        Message message = Message.obtain();
+//        message.what = GlobalApplication.MSG_CLEAR_TASKS_RESOURCE;
+//        GlobalApplication.getMainHandler().sendMessage(message);
     }
 }
