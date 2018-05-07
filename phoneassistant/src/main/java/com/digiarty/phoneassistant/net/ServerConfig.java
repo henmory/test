@@ -12,8 +12,6 @@ package com.digiarty.phoneassistant.net;
  **/
 public class ServerConfig {
 
-
-
     public static class AndroidConfig{
         private static String IP = "";
 
@@ -40,7 +38,7 @@ public class ServerConfig {
         private static String IP = "";
 
 
-        private static int PORT = 0;//自动分配
+        private static int PORT = 12580;//自动分配
         public static void setIP(String IP) {
             PCConfig.IP = IP;
         }

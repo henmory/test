@@ -33,20 +33,18 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
-        logger.debug("action = " + action);
         if (null != action){
-
+            logger.debug("action = " + action);
             if (action.equalsIgnoreCase(BROADCAST_START_ACTION)){
                 logger.debug("startService");
                 Intent intent1 = new Intent();
-                intent1.setAction(MyIntentService.getStartService());
-//                intent1.setClassName(GlobalApplication.getGlobalPackageName() + ,"MyIntentService");
+                intent1.setAction(MyService.getStartService());
                 intent1.setPackage(GlobalApplication.getGlobalPackageName());
                 context.startService(intent1);
 
             }else if (action.equalsIgnoreCase(BROADCAST_STOP_ACTION)){
                 logger.debug("stopService");
-                context.stopService(new Intent(context, MyIntentService.class));
+                context.stopService(new Intent(context, MyService.class));
 
             }else{
                 logger.debug("不能匹配 action" + action);

@@ -57,7 +57,7 @@ public class ServerSocketWrap {
             serverSocket = new ServerSocket(port);
             if (null != serverSocket){
                 getServerSocketInformationCreatedBySystemDefault(serverSocket);
-                logger.debug("监听socketIP = " + ServerConfig.AndroidConfig.getIp() + "port= " + ServerConfig.AndroidConfig.getPort());
+//                logger.debug("监听socketIP = " + ServerConfig.AndroidConfig.getIp() + "port= " + ServerConfig.AndroidConfig.getPort());
             }else{
                 logger.debug("ServerSocket 为空");
             }
@@ -177,8 +177,7 @@ public class ServerSocketWrap {
                 //写到字节中
                 bytes = outWriter.toByteArray();
                 outWriter.close();
-                logger.debug("读取数据成功");
-
+//                logger.debug("读取数据成功");
             }
 
         } catch (UnsupportedEncodingException e) {
@@ -217,7 +216,7 @@ public class ServerSocketWrap {
             bos = new BufferedOutputStream(os);
             bos.write(text, off, lenght);
             bos.flush();
-            logger.debug("写数据成功");
+//            logger.debug("写数据成功");
             return true;
         } catch (UnsupportedEncodingException e) {
             logger.debug("写入socket数据异常" + e.getStackTrace());

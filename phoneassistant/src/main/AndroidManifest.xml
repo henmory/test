@@ -38,12 +38,24 @@
 
         <!-- exported = false 禁止其他应用开启服务 -->
         <!-- 该服务功能是开启服务器socket，监听相应端口 -->
+        <!--<service-->
+            <!--android:name=".boot.MyIntentService"-->
+            <!--android:exported="false">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.digiarty.phoneassistant.service.START_LISTEN_CLIENT" />-->
+                <!--<action android:name="com.digiarty.phoneassistant.service.STOP_LISTEN_CLIENT" />-->
+            <!--</intent-filter>-->
+        <!--</service>-->
+
+
+        <!-- exported = false 禁止其他应用开启服务 -->
+        <!-- 该服务功能是开启服务器socket，监听相应端口 -->
         <service
-            android:name=".boot.MyIntentService"
+            android:name=".boot.MyService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.digiarty.phoneassistant.service.START_LISTEN_CLIENT" />
-                <action android:name="com.digiarty.phoneassistant.service.STOP_LISTEN_CLIENT" />
+                <action android:name="com.digiarty.phoneassistant.service.START_LISTEN_PC_SOCKET" />
+                <action android:name="com.digiarty.phoneassistant.service.STOP_SERVICE" />
             </intent-filter>
         </service>
 

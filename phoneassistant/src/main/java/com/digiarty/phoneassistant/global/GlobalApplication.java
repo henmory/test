@@ -1,13 +1,17 @@
 package com.digiarty.phoneassistant.global;
 
 import android.app.Application;
-import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
-import com.digiarty.phoneassistant.file.FileHelper;
 import com.digiarty.phoneassistant.log.FileLog;
+import com.digiarty.phoneassistant.net.NetTaskManager;
 
-import java.io.File;
+import org.slf4j.LoggerFactory;
+
+import org.slf4j.Logger;
+
 
 /***
  *
@@ -24,17 +28,13 @@ import java.io.File;
 public class GlobalApplication extends Application {
 
     private final static String TAG = GlobalApplication.class.getSimpleName();
+    private Logger logger;
     private static String globalPackageName;
+    private static Handler mainHandler;
+    public final static int MSG_CLOSE_APP = 1;
+    public final static int MSG_CLEAR_TASKS_RESOURCE = 2;
 
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        getGlobalMessages();
-        Log.d(TAG, "onCreate: packageName = " + globalPackageName);
-        FileLog.createLogFileDirOnExternalPrivateStorage(this);
-    }
-
-    private void getGlobalMessages() {
+    private void getGlobalInformation() {
         globalPackageName = getApplicationContext().getPackageName();
     }
 
@@ -42,6 +42,69 @@ public class GlobalApplication extends Application {
     public static String getGlobalPackageName() {
         return globalPackageName;
     }
+
+    public static Handler getMainHandler() {
+        return mainHandler;
+    }
+
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        getGlobalInformation();
+        Log.d(TAG, "onCreate: packageName = " + globalPackageName);
+        FileLog.createLogFileDirOnExternalPrivateStorage(this);
+        mainHandler = new GlobalHandler();
+        logger = LoggerFactory.getLogger(GlobalApplication.class);
+    }
+
+
+    // 程序终止的时候执行
+    @Override
+    public void onTerminate() {
+        super.onTerminate();
+        System.out.println("application---------onTerminate");
+    }
+
+    // 低内存的时候执行
+    @Override
+    public void onLowMemory() {
+        super.onLowMemory();
+        System.out.println("application---------onLowMemory");
+    }
+
+    // 程序在内存清理的时候执行
+    @Override
+    public void onTrimMemory(int level) {
+        super.onTrimMemory(level);
+        System.out.println("application---------onTrimMemory");
+    }
+
+    private static class GlobalHandler extends Handler{
+
+        @Override
+        public void handleMessage(Message msg) {
+            if (msg.what == MSG_CLOSE_APP){
+                closeApp();
+            }else if(msg.what == MSG_CLEAR_TASKS_RESOURCE){
+                NetTaskManager.clearTaskResource();
+            }
+        }
+        private void closeApp(){
+            android.os.Process.killProcess(android.os.Process.myPid());
+        }
+
+    }
+
+
+
+    public static void notifyApplicationClose(){
+        Message message = Message.obtain();
+        message.what = GlobalApplication.MSG_CLOSE_APP;
+        mainHandler.sendMessage(message);
+    }
+
+
 
 
 }

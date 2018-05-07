@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
@@ -21,70 +19,83 @@ import static java.lang.Boolean.TRUE;
  *
  *
  **/
-public class ListenPCSocketTask {
+public class ListenPCSocketTask implements ITask {
 
     private static Logger logger = LoggerFactory.getLogger(ListenPCSocketTask.class);
 
-    private static ExecutorService mExecutorService = null; //线程池
+    private Boolean serverListenSocketFlag = FALSE;
+    private ServerSocket serverSocket;
 
-    private static Boolean serverListenSocketFlag = FALSE;
+    @Override
+    public void run() {
 
+        Thread.currentThread().setName("监听pc端socket线程");
+        logger.debug("线程id = " + Thread.currentThread().getId() + "的线程开始启动，监听socket连接");
 
-    public static void startListenPCSocketConnect() {
-
-        ServerSocket serverSocket = createServerSocketForPCToConnect(ServerConfig.AndroidConfig.getPort());
+        serverSocket = createServerSocketWaitingForPCToConnect();
         if (null != serverSocket) {
             logger.debug("服务器socket信息: serverSocket = " + serverSocket.toString());
         } else {
-            //todo 杀死应用重新开始
-            logger.debug("android端创建监听socket失败，也就意味着整个通信的流程是不能正常进行的，那么只能杀死应用，重新开始");
+            NetTaskManager.notifyNetTaskManagerClearAllTask();
+            logger.debug("线程id = " + Thread.currentThread().getId() + "的线程销毁");
             return;
         }
 
-        mExecutorService = Executors.newCachedThreadPool();  //创建一个线程池
-//        sendAndroidServerPortToPC(serverSocket.getLocalPort());
+        NetTaskManager.newTaskToSendAndroidServerPortToPC(serverSocket.getLocalPort());
 
-        logger.debug("服务的socket创建完成，等待客户端接入");
+        logger.debug("开始监听PC端socket....");
+
         serverListenSocketFlag = TRUE;
+        while (serverListenSocketFlag ) {
 
-        while (serverListenSocketFlag) {
+            if (serverSocket.isClosed()) {
+                logger.debug("接收数据前，连接已经断开");
+                System.out.println("接收数据前，连接已经断开");
+                break;
+            }
+
             Socket socketToCommunicateWithPC = listenPCConnectAndCreateNewSocketForPCConnection(serverSocket);
-            mExecutorService.execute(new CommunicateWithPCTask(socketToCommunicateWithPC)); //启动一个新的线程来处理连接
+            if (socketToCommunicateWithPC != null){
+                logger.debug("开始与PC端通信");
+                NetTaskManager.newTaskToCommunicateWithPC(socketToCommunicateWithPC);
+            }else{
+                logger.debug("未知原因监听socket出现问题");
+                break;
+            }
         }
-        mExecutorService.shutdown();
-        serverListenSocketFlag = FALSE;
-        closeListenSocket(serverSocket);
+        NetTaskManager.notifyNetTaskManagerClearAllTask();
+        logger.debug("线程id = " + Thread.currentThread().getId() + "的线程销毁");
     }
 
-    private static Socket listenPCConnectAndCreateNewSocketForPCConnection(ServerSocket serverSocket) {
 
-        Socket socketToCommunicateWithPC = listenAndCreateSocketForPCToCommunicate(serverSocket);
-        logger.debug("出现新的PC连接,为其创建新的socket");
+    public ServerSocket createServerSocketWaitingForPCToConnect() {
+        return serverSocket = ServerSocketWrap.createSocketForListen(ServerConfig.AndroidConfig.getPort());
+    }
+
+    private Socket listenPCConnectAndCreateNewSocketForPCConnection(ServerSocket serverSocket) {
+
+        Socket socketToCommunicateWithPC = ServerSocketWrap.listenAndCreatSocketForNewConnection(serverSocket);
 
         if (socketToCommunicateWithPC != null) {
+            logger.debug("出现新的PC连接,为其创建新的socket");
             logger.debug("新创建的socket信息: socketToCommunicateWithClient = " + socketToCommunicateWithPC.toString());
         } else {
-            logger.debug("新创建socket失败");
+            return null;
         }
         return socketToCommunicateWithPC;
     }
 
-    private static ServerSocket createServerSocketForPCToConnect(int port) {
-        return ServerSocketWrap.createSocketForListen(port);
-    }
 
-    private static Socket listenAndCreateSocketForPCToCommunicate(ServerSocket serverSocket) {
-        return ServerSocketWrap.listenAndCreatSocketForNewConnection(serverSocket);
-    }
-
-
-    private static void closeListenSocket(ServerSocket serverSocket) {
+    private void closeListenSocket(ServerSocket serverSocket) {
+        serverListenSocketFlag = FALSE;
         ServerSocketWrap.closeListenSocket(serverSocket);
     }
-
-    private static void sendAndroidServerPortToPC(int serverPort){
-        ServerConfig.AndroidConfig.setPort(serverPort);
-        mExecutorService.execute(new LongConnectionTask());
+    @Override
+    public void closeCurrentTask(){
+        logger.debug("资源在回收");
+        serverListenSocketFlag = false;
+        closeListenSocket(serverSocket);
+        logger.debug("资源释放完成");
     }
 
 }
