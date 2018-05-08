@@ -74,13 +74,13 @@ public class NetTaskManager {
         }
         closeExecutor();
         // TODO: 07/05/2018 是否需要自己关闭，以后继续学习
-        GlobalApplication.notifyApplicationClose();
+//        GlobalApplication.notifyApplicationClose();
 
     }
 
     public static void notifyNetTaskManagerClearAllTask(){
-//        Message message = Message.obtain();
-//        message.what = GlobalApplication.MSG_CLEAR_TASKS_RESOURCE;
-//        GlobalApplication.getMainHandler().sendMessage(message);
+        Message message = Message.obtain();
+        message.what = GlobalApplication.MSG_CLEAR_TASKS_RESOURCE;
+        GlobalApplication.getMainHandler().sendMessage(message);
     }
 }

@@ -3,6 +3,7 @@ package com.digiarty.phoneassistant.global;
 import android.app.Application;
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
@@ -34,8 +35,7 @@ import org.slf4j.Logger;
 public class GlobalApplication extends Application {
 
     private final static String TAG = GlobalApplication.class.getSimpleName();
-
-    private Logger logger;
+    private static Context context = null;
     private static String globalPackageName;
     private static Handler mainHandler;
     public final static int MSG_CLOSE_APP = 1;
@@ -43,6 +43,7 @@ public class GlobalApplication extends Application {
 
     private void getGlobalInformation() {
         globalPackageName = getApplicationContext().getPackageName();
+        Log.d(TAG, "onCreate: packageName = " + globalPackageName);
     }
 
 
@@ -58,12 +59,13 @@ public class GlobalApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
         getGlobalInformation();
-        Log.d(TAG, "onCreate: packageName = " + globalPackageName);
         FileLog.createLogFileDirOnExternalPrivateStorage(this);
+
         mainHandler = new GlobalHandler();
-        logger = LoggerFactory.getLogger(GlobalApplication.class);
         MyNotification.createNotificationChannelForGlobalApplication(this);
+        context = this;
     }
 
 
