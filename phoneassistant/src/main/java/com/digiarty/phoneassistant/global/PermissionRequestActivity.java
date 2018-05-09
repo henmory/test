@@ -1,4 +1,4 @@
-package com.example.junit5.globalapplication;
+package com.digiarty.phoneassistant.global;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -10,7 +10,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
-import com.example.junit5.R;
+import com.digiarty.phoneassistant.R;
 
 public class PermissionRequestActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -26,7 +26,7 @@ public class PermissionRequestActivity extends AppCompatActivity implements Acti
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
         requestAllPermissionsForApplicationRunningNormally();
 //        finish();
     }

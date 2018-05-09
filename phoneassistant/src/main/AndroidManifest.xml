@@ -5,6 +5,11 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- 读联系人权限 -->
+    <uses-permission android:name="android.permission.READ_CONTACTS"/>
+    <!-- 写联系人权限 -->
+    <uses-permission android:name="android.permission.WRITE_CONTACTS" />
+
 
     <!-- receiver声明权限，表示可以接收这个权限的广播 -->
     <uses-permission android:name="com.digiarty.phoneassistant.permission.receive_broadcast" />
@@ -70,7 +75,18 @@
             <!--</intent-filter>-->
         <!--</activity>-->
 
+        <!--桌面显示图标，只需要把category的launcher改掉就行-->
+        <!--去掉之后就要考虑，如何启动我们的activity，请求权限，这里要求PC端发送abd指令，但这里需要注意，要么我们加上action，要么把exported置为true，否则我们是不可能开启该activity的-->
+        <activity
+            android:name=".global.PermissionRequestActivity"
+            android:label="@string/app_name"
+            android:theme="@style/FullScreen">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
