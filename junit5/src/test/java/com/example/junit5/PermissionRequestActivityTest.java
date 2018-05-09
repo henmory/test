@@ -17,14 +17,14 @@ import org.mockito.junit.MockitoJUnitRunner;
  *
  **/
 @RunWith(MockitoJUnitRunner.class)
-class MainActivityTest {
+class PermissionRequestActivityTest {
 
 
 //    private static final String STRING_TO_BE_TYPED = "Peter";
 //
 //    @Rule
-//    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(
-//            MainActivity.class);
+//    public ActivityTestRule<PermissionRequestActivity> mActivityRule = new ActivityTestRule<>(
+//            PermissionRequestActivity.class);
 //
 //
 //

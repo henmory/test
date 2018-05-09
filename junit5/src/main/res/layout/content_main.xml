@@ -24,11 +24,19 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView"/>
     <Button
+        android:id="@+id/btnEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Say hello!"
         android:layout_below="@+id/editText"
         android:onClick="sayHello"/>
+    <Button
+        android:id="@+id/get_phonenumber"
+        android:text="获取联系人信息"
+        android:layout_below="@id/btnEditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="getContacts"/>
 
 
 </RelativeLayout>
