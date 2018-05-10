@@ -100,15 +100,15 @@ public class CommunicateWithPCTask implements ITask {
 
 
     private byte[] readDatasFromPC(InputStream inputStream){
-        byte[] readDatas = ServerSocketWrap.readDatasFromInputStream(inputStream);
-        return readDatas;
+        return ServerSocketWrap.readDatasFromInputStream(inputStream);
+
     }
 
     private boolean writeDatasToPC(OutputStream outputStream,byte[] datas){
         return ServerSocketWrap.writeDatasToOutputStream(outputStream, datas);
     }
 
-    public void closeInputOutPutStread(){
+    private void closeInputOutPutStread(){
         if (null != inputStream || null != outputStream){
             try {
                 inputStream.close();

@@ -62,7 +62,6 @@ public class GlobalApplication extends Application {
 
         getGlobalInformation();
         FileLog.createLogFileDirOnExternalPrivateStorage(this);
-
         mainHandler = new GlobalHandler();
         MyNotification.createNotificationChannelForGlobalApplication(this);
         context = this;

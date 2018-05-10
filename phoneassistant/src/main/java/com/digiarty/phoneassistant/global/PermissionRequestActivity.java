@@ -26,7 +26,7 @@ public class PermissionRequestActivity extends AppCompatActivity implements Acti
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_request_permissions);
         requestAllPermissionsForApplicationRunningNormally();
 //        finish();
     }
@@ -50,7 +50,7 @@ public class PermissionRequestActivity extends AppCompatActivity implements Acti
         } else {
             // 权限已经被授予，显示细节页面！
             finish();
-//            startActivity(new Intent(this, MainActivity.class));
+//            startActivity(new Intent(this, TestActivity.class));
         }
     }
 
@@ -82,7 +82,7 @@ public class PermissionRequestActivity extends AppCompatActivity implements Acti
             if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 // Permission has been granted.
                 Log.d(TAG, "onRequestPermissionsResult: 用户授权");
-//                startActivity(new Intent(this, MainActivity.class));
+//                startActivity(new Intent(this, TestActivity.class));
                 finish();
             } else {
                 // Permission request was denied.

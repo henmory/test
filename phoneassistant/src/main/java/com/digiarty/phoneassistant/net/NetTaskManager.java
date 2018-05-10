@@ -33,7 +33,7 @@ public class NetTaskManager {
         return mExecutorService = Executors.newCachedThreadPool();  //创建一个线程池
     }
 
-    public static void closeExecutor(){
+    private static void closeExecutor(){
         if (mExecutorService.isShutdown()){
             return;
         }

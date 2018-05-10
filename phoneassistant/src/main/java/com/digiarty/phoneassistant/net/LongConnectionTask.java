@@ -132,8 +132,7 @@ public class LongConnectionTask implements ITask {
     }
 
     private byte[] readDatasFromPC(InputStream inputStream){
-        byte[] readDatas = ServerSocketWrap.readDatasFromInputStream(inputStream);
-        return readDatas;
+        return ServerSocketWrap.readDatasFromInputStream(inputStream);
     }
 
     private boolean writeDatasToPC(OutputStream outputStream,byte[] datas){

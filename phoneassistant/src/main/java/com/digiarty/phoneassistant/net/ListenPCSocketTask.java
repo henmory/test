@@ -68,7 +68,7 @@ public class ListenPCSocketTask implements ITask {
     }
 
 
-    public ServerSocket createServerSocketWaitingForPCToConnect() {
+    private ServerSocket createServerSocketWaitingForPCToConnect() {
         return serverSocket = ServerSocketWrap.createSocketForListen(ServerConfig.AndroidConfig.getPort());
     }
 
