@@ -603,6 +603,17 @@ public class AndroidStorage {
         }
     }
 
+    public static int getExternalStorageNumbers(Context context){
+        if (Environment.getExternalStorageState().equals(Environment.MEDIA_MOUNTED)){
+            File[] files = ContextCompat.getExternalCacheDirs(context);
+            return files.length;
+        }else{
+            System.out.println("sd未挂载成功，不能使用");
+            return -1;
+        }
+
+    }
+
     //=============其次介绍几个除了/data目录之外的目录===============
     // 1. /mnt :这个目录专门用来当作挂载点(MountPoint)。通俗点说,/mnt就是来挂载外部存储设备的(如sdcard),
     // 我们的sdcard将会被手机系统视作一个文件夹,这个文件夹将会被系统嵌入到收集系统的mnt目录

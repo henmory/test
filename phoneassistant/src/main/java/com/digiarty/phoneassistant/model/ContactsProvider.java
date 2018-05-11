@@ -48,6 +48,7 @@ public class ContactsProvider {
         public String TDATA_PHONE_TYPE = ContactsContract.CommonDataKinds.Phone.TYPE;
 
     }
+
     private static List<ContactBean> contacts = new ArrayList<>();
     private static ContractsString contractsString =  new ContractsString();
 

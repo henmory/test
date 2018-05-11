@@ -9,6 +9,7 @@ import android.widget.TextView;
 import com.digiarty.phoneassistant.R;
 import com.digiarty.phoneassistant.bean.ContactBean;
 import com.digiarty.phoneassistant.model.ContactsProvider;
+import com.digiarty.phoneassistant.model.SettingsProvider;
 
 import java.util.List;
 
@@ -24,7 +25,6 @@ public class TestActivity extends AppCompatActivity implements ActivityCompat.On
 
 
     public void getContactMessage(View view) {
-        List<ContactBean> beans =  ContactsProvider.getContactDatas(this);
-        textView.setText(beans.get(0).getPhoneNumber());
+        SettingsProvider.getSettingsDatas(this);
     }
 }
