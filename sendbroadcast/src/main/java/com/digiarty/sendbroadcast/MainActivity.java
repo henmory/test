@@ -1,5 +1,6 @@
 package com.digiarty.sendbroadcast;
 
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -22,8 +23,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 //发送有权限广播
-                sendBroadcast(new Intent("digiarty.phoneassistant.startservice.broadcast"), "com.digiarty.phoneassistant.permission.receive_broadcast");
-//                sendBroadcast(new Intent("digiarty.phoneassistant.startservice.broadcast"));
+                System.out.println("click");
+                Intent i = new Intent();
+                i.setAction("digiarty.phoneassistant.startservice.broadcast");
+                i.setPackage("com.digiarty.sendbroadcast");
+//                sendBroadcast(i);
+                                sendBroadcast(i, "com.digiarty.phoneassistant.permission.receive_broadcast");
             }
         });
     }

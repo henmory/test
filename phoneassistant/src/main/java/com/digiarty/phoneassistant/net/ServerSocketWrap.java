@@ -41,12 +41,16 @@ public class ServerSocketWrap {
 
     public static Socket createSocket(String hostIp, int port){
         try {
+            logger.debug("ip = " + hostIp);
+            logger.debug("port = " + port);
             InetAddress serveraddr = InetAddress.getByName(hostIp);
             return new Socket(serveraddr, port);
         } catch (UnknownHostException e) {
             e.printStackTrace();
+            logger.debug(e.getMessage());
         } catch (IOException e) {
             e.printStackTrace();
+            logger.debug(e.getMessage());
         }
         return null;
     }

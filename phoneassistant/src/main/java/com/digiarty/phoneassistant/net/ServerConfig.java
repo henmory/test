@@ -35,7 +35,7 @@ public class ServerConfig {
     public static class PCConfig{
 
 
-        private static String IP = "";
+        private static String IP = "127.0.0.1";
 
 
         private static int PORT = 12580;//自动分配

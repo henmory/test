@@ -42,12 +42,20 @@ public class MyNotification {
 //            CharSequence name = getString("");
 //            String description = getString(R.string.channel_description);
             int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, null, importance);
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, "channel_name", importance);
 //            channel.setDescription(description);
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this
-            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
+//            NotificationManager notificationManager = context.getSystemService(NotificationManager.class);
+//            notificationManager.createNotificationChannel(channel);
+
+
+
+            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+
+            manager.createNotificationChannel(channel);
+
+
         }
     }
 
