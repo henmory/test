@@ -75,7 +75,7 @@ public class CommunicateWithPCTask implements ITask {
             logger.debug("写数据给PC完成");
 
         }
-//        NetTaskManager.notifyNetTaskManagerClearAllTask();
+        NetTaskManager.notifyNetTaskManagerClearAllTask();
         closeSocketOfCommunicating();
         logger.debug("线程id = " + Thread.currentThread().getId() + "的线程销毁");
         System.out.println("线程id = " + Thread.currentThread().getId() + "的线程销毁");

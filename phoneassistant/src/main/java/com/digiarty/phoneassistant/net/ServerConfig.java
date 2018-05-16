@@ -15,7 +15,7 @@ public class ServerConfig {
     public static class AndroidConfig{
         private static String IP = "";
 
-        private static int PORT = 10086;//自动分配
+        private static int PORT = 10086;//写死
 
         public static void setIp(String serverIp) {
             IP = serverIp;

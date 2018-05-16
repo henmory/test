@@ -74,7 +74,7 @@ public class NetTaskManager {
         }
         closeExecutor();
         // TODO: 07/05/2018 是否需要自己关闭，以后继续学习
-//        GlobalApplication.notifyApplicationClose();
+        GlobalApplication.notifyApplicationClose();
 
     }
 
