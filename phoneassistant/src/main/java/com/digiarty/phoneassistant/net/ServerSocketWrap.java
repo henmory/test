@@ -34,8 +34,6 @@ public class ServerSocketWrap {
     private static BufferedOutputStream bos;
     //查一下怎么设置tcp缓存区大小和socket默认的缓存区
 
-    private final static int SOCKET_SEND_BUFFER_SIZE = 1024;
-    private final static int SOCKET_RECV_BUFFER_SIZE = 1024;
 
     private static final int SIZE = 1024 * 8;
 
@@ -61,7 +59,6 @@ public class ServerSocketWrap {
             serverSocket = new ServerSocket(port);
             if (null != serverSocket){
                 getServerSocketInformationCreatedBySystemDefault(serverSocket);
-//                logger.debug("监听socketIP = " + ServerConfig.AndroidConfig.getIp() + "port= " + ServerConfig.AndroidConfig.getPort());
             }else{
                 logger.debug("ServerSocket 为空");
             }
@@ -76,8 +73,7 @@ public class ServerSocketWrap {
     public static void getServerSocketInformationCreatedBySystemDefault(ServerSocket serverSocket){
         int port = serverSocket.getLocalPort();
         String host = serverSocket.getInetAddress().getHostAddress();
-        ServerConfig.AndroidConfig.setIp(host);
-        ServerConfig.AndroidConfig.setPort(port);
+        ServerConfig.AndroidConfig.setServerPort(port);
     }
 
 

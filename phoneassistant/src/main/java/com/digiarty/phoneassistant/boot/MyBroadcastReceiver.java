@@ -52,7 +52,7 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
             return;
         }
 
-        logger.debug("解析的PC端socket端口为" + ServerConfig.PCConfig.getPort());
+        logger.debug("解析的PC端socket端口为" + ServerConfig.ADBDConfig.getADBDPort());
 
         String action = intent.getAction();
 
@@ -90,7 +90,7 @@ public class MyBroadcastReceiver extends BroadcastReceiver {
         if (null == port){
             return false;
         }
-        ServerConfig.PCConfig.setPort(Integer.parseInt(port));
+        ServerConfig.ADBDConfig.setADBDPort(Integer.parseInt(port));
         return true;
     }
 }

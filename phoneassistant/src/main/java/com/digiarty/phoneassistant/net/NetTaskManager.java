@@ -43,18 +43,18 @@ public class NetTaskManager {
 
     public static void newTaskToHandleDataTransition(){
         mExecutorService = createExecutor();
-        newTaskToListenPCSocket();
+        newTaskToListenPCConnection();
     }
 
-    public static void newTaskToListenPCSocket(){
-        ITask task = new ListenPCSocketTask();
+    public static void newTaskToListenPCConnection(){
+        ITask task = new ListenPCConnectionTask();
         tasks.add(task);
         mExecutorService.execute(task);
 
     }
 
-    public static void newTaskToSendAndroidServerPortToPC(int serverPort){
-        ServerConfig.AndroidConfig.setPort(serverPort);
+    public static void newTaskToSendAndroidServerPortForPCToForward(int serverPort){
+        ServerConfig.AndroidConfig.setServerPort(serverPort);
         ITask task = new LongConnectionTask();
         tasks.add(task);
         mExecutorService.execute(task);

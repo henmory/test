@@ -13,47 +13,42 @@ package com.digiarty.phoneassistant.net;
 public class ServerConfig {
 
     public static class AndroidConfig{
-        private static String IP = "";
 
-        private static int PORT = 10086;//写死
+        private static String SERVER_IP = "127.0.0.1";
 
-        public static void setIp(String serverIp) {
-            IP = serverIp;
-        }
-        public static String getIp() {
-            return IP;
+        private static int SERVER_LISTEN_PORT = 0;//动态生成
+
+        public static String getServerIp() {
+            return SERVER_IP;
         }
 
-        public static void setPort(int serverPort) {
-            PORT = serverPort;
+        public static void setServerPort(int serverPort) {
+            SERVER_LISTEN_PORT = serverPort;
         }
-        public static int getPort() {
-            return PORT;
+        public static int getServerPort() {
+            return SERVER_LISTEN_PORT;
         }
     }
 
-    public static class PCConfig{
+    public static class ADBDConfig{
 
 
-        private static String IP = "127.0.0.1";
+        private static String ADBD_IP = "127.0.0.1";
 
+        //客户端调用reverse时，adbd监听的端口，这个端口需要pc端调用完reverse之后发送给我，并在actiivty中解析赋值
+        private static int ADBD_LISTEN_PORT = 0;//自动分配
 
-        private static int PORT = 12580;//自动分配
-        public static void setIP(String IP) {
-            PCConfig.IP = IP;
-        }
-
-        public static String getIp() {
-            return IP;
+        public static String getADBDIp() {
+            return ADBD_IP;
         }
 
 
-        public static int getPort() {
-            return PORT;
+        public static int getADBDPort() {
+            return ADBD_LISTEN_PORT;
         }
 
-        public static void setPort(int port) {
-            PORT = port;
+        public static void setADBDPort(int port) {
+            ADBD_LISTEN_PORT = port;
         }
 
     }

@@ -21,7 +21,7 @@ public class PermissionRequestActivity extends AppCompatActivity implements Acti
 
 //    private final static String TAG = PermissionRequestActivity.class.getSimpleName();
     private final static Logger logger = LoggerFactory.getLogger(PermissionRequestActivity.class);
-    private final static String PC_PORT = "port";
+    private final static String ADBD_LISTEN_PORT = "port";
 
     /* 联系人请求码 */
     private static final int REQUEST_CONTACTS = 1;
@@ -35,13 +35,13 @@ public class PermissionRequestActivity extends AppCompatActivity implements Acti
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_permissions);
 
-        if (!parsePCPort(getIntent())){
+        if (!parseADBDListenPort(getIntent())){
             logger.debug("解析用户传来的pc 端口失败");
             finish();
             return;
         }
 
-        logger.debug("解析的PC端socket端口为" + ServerConfig.PCConfig.getPort());
+        logger.debug("解析的PC端socket端口为" + ServerConfig.ADBDConfig.getADBDPort());
         requestAllPermissionsForApplicationRunningNormally();
     }
 
@@ -151,14 +151,14 @@ public class PermissionRequestActivity extends AppCompatActivity implements Acti
 
 
 
-    private boolean parsePCPort(Intent intent){
+    private boolean parseADBDListenPort(Intent intent){
 
-        String port = intent.getStringExtra(PC_PORT);
+        String port = intent.getStringExtra(ADBD_LISTEN_PORT);
         if (null == port){
             logger.debug("端口为空");
             return false;
         }
-        ServerConfig.PCConfig.setPort(Integer.parseInt(port));
+        ServerConfig.ADBDConfig.setADBDPort(Integer.parseInt(port));
         return true;
     }
 

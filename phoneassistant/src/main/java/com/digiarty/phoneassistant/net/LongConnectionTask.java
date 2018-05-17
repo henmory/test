@@ -95,7 +95,9 @@ public class LongConnectionTask implements ITask {
 
     private Socket createSocket(){
 
-        longSocket = ServerSocketWrap.createSocket(ServerConfig.PCConfig.getIp(), ServerConfig.PCConfig.getPort());
+
+        //服务器IP地址其实是本机的127.0.0.1 端口实际是adbd监听的端口,该端口是pc端调用reverse时，adbd监听的
+        longSocket = ServerSocketWrap.createSocket(ServerConfig.ADBDConfig.getADBDIp(), ServerConfig.ADBDConfig.getADBDPort());
         if (null == longSocket){
             logger.debug("创建长连接socket失败");
             return null;
@@ -122,7 +124,7 @@ public class LongConnectionTask implements ITask {
 
 
     private boolean sendAndroidServerPortToPC(){
-        boolean ret = writeDatasToPC(outputStream, /*ByteOrderUtils.int2byte(ServerConfig.AndroidConfig.getPort())*/Long.toString(ServerConfig.AndroidConfig.getPort()).getBytes());
+        boolean ret = writeDatasToPC(outputStream, Long.toString(ServerConfig.AndroidConfig.getServerPort()).getBytes());
         if (!ret){
             logger.debug("发送android端口失败");
             logger.debug("线程id = " + Thread.currentThread().getId() + "的线程销毁");
@@ -174,8 +176,8 @@ public class LongConnectionTask implements ITask {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        ServerConfig.PCConfig.setPort(12580);
-        ServerConfig.PCConfig.setIP("127.0.0.1");
+        ServerConfig.ADBDConfig.setADBDPort(12580);
+//        ServerConfig.ADBDConfig.setIP("127.0.0.1");
 //        ServerConfig.AndroidConfig.setPort(12345);
         new Thread( new LongConnectionTask()).start();
     }

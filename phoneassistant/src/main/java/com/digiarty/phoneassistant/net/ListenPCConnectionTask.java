@@ -19,11 +19,11 @@ import static java.lang.Boolean.TRUE;
  *
  *
  **/
-public class ListenPCSocketTask implements ITask {
+public class ListenPCConnectionTask implements ITask {
 
-    private static Logger logger = LoggerFactory.getLogger(ListenPCSocketTask.class);
+    private static Logger logger = LoggerFactory.getLogger(ListenPCConnectionTask.class);
 
-    private Boolean serverListenSocketFlag = FALSE;
+    private Boolean socketFlag = FALSE;
     private ServerSocket serverSocket;
 
     @Override
@@ -41,12 +41,12 @@ public class ListenPCSocketTask implements ITask {
             return;
         }
 
-        NetTaskManager.newTaskToSendAndroidServerPortToPC(serverSocket.getLocalPort());
+        NetTaskManager.newTaskToSendAndroidServerPortForPCToForward(serverSocket.getLocalPort());
 
         logger.debug("开始监听PC端socket....");
 
-        serverListenSocketFlag = TRUE;
-        while (serverListenSocketFlag ) {
+        socketFlag = TRUE;
+        while (socketFlag ) {
 
             if (serverSocket.isClosed()) {
                 logger.debug("接收数据前，连接已经断开");
@@ -69,7 +69,8 @@ public class ListenPCSocketTask implements ITask {
 
 
     private ServerSocket createServerSocketWaitingForPCToConnect() {
-        return serverSocket = ServerSocketWrap.createSocketForListen(ServerConfig.AndroidConfig.getPort());
+        //本地应用程序需要监听的端口，客户端往这个端口发送数据
+        return serverSocket = ServerSocketWrap.createSocketForListen(ServerConfig.AndroidConfig.getServerPort());
     }
 
     private Socket listenPCConnectAndCreateNewSocketForPCConnection(ServerSocket serverSocket) {
@@ -87,13 +88,13 @@ public class ListenPCSocketTask implements ITask {
 
 
     private void closeListenSocket(ServerSocket serverSocket) {
-        serverListenSocketFlag = FALSE;
+        socketFlag = FALSE;
         ServerSocketWrap.closeListenSocket(serverSocket);
     }
     @Override
     public void closeCurrentTask(){
         logger.debug("资源在回收");
-        serverListenSocketFlag = false;
+        socketFlag = false;
         closeListenSocket(serverSocket);
         logger.debug("资源释放完成");
     }

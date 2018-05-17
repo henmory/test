@@ -23,7 +23,7 @@ import static java.lang.Boolean.TRUE;
  **/
 public class CommunicateWithPCTask implements ITask {
 
-    private static Logger logger = LoggerFactory.getLogger(ListenPCSocketTask.class);
+    private static Logger logger = LoggerFactory.getLogger(ListenPCConnectionTask.class);
     private Socket socketToCommunicateWithPC;
     private InputStream inputStream;
     private OutputStream outputStream;
