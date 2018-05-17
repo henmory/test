@@ -12,9 +12,9 @@
 
 
     <!-- receiver声明权限，表示可以接收这个权限的广播 -->
-    <uses-permission android:name="com.digiarty.phoneassistant.permission.receive_broadcast" />
+    <!--<uses-permission android:name="com.digiarty.phoneassistant.permission.receive_broadcast" />-->
     <!--声明可以发送的权限广播-->
-    <permission android:name="com.digiarty.phoneassistant.permission.receive_broadcast"/>
+    <!--<permission android:name="com.digiarty.phoneassistant.permission.receive_broadcast"/>-->
 
     <application
         android:name=".global.GlobalApplication"
@@ -31,14 +31,14 @@
         <!-- receiver-permission 权限设置 -->
         <!-- -a 组件action -->
         <!-- -n 组件类 -->
-        <receiver
-            android:name=".boot.MyBroadcastReceiver"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="com.digiarty.phoneassistant.broadcast.START_SERVICE" />
-                <action android:name="com.digiarty.phoneassistant.broadcast.STOP_SERVICE" />
-            </intent-filter>
-        </receiver>
+        <!--<receiver-->
+            <!--android:name=".boot.MyBroadcastReceiver"-->
+            <!--android:exported="false">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="com.digiarty.phoneassistant.broadcast.START_SERVICE" />-->
+                <!--<action android:name="com.digiarty.phoneassistant.broadcast.STOP_SERVICE" />-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
 
 
         <!-- exported = false 禁止其他应用开启服务 -->

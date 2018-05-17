@@ -2,19 +2,26 @@ package com.digiarty.phoneassistant.global;
 
 import android.Manifest;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.digiarty.phoneassistant.R;
+import com.digiarty.phoneassistant.boot.MyService;
+import com.digiarty.phoneassistant.net.ServerConfig;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PermissionRequestActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private final static String TAG = PermissionRequestActivity.class.getSimpleName();
+//    private final static String TAG = PermissionRequestActivity.class.getSimpleName();
+    private final static Logger logger = LoggerFactory.getLogger(PermissionRequestActivity.class);
+    private final static String PC_PORT = "port";
 
     /* 联系人请求码 */
     private static final int REQUEST_CONTACTS = 1;
@@ -27,8 +34,15 @@ public class PermissionRequestActivity extends AppCompatActivity implements Acti
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_permissions);
+
+        if (!parsePCPort(getIntent())){
+            logger.debug("解析用户传来的pc 端口失败");
+            finish();
+            return;
+        }
+
+        logger.debug("解析的PC端socket端口为" + ServerConfig.PCConfig.getPort());
         requestAllPermissionsForApplicationRunningNormally();
-//        finish();
     }
 
 
@@ -43,14 +57,14 @@ public class PermissionRequestActivity extends AppCompatActivity implements Acti
         // 判断权限是否拥有
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED
                 || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            Log.i(TAG, "读写联系人权限未被授予，需要申请！");
+            logger.debug("读写联系人权限未被授予，需要申请！");
 
             // 读写联系人权限未被授予，需要申请！
             requestContactsPermissions();
         } else {
             // 权限已经被授予，显示细节页面！
-            finish();
-//            startActivity(new Intent(this, TestActivity.class));
+
+            userGrantAllPermissions();
         }
     }
 
@@ -81,12 +95,11 @@ public class PermissionRequestActivity extends AppCompatActivity implements Acti
         if (requestCode == REQUEST_CONTACTS) {
             if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
                 // Permission has been granted.
-                Log.d(TAG, "onRequestPermissionsResult: 用户授权");
-//                startActivity(new Intent(this, TestActivity.class));
-                finish();
+                logger.debug("onRequestPermissionsResult: 用户授权");
+                userGrantAllPermissions();
             } else {
                 // Permission request was denied.
-                Log.d(TAG, "onRequestPermissionsResult: 用户拒绝创建，告诉用户如果不同意，则不能使用app");
+                logger.debug("onRequestPermissionsResult: 用户拒绝创建，告诉用户如果不同意，则不能使用app");
                 showWarningIfRefusePermission();
 
             }
@@ -113,13 +126,40 @@ public class PermissionRequestActivity extends AppCompatActivity implements Acti
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        Log.d(TAG, "onClick: 用户再度拒绝授权，退出应用");
-                        finish();
-                        GlobalApplication.notifyApplicationClose();
+                        logger.debug( "onClick: 用户再度拒绝授权，退出应用");
+                        userRefusePermissions();
+
                     }
                 });
         // 显示
         normalDialog.show();
+    }
+
+    private void userGrantAllPermissions(){
+        logger.debug("用户授予所有权限，开始开始服务");
+        Intent intent = new Intent();
+        intent.setAction(MyService.getStartService());
+        intent.setPackage(GlobalApplication.getGlobalPackageName());
+        startService(intent);
+        finish();
+    }
+
+    private void userRefusePermissions(){
+        finish();
+        GlobalApplication.notifyApplicationClose();
+    }
+
+
+
+    private boolean parsePCPort(Intent intent){
+
+        String port = intent.getStringExtra(PC_PORT);
+        if (null == port){
+            logger.debug("端口为空");
+            return false;
+        }
+        ServerConfig.PCConfig.setPort(Integer.parseInt(port));
+        return true;
     }
 
 

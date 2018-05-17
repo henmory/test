@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
  *
  *
  **/
+@Deprecated
 public class MyBroadcastReceiver extends BroadcastReceiver {
 
     //定义日志对象
