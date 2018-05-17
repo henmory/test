@@ -7,7 +7,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.digiarty.phoneassistant.R;
-import com.digiarty.phoneassistant.model.SettingsProvider;
+import com.digiarty.phoneassistant.model.IGetDatasFromMobilePhoneService;
+import com.digiarty.phoneassistant.model.PicturesProvider;
+import com.digiarty.phoneassistant.model.ProviderDataType;
+
+import java.util.List;
 
 
 public class TestActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
@@ -22,6 +26,9 @@ public class TestActivity extends AppCompatActivity implements ActivityCompat.On
 
 
     public void getContactMessage(View view) {
-        SettingsProvider.getSettingsDatas(this);
+        IGetDatasFromMobilePhoneService<String> datas = new PicturesProvider();
+        List<String> d =  datas.getDatasFromMobilPhone(this, ProviderDataType.PICTURE);
+        System.out.println(d.toString());
+
     }
 }

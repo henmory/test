@@ -20,6 +20,7 @@ import java.util.List;
  *
  *
  **/
+@Deprecated
 public class CommonProvider<T> {
 
     private Logger logger = LoggerFactory.getLogger(CommonProvider.class);
