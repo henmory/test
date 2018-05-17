@@ -7,11 +7,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.digiarty.phoneassistant.R;
-import com.digiarty.phoneassistant.bean.ContactBean;
-import com.digiarty.phoneassistant.model.ContactsProvider;
 import com.digiarty.phoneassistant.model.SettingsProvider;
 
-import java.util.List;
 
 public class TestActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
