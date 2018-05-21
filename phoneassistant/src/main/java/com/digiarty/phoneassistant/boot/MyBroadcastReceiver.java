@@ -4,9 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
-import com.digiarty.phoneassistant.global.GlobalApplication;
 import com.digiarty.phoneassistant.net.ServerConfig;
 
 import org.slf4j.Logger;

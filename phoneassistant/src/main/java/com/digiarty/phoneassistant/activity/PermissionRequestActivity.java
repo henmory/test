@@ -1,4 +1,4 @@
-package com.digiarty.phoneassistant.global;
+package com.digiarty.phoneassistant.activity;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -11,8 +11,8 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import com.digiarty.phoneassistant.R;
+import com.digiarty.phoneassistant.boot.GlobalApplication;
 import com.digiarty.phoneassistant.boot.MyIntentService;
-import com.digiarty.phoneassistant.boot.MyService;
 import com.digiarty.phoneassistant.net.ServerConfig;
 
 import org.slf4j.Logger;

@@ -79,7 +79,7 @@ public class MyService extends Service {
         if (action.equalsIgnoreCase(START_SERVICE)){
             logger.debug("开启服务action");
             logger.debug("开启安卓端socket，监听客户端的链接");
-            NetTaskManager.newTaskToHandleDataTransition();
+            NetTaskManager.getInstance().main();
         }else if(action.equalsIgnoreCase(STOP_SERVICE)){
             logger.debug("关闭服务");
             stopSelf();

@@ -16,7 +16,7 @@ public class ServerConfig {
 
         private static String SERVER_IP = "127.0.0.1";
 
-        private static int SERVER_LISTEN_PORT = 0;//动态生成
+        private static int SERVER_LISTEN_PORT = 10086;//动态生成
 
         public static String getServerIp() {
             return SERVER_IP;
@@ -36,7 +36,7 @@ public class ServerConfig {
         private static String ADBD_IP = "127.0.0.1";
 
         //客户端调用reverse时，adbd监听的端口，这个端口需要pc端调用完reverse之后发送给我，并在actiivty中解析赋值
-        private static int ADBD_LISTEN_PORT = 0;//自动分配
+        private static int ADBD_LISTEN_PORT = 8000;//自动分配
 
         public static String getADBDIp() {
             return ADBD_IP;

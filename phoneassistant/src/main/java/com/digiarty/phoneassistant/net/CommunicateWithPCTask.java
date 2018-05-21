@@ -1,5 +1,7 @@
 package com.digiarty.phoneassistant.net;
 
+import android.os.Message;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,16 +23,20 @@ import static java.lang.Boolean.TRUE;
  *
  *
  **/
-public class CommunicateWithPCTask implements ITask {
+class CommunicateWithPCTask implements ITask {
 
     private static Logger logger = LoggerFactory.getLogger(ListenPCConnectionTask.class);
+    final String name = CommunicateWithPCTask.class.getSimpleName();
     private Socket socketToCommunicateWithPC;
+    private int remoteServer;
     private InputStream inputStream;
     private OutputStream outputStream;
     private Boolean socketFlag = FALSE;
 
-    public CommunicateWithPCTask(Socket socket) {
+    public CommunicateWithPCTask(Socket socket, String remoteServer) {
         socketToCommunicateWithPC = socket;
+        this.remoteServer = Integer.parseInt(remoteServer);
+        logger.debug("communication的远程socket端口号是: " + this.remoteServer);
     }
 
     @Override
@@ -40,7 +46,8 @@ public class CommunicateWithPCTask implements ITask {
         logger.debug("线程id = " + Thread.currentThread().getId() + "的线程开始启动，进行socket通信");
 
         if(!getInputOutPutStream()){
-            NetTaskManager.notifyNetTaskManagerClearAllTask();
+//            NetTaskManager.notifyNetTaskManagerClearAllTask();
+            notifyNetManagerCommunicationTaskGetInOutStreamError();
             logger.debug("线程id = " + Thread.currentThread().getId() + "的线程销毁");
             System.out.println("线程id = " + Thread.currentThread().getId() + "的线程销毁");
             return;
@@ -75,8 +82,9 @@ public class CommunicateWithPCTask implements ITask {
             logger.debug("写数据给PC完成");
 
         }
-        NetTaskManager.notifyNetTaskManagerClearAllTask();
+//        NetTaskManager.notifyNetTaskManagerClearAllTask();
         closeSocketOfCommunicating();
+        notifyNetTaskManagerCommunicationTaskDestory();
         logger.debug("线程id = " + Thread.currentThread().getId() + "的线程销毁");
         System.out.println("线程id = " + Thread.currentThread().getId() + "的线程销毁");
     }
@@ -92,7 +100,7 @@ public class CommunicateWithPCTask implements ITask {
                 return false;
             }
         }else{
-            logger.debug("从socket获取输入输出流失败");
+            logger.debug("从socket获取输入输出流失败---socketToCommunicateWithPC为空");
             return false;
         }
         return true;
@@ -106,6 +114,25 @@ public class CommunicateWithPCTask implements ITask {
 
     private boolean writeDatasToPC(OutputStream outputStream,byte[] datas){
         return ServerSocketWrap.writeDatasToOutputStream(outputStream, datas);
+    }
+
+    private void notifyNetManagerCommunicationTaskGetInOutStreamError(){
+        logger.debug("通知网络管理器短连接任务获取输入输出流失败");
+        Message message = Message.obtain();
+        message.what = NetTaskManager.MSG_NOTIFY_NET_MANAGER_COMMUNICATION_TASK_GET_INOUT_STREAM_ERROR;
+        message.setTarget(NetTaskManager.handler);
+        message.arg1 = remoteServer;
+        NetTaskManager.handler.sendMessage(message);
+    }
+
+    private void notifyNetTaskManagerCommunicationTaskDestory(){
+        logger.debug("通知网络管理器端连接任务结束");
+        Message message = Message.obtain();
+        message.what = NetTaskManager.MSG_NOTIFY_NET_MANAGER_COMMUNICATION_TASK_DESTPRY;
+        message.setTarget(NetTaskManager.handler);
+        message.arg1 = remoteServer;
+        NetTaskManager.handler.sendMessage(message);
+
     }
 
     private void closeInputOutPutStread(){

@@ -1,23 +1,14 @@
-package com.digiarty.phoneassistant.global;
+package com.digiarty.phoneassistant.boot;
 
 import android.app.Application;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.Context;
-import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
-import com.digiarty.phoneassistant.R;
 import com.digiarty.phoneassistant.activity.MyNotification;
-import com.digiarty.phoneassistant.boot.MyService;
 import com.digiarty.phoneassistant.log.FileLog;
 import com.digiarty.phoneassistant.net.NetTaskManager;
-
-import org.slf4j.LoggerFactory;
-
-import org.slf4j.Logger;
 
 
 /***
@@ -96,7 +87,7 @@ public class GlobalApplication extends Application {
             if (msg.what == MSG_CLOSE_APP){
                 closeApp();
             }else if(msg.what == MSG_CLEAR_TASKS_RESOURCE){
-                NetTaskManager.clearTaskResource();
+                NetTaskManager.getInstance().clearTaskResource();
             }
         }
         private void closeApp(){

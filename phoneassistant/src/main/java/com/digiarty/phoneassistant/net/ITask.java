@@ -10,6 +10,6 @@ package com.digiarty.phoneassistant.net;
  *
  *
  **/
-public interface ITask extends Runnable {
+interface ITask extends Runnable {
     void closeCurrentTask();
 }

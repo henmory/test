@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
  *
  *
  **/
-//@Deprecated
+
 public class MyIntentService extends IntentService {
     private static Logger logger = LoggerFactory.getLogger(MyIntentService.class);
 
@@ -74,7 +74,7 @@ public class MyIntentService extends IntentService {
         if (action.equalsIgnoreCase(START_SERVICE)){
             logger.debug("开启服务action");
             logger.debug("开启安卓端socket，监听客户端的链接");
-            NetTaskManager.newTaskToHandleDataTransition();
+            NetTaskManager.getInstance().main();
         }else if(action.equalsIgnoreCase(STOP_SERVICE)){
             logger.debug("关闭服务");
             stopSelf();

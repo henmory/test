@@ -1,5 +1,7 @@
 package com.digiarty.phoneassistant.net;
 
+import android.os.Message;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,9 +23,10 @@ import static java.lang.Boolean.TRUE;
  *
  *
  **/
-public class LongConnectionTask implements ITask {
+class LongConnectionTask implements ITask {
 
     private static Logger logger = LoggerFactory.getLogger(LongConnectionTask.class);
+    final String name = LongConnectionTask.class.getSimpleName();
     private Socket longSocket;
     private InputStream inputStream;
     private OutputStream outputStream;
@@ -40,14 +43,14 @@ public class LongConnectionTask implements ITask {
 
         longSocket = createSocket();
         if (null == longSocket){
-            NetTaskManager.notifyNetTaskManagerClearAllTask();
+            notifyNetTaskManagerLongConnectionTaskCreateFail();
             logger.debug("线程id = " + Thread.currentThread().getId() + "的线程销毁");
             return;
         }
         logger.debug("创建长连接成功");
 
         if(!getInputOutPutStream()){
-            NetTaskManager.notifyNetTaskManagerClearAllTask();
+            notifyNetTaskManagerLongConnectionTaskCreateFail();
             logger.debug("线程id = " + Thread.currentThread().getId() + "的线程销毁");
             return;
         }
@@ -55,7 +58,7 @@ public class LongConnectionTask implements ITask {
         logger.debug("开始发送android端口");
         boolean ret = sendAndroidServerPortToPC();
         if (!ret){
-            NetTaskManager.notifyNetTaskManagerClearAllTask();
+            notifyNetTaskManagerLongConnectionTaskSendAndroidPortFail();
             logger.debug("线程id = " + Thread.currentThread().getId() + "的线程销毁");
             return;
         }
@@ -87,8 +90,8 @@ public class LongConnectionTask implements ITask {
 
 
         }
-
-        NetTaskManager.notifyNetTaskManagerClearAllTask();
+        notifyNetTaskManagerLongConnectionTaskDestory();
+//        NetTaskManager.notifyNetTaskManagerClearAllTask();
         logger.debug("线程id = " + Thread.currentThread().getId() + "的线程销毁");
 
     }
@@ -141,6 +144,28 @@ public class LongConnectionTask implements ITask {
         return ServerSocketWrap.writeDatasToOutputStream(outputStream, datas);
     }
 
+    private void notifyNetTaskManagerLongConnectionTaskCreateFail(){
+        logger.debug("通知网络管理器长连接任务创建失败");
+        Message message = Message.obtain();
+        message.what = NetTaskManager.MSG_NOTIFY_NET_MANAGER_LONG_TASK_CREATE_FAIL;
+        message.setTarget(NetTaskManager.handler);
+        NetTaskManager.handler.sendMessage(message);
+    }
+
+    private void notifyNetTaskManagerLongConnectionTaskSendAndroidPortFail(){
+        logger.debug("通知网络管理器长连接任务发送安卓端口失败");
+        Message message = Message.obtain();
+        message.what = NetTaskManager.MSG_NOTIFY_NET_MANAGER_LONG_TASK_SEND_ANDROID_PORT_FAIL;
+        message.setTarget(NetTaskManager.handler);
+        NetTaskManager.handler.sendMessage(message);
+    }
+    private void notifyNetTaskManagerLongConnectionTaskDestory(){
+        logger.debug("通知网络管理器长连接任务结束");
+        Message message = Message.obtain();
+        message.what = NetTaskManager.MSG_NOTIFY_NET_MANAGER_LONG_TASK_DESTPRY;
+        message.setTarget(NetTaskManager.handler);
+        NetTaskManager.handler.sendMessage(message);
+    }
 
     private void closeInputOutPutStread(){
         if (null != inputStream || null != outputStream){
