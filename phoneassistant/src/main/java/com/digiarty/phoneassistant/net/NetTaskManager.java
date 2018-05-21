@@ -38,9 +38,9 @@ public class NetTaskManager {
             return;
         }
         mExecutorService.shutdown();
-
     }
 
+    //main thread
     public static void newTaskToHandleDataTransition(){
         mExecutorService = createExecutor();
         newTaskToListenPCConnection();

@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import com.digiarty.phoneassistant.R;
+import com.digiarty.phoneassistant.boot.MyIntentService;
 import com.digiarty.phoneassistant.boot.MyService;
 import com.digiarty.phoneassistant.net.ServerConfig;
 
@@ -138,7 +139,7 @@ public class PermissionRequestActivity extends AppCompatActivity implements Acti
     private void userGrantAllPermissions(){
         logger.debug("用户授予所有权限，开始开始服务");
         Intent intent = new Intent();
-        intent.setAction(MyService.getStartService());
+        intent.setAction(MyIntentService.getStartService());
         intent.setPackage(GlobalApplication.getGlobalPackageName());
         startService(intent);
         finish();

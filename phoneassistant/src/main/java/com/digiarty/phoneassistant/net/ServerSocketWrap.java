@@ -27,7 +27,7 @@ import java.net.UnknownHostException;
  *
  *
  **/
-public class ServerSocketWrap {
+class ServerSocketWrap {
     private static Logger logger = LoggerFactory.getLogger(ServerSocketWrap.class);
 
     private static BufferedInputStream bis;

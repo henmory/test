@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
  *
  *
  **/
+@Deprecated
 public class MyService extends Service {
     private static Logger logger = LoggerFactory.getLogger(MyService.class);
 
@@ -72,7 +73,7 @@ public class MyService extends Service {
             return START_NOT_STICKY;
         }
 
-        startForeground(FORE_GROUND_NOTIFICATION_ID, MyNotification.buildForegroundNotification(this));
+//        startForeground(FORE_GROUND_NOTIFICATION_ID, MyNotification.buildForegroundNotification(this));
 
         logger.debug("接收的服务: action = " +  action);
         if (action.equalsIgnoreCase(START_SERVICE)){
