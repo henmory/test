@@ -25,7 +25,7 @@ import java.util.List;
  *
  *
  **/
-public class ContactsProvider {
+class ContactsProvider {
     private static Logger logger = LoggerFactory.getLogger(ContactsProvider.class);
 
     private static class ContractsString{

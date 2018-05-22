@@ -10,5 +10,5 @@ package com.digiarty.phoneassistant.model;
  *
  *
  **/
-public class MusicsProvider {
+class MusicsProvider {
 }

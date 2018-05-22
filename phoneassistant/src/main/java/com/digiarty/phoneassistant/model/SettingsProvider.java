@@ -13,7 +13,7 @@ import android.provider.Settings;
  *
  *
  **/
-public class SettingsProvider {
+class SettingsProvider {
     private Context mContext;
 
     public SettingsProvider(Context mContext) {

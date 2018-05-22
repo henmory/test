@@ -22,7 +22,7 @@ import java.util.List;
  *
  *
  **/
-public abstract class ICommonProvider<T> {
+abstract class ICommonProvider<T> {
 
     private Logger logger = LoggerFactory.getLogger(ICommonProvider.class);
     protected int externalNumbers = -1;

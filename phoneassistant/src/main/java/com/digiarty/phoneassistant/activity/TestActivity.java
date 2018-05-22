@@ -1,5 +1,6 @@
 package com.digiarty.phoneassistant.activity;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -7,8 +8,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.digiarty.phoneassistant.R;
-import com.digiarty.phoneassistant.model.IGetDatasFromMobilePhoneService;
-import com.digiarty.phoneassistant.model.PicturesProvider;
+import com.digiarty.phoneassistant.model.IGetDatasService;
 import com.digiarty.phoneassistant.model.ProviderDataType;
 
 import java.util.List;
@@ -26,9 +26,14 @@ public class TestActivity extends AppCompatActivity implements ActivityCompat.On
 
 
     public void getContactMessage(View view) {
-        IGetDatasFromMobilePhoneService<String> datas = new PicturesProvider();
-        List<String> d =  datas.getDatasFromMobilPhone(this, ProviderDataType.PICTURE);
-        System.out.println(d.toString());
+        new IGetDatasService<String>() {
+            @Override
+            public List<String> getDatasFromMobilePhone(Context context, ProviderDataType dataType) {
+                return null;
+            }
+        };
+//        List<String> d =  datas.getDatasFromMobilPhone(this, ProviderDataType.PICTURE);
+//        System.out.println(d.toString());
 
     }
 }

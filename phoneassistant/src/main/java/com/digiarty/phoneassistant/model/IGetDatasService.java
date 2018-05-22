@@ -14,6 +14,6 @@ import java.util.List;
  *
  *
  **/
-public interface IGetDatasFromMobilePhoneService<T> {
-    List<T> getDatasFromMobilPhone(Context context, ProviderDataType dataType);
+public interface IGetDatasService<T> {
+    List<T> getDatasFromMobilePhone(Context context, ProviderDataType dataType);
 }

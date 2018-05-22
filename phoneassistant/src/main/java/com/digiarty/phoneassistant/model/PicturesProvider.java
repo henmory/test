@@ -22,7 +22,7 @@ import java.util.List;
  *
  *
  **/
-public class PicturesProvider extends ICommonProvider<String> implements IGetDatasFromMobilePhoneService<String> {
+class PicturesProvider extends ICommonProvider<String> implements IGetDatasService<String> {
 
     private Logger logger = LoggerFactory.getLogger(PicturesProvider.class);
     private static List<String> picutres = new ArrayList<>();
@@ -58,8 +58,8 @@ public class PicturesProvider extends ICommonProvider<String> implements IGetDat
 
         List<String> temp = new ArrayList<>();
         // 扫描外部设备中的照片
-        String str[] = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATA};
-        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, str, null, null, null);
+//        String str[] = { MediaStore.Images.Media._ID, MediaStore.Images.Media.DISPLAY_NAME, MediaStore.Images.Media.DATA};
+        Cursor cursor = context.getContentResolver().query(MediaStore.Images.Media.INTERNAL_CONTENT_URI, null, null, null, null);
         if (null == cursor){
             logger.debug("从 <外部存储2>  位置的 <系统应用> 中获取图片数据---指针为空");
             return null;
