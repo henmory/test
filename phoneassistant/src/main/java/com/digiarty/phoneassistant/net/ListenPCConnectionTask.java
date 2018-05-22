@@ -34,10 +34,6 @@ class ListenPCConnectionTask implements ITask {
     String name = ListenPCConnectionTask.class.getSimpleName();
     private Boolean socketFlag = FALSE;
     ServerSocket serverSocket = null;
-//    List<Socket> sockets = new ArrayList<>();
-// TODO: 2018/5/21 同步类学习
-//    List<Socket> sockets = Collections.synchronizedList(new ArrayList<Socket>());
-    Map<String, Socket> sockets = new ConcurrentHashMap<>();
     @Override
     public void run() {
 
@@ -48,13 +44,10 @@ class ListenPCConnectionTask implements ITask {
         if (null != serverSocket) {
             logger.debug("服务器socket信息: serverSocket = " + serverSocket.toString());
         } else {
-//            NetTaskManager.notifyNetTaskManagerClearAllTask();
             notifyNetManagerListenTaskCreateFail();
             logger.debug("线程id = " + Thread.currentThread().getId() + "的线程销毁");
             return;
         }
-
-//        NetTaskManager.newTaskToSendAndroidServerPortForPCToForward(serverSocket.getLocalPort());
 
         logger.debug("开始监听PC端socket....");
 
@@ -62,7 +55,6 @@ class ListenPCConnectionTask implements ITask {
         while (socketFlag) {
 
             if (serverSocket.isClosed()) {
-//                NotifyNetManagerLongConnectionCreateFail();
                 logger.debug("接收数据前，连接已经断开");
                 System.out.println("接收数据前，连接已经断开");
                 break;
@@ -70,14 +62,11 @@ class ListenPCConnectionTask implements ITask {
 
             Socket socketToCommunicateWithPC = listenPCConnectAndCreateNewSocketForPCConnection(serverSocket);
             if (socketToCommunicateWithPC != null) {
-//                logger.debug("开始与PC端通信");
                 logger.debug("新创建的socket信息为: " + socketToCommunicateWithPC.toString());
-                sockets.put(socketToCommunicateWithPC.getPort() + "",socketToCommunicateWithPC);
-                notifyNetManagerThereIsANewConnection(socketToCommunicateWithPC.getPort() + "");
-//                NetTaskManager.newTaskToCommunicateWithPC(socketToCommunicateWithPC);
+                notifyNetManagerThereIsANewConnection(socketToCommunicateWithPC);
             } else {
                 logger.debug("未知原因监听socket出现问题,结束监听线程");
-//              未知原因监听socket出现问题  break;
+                break;
             }
         }
         notifyNetManagerLongConnectionTaskDestory();
@@ -102,7 +91,7 @@ class ListenPCConnectionTask implements ITask {
         }
         return socketToCommunicateWithPC;
     }
-    void notifyNetManagerLongConnectionTaskDestory(){
+    private void notifyNetManagerLongConnectionTaskDestory(){
         logger.debug("通知网络管理器监听任务结束");
         Message message = Message.obtain();
         message.what = NetTaskManager.MSG_NOTIFY_NET_MANAGER_LISTEN_TASK_DESTORY;
@@ -110,7 +99,7 @@ class ListenPCConnectionTask implements ITask {
         NetTaskManager.handler.sendMessage(message);
     }
 
-    void notifyNetManagerListenTaskCreateFail(){
+    private void notifyNetManagerListenTaskCreateFail(){
         logger.debug("通知网络管理器监听任务创建失败");
         Message message = Message.obtain();
         message.what = NetTaskManager.MSG_NOTIFY_NET_MANAGER_LISTEN_TASK_CREATE_FAIL;
@@ -118,12 +107,12 @@ class ListenPCConnectionTask implements ITask {
 
         NetTaskManager.handler.sendMessage(message);
     }
-    void notifyNetManagerThereIsANewConnection(String local_port) {
+    private void notifyNetManagerThereIsANewConnection(Socket socketToCommunicateWithPC) {
         logger.debug("通知网络管理器监听任务收到一个新连接,开启socket准备与其通信");
         Message message = Message.obtain();
         message.what = NetTaskManager.MSG_NOTIFY_NET_MANAGER_NEW_CLIENT_CONNECTION;
         message.setTarget(NetTaskManager.handler);
-        message.obj = local_port;
+        message.obj = socketToCommunicateWithPC;
         NetTaskManager.handler.sendMessage(message);
     }
 
@@ -137,7 +126,6 @@ class ListenPCConnectionTask implements ITask {
     public void closeCurrentTask() {
         logger.debug("资源在回收");
         socketFlag = false;
-        sockets.clear();
         closeListenSocket(serverSocket);
         logger.debug("资源释放完成");
     }

@@ -27,7 +27,7 @@ class LongConnectionTask implements ITask {
 
     private static Logger logger = LoggerFactory.getLogger(LongConnectionTask.class);
     final String name = LongConnectionTask.class.getSimpleName();
-    private Socket longSocket;
+    Socket longSocket;
     private InputStream inputStream;
     private OutputStream outputStream;
     private Boolean socketFlag = FALSE;

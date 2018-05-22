@@ -10,8 +10,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -29,8 +34,8 @@ public class NetTaskManager {
 
     private static Logger logger = LoggerFactory.getLogger(NetTaskManager.class);
     private ExecutorService mExecutorService = null; //线程池
-    //    private static List<ITask> tasks = new ArrayList<>();
-    private Map<String, ITask> tasks = new HashMap<>();
+    static List<Socket> socketPool = Collections.synchronizedList(new ArrayList<Socket>()); //socket连接池
+    private List<ITask> tasks = Collections.synchronizedList(new ArrayList<ITask>());//任务池
     static NetManagerHandler handler = null;
 
 
@@ -43,7 +48,6 @@ public class NetTaskManager {
     }
 
     private NetTaskManager() {
-//        Looper.prepare();
         Looper looper = Looper.myLooper();
         handler = new NetManagerHandler(looper);
         logger.debug("准备网络管理线程的消息队列和handler" + handler);
@@ -83,7 +87,7 @@ public class NetTaskManager {
     public ListenPCConnectionTask newTaskToListenPCConnection() {
 
         ListenPCConnectionTask task = new ListenPCConnectionTask();
-        tasks.put(task.name, task);
+        tasks.add(task);
         mExecutorService.execute(task);
         return task;
     }
@@ -91,29 +95,18 @@ public class NetTaskManager {
     public void newTaskToSendAndroidServerPortForPCToForward(int serverPort) {
         ServerConfig.AndroidConfig.setServerPort(serverPort);
         LongConnectionTask task = new LongConnectionTask();
-        tasks.put(task.name, task);
-
+        tasks.add(task);
         mExecutorService.execute(task);
+        socketPool.add(task.longSocket);
     }
 
-    public void newTaskToCommunicateWithPC(String port) {
-        ListenPCConnectionTask listenTask = (ListenPCConnectionTask) tasks.get(ListenPCConnectionTask.class.getSimpleName());
-        for (Map.Entry<String, Socket> entry : listenTask.sockets.entrySet()) {
-
-            logger.debug("Key = " + entry.getKey() + ", Value = " + entry.getValue());
-
-        }
-        CommunicateWithPCTask task = new CommunicateWithPCTask(listenTask.sockets.get(port), port);
-        tasks.put(task.name, task);
-
+    public void newTaskToCommunicateWithPC(Socket socketToCommunicateWithPC) {
+        CommunicateWithPCTask task = new CommunicateWithPCTask(socketToCommunicateWithPC);
+        tasks.add(task);
         mExecutorService.execute(task);
-    }
+        socketPool.add(socketToCommunicateWithPC);
 
-//    public static void notifyNetTaskManagerClearAllTask(){
-//        Message message = Message.obtain();
-//        message.what = GlobalApplication.MSG_CLEAR_TASKS_RESOURCE;
-//        GlobalApplication.getMainHandler().sendMessage(message);
-//    }
+    }
 
 
     public void clearTaskResource() {
@@ -123,8 +116,9 @@ public class NetTaskManager {
             tasks.remove(i);
         }
         closeExecutor();
+        socketPool.clear();
         // TODO: 07/05/2018 是否需要自己关闭，以后继续学习
-        GlobalApplication.notifyApplicationClose();
+//        GlobalApplication.notifyApplicationClose();
 
     }
 
@@ -152,7 +146,7 @@ public class NetTaskManager {
         public void handleMessage(Message msg) {
             switch (msg.what) {
                 case MSG_NOTIFY_NET_MANAGER_NEW_CLIENT_CONNECTION:
-                    NetTaskManager.getInstance().newTaskToCommunicateWithPC((String) msg.obj);
+                    NetTaskManager.getInstance().newTaskToCommunicateWithPC((Socket) msg.obj);
                     break;
                 case MSG_NOTIFY_NET_MANAGER_LISTEN_TASK_CREATE_FAIL:
                 case MSG_NOTIFY_NET_MANAGER_LISTEN_TASK_DESTORY:
@@ -163,7 +157,7 @@ public class NetTaskManager {
                     break;
                 case MSG_NOTIFY_NET_MANAGER_COMMUNICATION_TASK_GET_INOUT_STREAM_ERROR:
                 case MSG_NOTIFY_NET_MANAGER_COMMUNICATION_TASK_DESTPRY:
-                    notifyListenTaskOneCommunicationConnectionDestory(msg.arg1);
+                    socketPool.remove(msg.obj);
                     break;
                 default:
                     break;
@@ -171,8 +165,4 @@ public class NetTaskManager {
         }
     }
 
-    private static void notifyListenTaskOneCommunicationConnectionDestory(int index) {
-        ListenPCConnectionTask listenTask = (ListenPCConnectionTask) NetTaskManager.getInstance().tasks.get(ListenPCConnectionTask.class.getSimpleName());
-        listenTask.sockets.remove(index);
-    }
 }
