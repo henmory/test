@@ -28,6 +28,15 @@ import java.util.List;
 class ContactsProvider {
     private static Logger logger = LoggerFactory.getLogger(ContactsProvider.class);
 
+    // 获取用来操作数据的类的对象，对联系人的基本操作都是使用这个对象
+    private  ContentResolver contentResolver;
+    private List<ContactBean> contactBeans = new ArrayList<>();
+    private  ContractsString contractsString =  new ContractsString();
+
+    public ContactsProvider(Context context) {
+        contentResolver = context.getContentResolver();
+    }
+
     private static class ContractsString{
 
         //contact table
@@ -49,18 +58,7 @@ class ContactsProvider {
 
     }
 
-    private static List<ContactBean> contacts = new ArrayList<>();
-    private static ContractsString contractsString =  new ContractsString();
-
-    // 获取用来操作数据的类的对象，对联系人的基本操作都是使用这个对象
-    private static ContentResolver contentResolver;
-
-    public static List<ContactBean> getContactDatas(Context context){
-        contentResolver =  context.getContentResolver();
-        return getContactsDatasFromContactsProvider();
-    }
-
-    private static List<ContactBean> getContactsDatasFromContactsProvider(){
+    public  List<ContactBean> getContactsDatasFromContactsApplication(){
 
         // 查询contacts表的所有记录
         Cursor cursor = getContactsCursorFromContactsTable();
@@ -83,22 +81,22 @@ class ContactsProvider {
                 //从ContractDataTable表中获取数据
                 if (Integer.parseInt(cursor.getString(cursor.getColumnIndex(contractsString.TCONTACT_HAS_PHONE_NUMBER))) > 0){
                     ContactBean bean = getOneItemDataFromContractDataTable(rawContactId);
-                    contacts.add(bean);
+                    contactBeans.add(bean);
                 }else{
                     logger.debug("rawContactId = " + rawContactId + "  的数据没有添加任何电话号码");
-                    contacts = null;
+                    contactBeans = null;
                 }
             }
             logger.debug("联系人数据读取完毕");
         }else{
             logger.debug("获取联系人Contract数据为空");
-            contacts = null;
+            contactBeans = null;
         }
         cursor.close();
-        return contacts;
+        return contactBeans;
     }
 
-    private static Cursor getContactsCursorFromContactsTable(){
+    private  Cursor getContactsCursorFromContactsTable(){
         // 查询contacts表的所有记录===返回id跟是否有电话号码列
         Cursor cursor = contentResolver.query(contractsString.CONTACT_URI, new String[]{contractsString.TCONTACT_ID,
                 contractsString.TCONTACT_HAS_PHONE_NUMBER}, null, null,null);
@@ -109,7 +107,7 @@ class ContactsProvider {
         return cursor;
     }
 
-    private static String getRawContactIdFromRawContractTable(String contactId){
+    private  String getRawContactIdFromRawContractTable(String contactId){
 
         String rawContactId;
 
@@ -135,7 +133,7 @@ class ContactsProvider {
 
 
     }
-    private static ContactBean getOneItemDataFromContractDataTable(String rawContactId){
+    private  ContactBean getOneItemDataFromContractDataTable(String rawContactId){
         ContactBean contactBean =  new ContactBean();
 
         // 根据查询RAW_CONTACT_ID查询该联系人的号码

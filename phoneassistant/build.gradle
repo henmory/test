@@ -8,7 +8,7 @@ android {
     defaultConfig {
         applicationId "com.digiarty.phoneassistant"
         minSdkVersion 15
-        targetSdkVersion 22  //权限改成小于22，可以保证权限安装的时候默认是开启的
+        targetSdkVersion 23  //权限改成小于22，可以保证权限安装的时候默认是开启的
         versionCode 1
         versionName "1.0"
 

@@ -15,5 +15,6 @@ public enum  ProviderDataType {
     PICTURE,
     VIDEO,
     AUDIO,
-    MUSIC
+    MUSIC,
+    CONTACT
 }

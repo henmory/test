@@ -1,6 +1,5 @@
 package com.digiarty.phoneassistant.activity;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -8,10 +7,9 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.digiarty.phoneassistant.R;
-import com.digiarty.phoneassistant.model.IGetDatasService;
+import com.digiarty.phoneassistant.model.ModelManager;
 import com.digiarty.phoneassistant.model.ProviderDataType;
 
-import java.util.List;
 
 
 public class TestActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
@@ -26,14 +24,10 @@ public class TestActivity extends AppCompatActivity implements ActivityCompat.On
 
 
     public void getContactMessage(View view) {
-        new IGetDatasService<String>() {
-            @Override
-            public List<String> getDatasFromMobilePhone(Context context, ProviderDataType dataType) {
-                return null;
-            }
-        };
-//        List<String> d =  datas.getDatasFromMobilPhone(this, ProviderDataType.PICTURE);
-//        System.out.println(d.toString());
+        ModelManager modelManager = ModelManager.getInstance();
+        System.out.println(modelManager.getDatas(this, ProviderDataType.PICTURE));
+        System.out.println(modelManager.getDatas(this, ProviderDataType.AUDIO));
+        System.out.println(modelManager.getDatas(this, ProviderDataType.CONTACT));
 
     }
 }

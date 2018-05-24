@@ -1,5 +1,12 @@
 package com.digiarty.phoneassistant.net;
 
+import android.content.Intent;
+
+import com.digiarty.phoneassistant.presenter.PermissionRequestPresenter;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /***
  *
  * Created on：24/04/2018
@@ -11,6 +18,7 @@ package com.digiarty.phoneassistant.net;
  *
  **/
 public class ServerConfig {
+    private final static Logger logger = LoggerFactory.getLogger(ServerConfig.class);
 
     public static class AndroidConfig{
 
@@ -32,6 +40,7 @@ public class ServerConfig {
 
     public static class ADBDConfig{
 
+        private final static String ADBD_LISTEN_PORT_KEY = "port";
 
         private static String ADBD_IP = "127.0.0.1";
 
@@ -49,6 +58,18 @@ public class ServerConfig {
 
         public static void setADBDPort(int port) {
             ADBD_LISTEN_PORT = port;
+        }
+
+
+        public static boolean parseADBDListenPort(Intent intent){
+
+            String port = intent.getStringExtra(ADBD_LISTEN_PORT_KEY);
+            if (null == port){
+                logger.debug("端口为空");
+                return false;
+            }
+            setADBDPort(Integer.parseInt(port));
+            return true;
         }
 
     }

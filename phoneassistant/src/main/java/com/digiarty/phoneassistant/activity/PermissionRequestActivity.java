@@ -1,6 +1,5 @@
 package com.digiarty.phoneassistant.activity;
 
-import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -14,101 +13,78 @@ import com.digiarty.phoneassistant.R;
 import com.digiarty.phoneassistant.boot.GlobalApplication;
 import com.digiarty.phoneassistant.boot.MyIntentService;
 import com.digiarty.phoneassistant.net.ServerConfig;
+import com.digiarty.phoneassistant.presenter.PermissionManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PermissionRequestActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
+import java.util.ArrayList;
+import java.util.List;
 
-//    private final static String TAG = PermissionRequestActivity.class.getSimpleName();
+
+public class PermissionRequestActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, IPermissionRequest {
+
     private final static Logger logger = LoggerFactory.getLogger(PermissionRequestActivity.class);
-    private final static String ADBD_LISTEN_PORT = "port";
-
-    /* 联系人请求码 */
-    private static final int REQUEST_CONTACTS = 1;
-
-    /* 请求读取联系人权限 */
-    private static String[] PERMISSIONS_CONTACT = {Manifest.permission.READ_CONTACTS,
-            Manifest.permission.WRITE_CONTACTS};
+    private PermissionManager permissionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_request_permissions);
 
-        if (!parseADBDListenPort(getIntent())){
+        if (!ServerConfig.ADBDConfig.parseADBDListenPort(getIntent())) {
             logger.debug("解析用户传来的pc 端口失败");
             finish();
             return;
         }
 
         logger.debug("解析的PC端socket端口为" + ServerConfig.ADBDConfig.getADBDPort());
-        requestAllPermissionsForApplicationRunningNormally();
+        permissionManager = new PermissionManager(this);
+        List<PermissionManager.PermissionType> types =  new ArrayList<>();
+        types.add(PermissionManager.PermissionType.CONTACT);
+        types.add(PermissionManager.PermissionType.SMS);
+        permissionManager.requestPermissions(types);
     }
 
-
-    public void requestAllPermissionsForApplicationRunningNormally(){
-        requestReadAndWriteContactsPermissions();
-    }
-
-
-
-    public void requestReadAndWriteContactsPermissions(){
+    //同一组的任何一个权限被授权了，其他权限也自动被授权。
+    @Override
+    public boolean activityCheckSelfPermission(String[] permissions) {
 
         // 判断权限是否拥有
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_CONTACTS) != PackageManager.PERMISSION_GRANTED
-                || ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CONTACTS) != PackageManager.PERMISSION_GRANTED) {
-            logger.debug("读写联系人权限未被授予，需要申请！");
-
-            // 读写联系人权限未被授予，需要申请！
-            requestContactsPermissions();
-        } else {
-            // 权限已经被授予，显示细节页面！
-
-            userGrantAllPermissions();
+        boolean ret = false;
+        for (int i = 0; i < permissions.length; i++) {
+            ret = (ret || (ActivityCompat.checkSelfPermission(this, permissions[i]) != PackageManager.PERMISSION_GRANTED));
         }
+        return ret;
     }
 
-
-
-    /**
-     * 申请联系人读取权限
-     */
-    private void requestContactsPermissions() {
+    @Override
+    public boolean activityShouldShowRequestPermissionRationale(String[] permissions) {
         // 第一次不会运行里面代码，会走else请求权限，如果用户选择拒绝，那么当再次运行这个代码时，会走这里的代码
-        if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.READ_CONTACTS)
-                || ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.WRITE_CONTACTS)) {
-            // 如果是第二次申请，需要向用户说明为何使用此权限，会带出一个不再询问的复选框！
-            //再次提醒用户，必须选择允许，否则不能操作
-            showWarningIfRefusePermission();
-        } else {
-            // 第一次申请此权限，直接申请
-            ActivityCompat.requestPermissions(this, PERMISSIONS_CONTACT, REQUEST_CONTACTS);
+        boolean ret = false;
+        for (int i = 0; i < permissions.length; i++) {
+            ret = (ret || (ActivityCompat.shouldShowRequestPermissionRationale(this, permissions[i])));
         }
+        return ret;
+
     }
 
 
+    public void activityStartRequestPermissions(String[] permissions, int requestCode) {
+        ActivityCompat.requestPermissions(this, permissions, requestCode);
+    }
 
     //用户点击权限允许之后的处理结果
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == REQUEST_CONTACTS) {
-            if (grantResults.length == 2 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED) {
-                // Permission has been granted.
-                logger.debug("onRequestPermissionsResult: 用户授权");
-                userGrantAllPermissions();
-            } else {
-                // Permission request was denied.
-                logger.debug("onRequestPermissionsResult: 用户拒绝创建，告诉用户如果不同意，则不能使用app");
-                showWarningIfRefusePermission();
+        permissionManager.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-            }
-        }
     }
 
 
-    private void showWarningIfRefusePermission() {
+    @Override
+    public void activityShowWarningIfRefusePermission(final String[] permissions) {
 
         final AlertDialog.Builder normalDialog = new AlertDialog.Builder(PermissionRequestActivity.this);
         normalDialog.setIcon(R.drawable.ic_launcher_background);
@@ -120,15 +96,16 @@ public class PermissionRequestActivity extends AppCompatActivity implements Acti
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Request the permission
-                        ActivityCompat.requestPermissions(PermissionRequestActivity.this, PERMISSIONS_CONTACT, REQUEST_CONTACTS);
+                        permissionManager.startRequestPermissions(permissions);
+
                     }
                 });
         normalDialog.setNegativeButton("拒绝",
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        logger.debug( "onClick: 用户再度拒绝授权，退出应用");
-                        userRefusePermissions();
+                        logger.debug("用户再度拒绝授权，退出应用");
+                        permissionManager.userRefusePermissions();
 
                     }
                 });
@@ -136,8 +113,9 @@ public class PermissionRequestActivity extends AppCompatActivity implements Acti
         normalDialog.show();
     }
 
-    private void userGrantAllPermissions(){
-        logger.debug("用户授予所有权限，开始开始服务");
+
+    @Override
+    public void userGrantAllPermissions() {
         Intent intent = new Intent();
         intent.setAction(MyIntentService.getStartService());
         intent.setPackage(GlobalApplication.getGlobalPackageName());
@@ -145,23 +123,9 @@ public class PermissionRequestActivity extends AppCompatActivity implements Acti
         finish();
     }
 
-    private void userRefusePermissions(){
+    @Override
+    public void userRefusePermissions(){
         finish();
-        GlobalApplication.notifyApplicationClose();
     }
-
-
-
-    private boolean parseADBDListenPort(Intent intent){
-
-        String port = intent.getStringExtra(ADBD_LISTEN_PORT);
-        if (null == port){
-            logger.debug("端口为空");
-            return false;
-        }
-        ServerConfig.ADBDConfig.setADBDPort(Integer.parseInt(port));
-        return true;
-    }
-
 
 }

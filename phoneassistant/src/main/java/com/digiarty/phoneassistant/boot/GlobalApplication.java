@@ -9,6 +9,7 @@ import android.util.Log;
 import com.digiarty.phoneassistant.activity.MyNotification;
 import com.digiarty.phoneassistant.log.FileLog;
 import com.digiarty.phoneassistant.net.NetTaskManager;
+import com.digiarty.phoneassistant.sharedpreference.IPreference;
 
 
 /***
@@ -26,6 +27,10 @@ import com.digiarty.phoneassistant.net.NetTaskManager;
 public class GlobalApplication extends Application {
 
     private final static String TAG = GlobalApplication.class.getSimpleName();
+    public final static String SHARED_PREFERENCE = "shared_preference";
+    public final static String PERMISSION_REQUEST_STATE = "permission_request_state";
+
+
     private static Context context = null;
     private static String globalPackageName;
     private static Handler mainHandler;
@@ -35,6 +40,9 @@ public class GlobalApplication extends Application {
     private void getGlobalInformation() {
         globalPackageName = getApplicationContext().getPackageName();
         Log.d(TAG, "onCreate: packageName = " + globalPackageName);
+    }
+    public static Context getContext() {
+        return context;
     }
 
 
@@ -56,6 +64,7 @@ public class GlobalApplication extends Application {
         mainHandler = new GlobalHandler();
         MyNotification.createNotificationChannelForGlobalApplication(this);
         context = this;
+        initSharedPreference();
     }
 
 
@@ -78,6 +87,12 @@ public class GlobalApplication extends Application {
     public void onTrimMemory(int level) {
         super.onTrimMemory(level);
         System.out.println("application---------onTrimMemory");
+    }
+
+    private void initSharedPreference(){
+        Log.d(TAG, "初始化SharedPreference");
+        IPreference.IPreferenceHolder holder = IPreference.prefHolder;
+        holder.newPreference(this, SHARED_PREFERENCE);
     }
 
     private static class GlobalHandler extends Handler{

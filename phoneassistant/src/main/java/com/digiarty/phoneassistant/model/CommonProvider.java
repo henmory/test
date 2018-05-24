@@ -20,15 +20,18 @@ import java.util.List;
  *
  *
  **/
-@Deprecated
-public class CommonProvider<T> {
+abstract class CommonProvider<T> {
 
     private Logger logger = LoggerFactory.getLogger(CommonProvider.class);
-    private  int externalNumbers = -1;
-    private List<T> datas = new ArrayList<>();
+    protected int externalNumbers = -1;
+    protected List<T> datas = new ArrayList<>();
+    protected Context context;
 
+    public CommonProvider(Context context) {
+        this.context = context;
+    }
 
-    public List<T> getCommonDatas(Context context, ProviderDataType dataType){
+    protected List<T> getCommonDatas(){
 
         externalNumbers = getExternalStorageNumbers(context);
         logger.debug("获取外部存储的数量为 " + externalNumbers);
@@ -37,8 +40,13 @@ public class CommonProvider<T> {
             return null;
         }
 
-        getDataFromSystemApplications(dataType);
-        getDataFromThirdApplications(dataType);
+        logger.debug("从系统程序中获取数据开始-------");
+        getDatasFromEmbeddedSystemApplications();
+        logger.debug("从系统程序中获取数据结束-------");
+        logger.debug("获取的数据大小为" + datas.size());
+        logger.debug("从第三方程序中获取数据开始-------");
+        getDatasFromThirdApplications();
+        logger.debug("从第三方程序中获取数据结束--------");
 
         return  datas;
 
@@ -49,39 +57,53 @@ public class CommonProvider<T> {
         return AndroidStorage.getExternalStorageNumbers(context);
     }
 
-    private void getDataFromSystemApplications(ProviderDataType dataType) {
+//    private void getDatasFromEmbeddedSystemApplications() {
 
-        getDataFromSystemApplicationsInstalledInExternalStorage(dataType);
-        logger.debug("从外部存储1的系统应用中获取数据完成");
+//        List<T> data = getDatasFromEmbeddedSystemApplications();
+//        if (null != data){
+//            datas.addAll(data);
+//        }else{
+//            logger.debug("从 <系统应用> 中获取的 <公开数据> 为空");
+//        }
+
+//        if (2 == externalNumbers){
+//            data = getDataFromSystemApplicationsInstalledInSDCard();
+//            if (null != data){
+//                datas.addAll(data);
+//            }else{
+//                logger.debug("从 <外部存储2> 的 <系统应用> 中获取数据为空");
+//            }
+//        }
+//        data = getPrivateDatasFromSystemEmbeddedApplications();
+//        if (null != data){
+//            datas.addAll(data);
+//        }else{
+//            logger.debug("从 <系统应用> 中获取的 <私有数据> 为空");
+//        }
+//    }
+
+
+
+    private void getDatasFromThirdApplications(){
+
+        List<T> data = getDatasFromThirdApplicationsInstalledInExternalStorage();
+        if (null != data){
+            datas.addAll(data);
+        }else{
+            logger.debug("从 <外部存储1> 的 <三方应用> 中获取数据为空");
+        }
         if (2 == externalNumbers){
-            getDataFromSystemApplicationsInstalledInSDCard(dataType);
-            logger.debug("从外部存储2的系统应用中获取数据完成");
+            data = getDatasFromThirdApplicationsInstalledInSDCard();
+            if (null != data){
+                datas.addAll(data);
+            }else{
+                logger.debug("从 <外部存储1> 的 <三方应用> 中获取数据为空");
+            }
         }
     }
 
+    protected abstract List<T> getDatasFromEmbeddedSystemApplications();
+    protected abstract List<T> getDatasFromThirdApplicationsInstalledInExternalStorage();
+    protected abstract List<T> getDatasFromThirdApplicationsInstalledInSDCard();
 
-
-    private void getDataFromThirdApplications(ProviderDataType dataType){
-        getDataFromThirdApplicationsInstalledInExternalStorage(dataType);
-        logger.debug("从外部存储1的三方应用中获取数据完成");
-        if (2 == externalNumbers){
-            getDataFromThirdApplicationsInstalledInSDCard(dataType);
-            logger.debug("从外部存储2的三方应用中获取数据完成");
-        }
-    }
-
-    private void getDataFromSystemApplicationsInstalledInExternalStorage(ProviderDataType dataType) {
-
-    }
-
-    private void getDataFromSystemApplicationsInstalledInSDCard(ProviderDataType dataType){
-
-    }
-
-    private void getDataFromThirdApplicationsInstalledInExternalStorage(ProviderDataType dataType) {
-    }
-
-    private void getDataFromThirdApplicationsInstalledInSDCard(ProviderDataType dataType){
-
-    }
 }
