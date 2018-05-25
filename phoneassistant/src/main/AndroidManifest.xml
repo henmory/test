@@ -66,16 +66,6 @@
         <!--</service>-->
 
 
-
-        <activity
-            android:name=".activity.TestActivity"
-            android:theme="@style/AppTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
-                <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
-        </activity>
-
         <!--桌面显示图标，只需要把category的launcher改掉就行-->
         <!--去掉之后就要考虑，如何启动我们的activity，请求权限，这里要求PC端发送abd指令，但这里需要注意，要么我们加上action，要么把exported置为true，否则我们是不可能开启该activity的-->
         <activity

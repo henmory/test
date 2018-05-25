@@ -39,6 +39,11 @@ public class PermissionRequestActivity extends AppCompatActivity implements Acti
         }
 
         logger.debug("解析的PC端socket端口为" + ServerConfig.ADBDConfig.getADBDPort());
+        addAndRequestPermissions();
+
+    }
+
+    private void addAndRequestPermissions(){
         permissionManager = new PermissionManager(this);
         List<PermissionManager.PermissionType> types =  new ArrayList<>();
         types.add(PermissionManager.PermissionType.CONTACT);
