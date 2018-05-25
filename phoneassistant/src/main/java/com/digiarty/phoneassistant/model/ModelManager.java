@@ -51,7 +51,37 @@ public class ModelManager<T>  {
                 break;
             case CONTACT:
                 logger.debug("开始获取数据，获取的数据类型为：CONTACT");
-                return datas = (List<T>) new ContactsProvider(context).getContactsDatasFromContactsApplication();
+                return datas = (List<T>) new ContactsProvider(context).getContacts();
+            default:
+                logger.debug("获取数据类型未知");
+                break;
+        }
+        datas = commonProvider.getCommonDatas();
+        logger.debug("获取数据完成");
+        return datas;
+    }
+
+    public List<T> setDatas(Context context, ProviderDataType type){
+
+        switch (type){
+            case AUDIO:
+                logger.debug("开始获取数据，获取的数据类型为：AUDIO");
+                commonProvider = (CommonProvider<T>) new AudioProvider(context);
+                break;
+            case MUSIC:
+                logger.debug("开始获取数据，获取的数据类型为：MUSIC");
+                break;
+            case VIDEO:
+                logger.debug("开始获取数据，获取的数据类型为：VIDEO");
+                break;
+            case PICTURE:
+                logger.debug("开始获取数据，获取的数据类型为：PICTURE");
+                commonProvider = (CommonProvider<T>) new PicturesProvider(context);
+                break;
+            case CONTACT:
+                logger.debug("开始获取数据，获取的数据类型为：CONTACT");
+                new ContactsProvider(context).test();
+                return null;
             default:
                 logger.debug("获取数据类型未知");
                 break;

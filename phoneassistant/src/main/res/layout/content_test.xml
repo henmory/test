@@ -20,4 +20,10 @@
         android:layout_height="wrap_content"
         android:text="获取联系人信息"
         android:onClick="getContactMessage"/>
+    <Button
+        android:id="@+id/button_insert"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="插入联系人信息"
+        android:onClick="insetContactMessage"/>
 </LinearLayout>

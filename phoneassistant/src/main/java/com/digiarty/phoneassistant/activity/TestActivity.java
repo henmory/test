@@ -30,4 +30,9 @@ public class TestActivity extends AppCompatActivity implements ActivityCompat.On
         System.out.println(modelManager.getDatas(this, ProviderDataType.CONTACT));
 
     }
+
+    public void insetContactMessage(View view) {
+        ModelManager modelManager = ModelManager.getInstance();
+        modelManager.setDatas(this, ProviderDataType.CONTACT);
+    }
 }

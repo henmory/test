@@ -155,4 +155,6 @@ class CommunicateWithPCTask implements ITask {
         logger.debug("资源释放完成");
     }
 
+
+
 }

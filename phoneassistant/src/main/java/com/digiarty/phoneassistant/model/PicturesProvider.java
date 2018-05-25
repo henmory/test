@@ -2,7 +2,6 @@ package com.digiarty.phoneassistant.model;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.media.MediaScannerConnection;
 import android.provider.MediaStore;
 
 
@@ -10,7 +9,6 @@ import android.provider.MediaStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /***
