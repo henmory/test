@@ -76,6 +76,7 @@ class LongConnectionTask implements ITask {
             logger.debug("等待pc回复");
             byte[] datas = readDatasFromPC(inputStream);
             if (null == datas){
+                logger.debug("读数据为空");
                 break;
             }
 
@@ -137,11 +138,11 @@ class LongConnectionTask implements ITask {
     }
 
     private byte[] readDatasFromPC(InputStream inputStream){
-        return ServerSocketWrap.readDatasFromInputStream(inputStream);
+        return ServerSocketWrap.readCommandFromInputStream(inputStream);
     }
 
     private boolean writeDatasToPC(OutputStream outputStream,byte[] datas){
-        return ServerSocketWrap.writeDatasToOutputStream(outputStream, datas);
+        return ServerSocketWrap.writeRequestToOutputStream(outputStream, datas);
     }
 
     private void notifyNetTaskManagerLongConnectionTaskCreateFail(){
@@ -202,8 +203,6 @@ class LongConnectionTask implements ITask {
             e.printStackTrace();
         }
         ServerConfig.ADBDConfig.setADBDPort(12580);
-//        ServerConfig.ADBDConfig.setIP("127.0.0.1");
-//        ServerConfig.AndroidConfig.setPort(12345);
         new Thread( new LongConnectionTask()).start();
     }
 }

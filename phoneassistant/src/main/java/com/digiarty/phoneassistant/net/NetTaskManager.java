@@ -33,9 +33,11 @@ import java.util.concurrent.Executors;
 public class NetTaskManager {
 
     private static Logger logger = LoggerFactory.getLogger(NetTaskManager.class);
+
     private ExecutorService mExecutorService = null; //线程池
-    static List<Socket> socketPool = Collections.synchronizedList(new ArrayList<Socket>()); //socket连接池
-    private List<ITask> tasks = Collections.synchronizedList(new ArrayList<ITask>());//任务池
+    static List<Socket> socketPool /*= Collections.synchronizedList(new ArrayList<Socket>())*/; //socket连接池
+
+    private List<ITask> tasks /*= Collections.synchronizedList(new ArrayList<ITask>())*/;//任务池
     static NetManagerHandler handler = null;
 
 
@@ -51,20 +53,23 @@ public class NetTaskManager {
         Looper looper = Looper.myLooper();
         handler = new NetManagerHandler(looper);
         logger.debug("准备网络管理线程的消息队列和handler" + handler);
+
+        mExecutorService = createExecutor();
+        socketPool = Collections.synchronizedList(new ArrayList<Socket>());
+        tasks = Collections.synchronizedList(new ArrayList<ITask>());
     }
 
 
     //管理网络的线程
     public void main() {
         logger.debug("开始处理与网络有关的任务");
-        mExecutorService = createExecutor();
         ListenPCConnectionTask task = newTaskToListenPCConnection();
 
         // TODO: 2018/5/21 处理延迟
         while (true) {
             if (task.serverSocket != null) {
                 logger.debug("android端服务器开启成功，准备开始新任务通知PC自己的端口号码");
-                newTaskToSendAndroidServerPortForPCToForward(task.serverSocket.getLocalPort());
+//                newTaskToSendAndroidServerPortForPCToForward(task.serverSocket.getLocalPort());
                 break;
             }
         }
