@@ -9,8 +9,11 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
+
 import com.digiarty.phoneassistant.bean.ContactBean;
 import com.digiarty.phoneassistant.bean.ContactReadBean;
+import com.digiarty.phoneassistant.model.bean.beanfromclient.AddContactDataFromClientBean;
+import com.digiarty.phoneassistant.model.dataparse.ContactAction;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -233,7 +236,6 @@ class ContactsProvider {
     }
 
 
-
     public void test() {
 
         byte[] bytes = readPicture("/storage/emulated/0/Android/data/com.digiarty.phoneassistant/files/log/111.jpg");
@@ -248,64 +250,64 @@ class ContactsProvider {
 
         ArrayList<ContentProviderOperation> ops = new ArrayList<>();
         ContentProviderOperation.Builder op = ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
-                        .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, "tupe")
-                        .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, "name");
+                .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, "tupe")
+                .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, "name");
         // Builds the operation and adds it to the array of operations
         ops.add(op.build());
 
 
         // Creates the display name for the new raw contact, as a StructuredName data row.
         op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                        /*
-                         * withValueBackReference sets the value of the first argument to the value of
-                         * the ContentProviderResult indexed by the second argument. In this particular
-                         * call, the raw contact ID column of the StructuredName data row is set to the
-                         * value of the result returned by the first operation, which is the one that
-                         * actually adds the raw contact row.
-                         */
-                        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                /*
+                 * withValueBackReference sets the value of the first argument to the value of
+                 * the ContentProviderResult indexed by the second argument. In this particular
+                 * call, the raw contact ID column of the StructuredName data row is set to the
+                 * value of the result returned by the first operation, which is the one that
+                 * actually adds the raw contact row.
+                 */
+                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
 
-                        // Sets the data row's MIME type to StructuredName
-                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                // Sets the data row's MIME type to StructuredName
+                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
 
-                        // Sets the data row's display name to the name in the UI.
-                        .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, "hmh");
+                // Sets the data row's display name to the name in the UI.
+                .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, "hmh");
 
         // Builds the operation and adds it to the array of operations
         ops.add(op.build());
 
         // Inserts the specified phone number and type as a Phone data row
         op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                        /*
-                         * Sets the value of the raw contact id column to the new raw contact ID returned
-                         * by the first operation in the batch.
-                         */
-                        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                /*
+                 * Sets the value of the raw contact id column to the new raw contact ID returned
+                 * by the first operation in the batch.
+                 */
+                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
 
-                        // Sets the data row's MIME type to Phone
-                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                // Sets the data row's MIME type to Phone
+                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
 
-                        // Sets the phone number and type
-                        .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, 13488783)
-                        .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, "住宅");
+                // Sets the phone number and type
+                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, 13488783)
+                .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, "住宅");
 
         // Builds the operation and adds it to the array of operations
         ops.add(op.build());
 
         // Inserts the specified email and type as a Phone data row
         op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                        /*
-                         * Sets the value of the raw contact id column to the new raw contact ID returned
-                         * by the first operation in the batch.
-                         */
-                        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                /*
+                 * Sets the value of the raw contact id column to the new raw contact ID returned
+                 * by the first operation in the batch.
+                 */
+                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
 
-                        // Sets the data row's MIME type to Email
-                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+                // Sets the data row's MIME type to Email
+                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
 
-                        // Sets the email address and type
-                        .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, "hanmh@gmail.com")
-                        .withValue(ContactsContract.CommonDataKinds.Email.TYPE, "home");
+                // Sets the email address and type
+                .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, "hanmh@gmail.com")
+                .withValue(ContactsContract.CommonDataKinds.Email.TYPE, "home");
         // Inserts the specified email and type as a Phone data row
         op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                 /*
@@ -336,21 +338,21 @@ class ContactsProvider {
          * discarded.
          */
 
-            try {
-                contentResolver.applyBatch(ContactsContract.AUTHORITY, ops);
-            } catch (RemoteException e) {
-                e.printStackTrace();
-                logger.debug("异常发生 " + e.getMessage());
-            } catch (OperationApplicationException e) {
-                e.printStackTrace();
-                logger.debug("异常发生2 " + e.getMessage());
-            }
+        try {
+            contentResolver.applyBatch(ContactsContract.AUTHORITY, ops);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            logger.debug("异常发生 " + e.getMessage());
+        } catch (OperationApplicationException e) {
+            e.printStackTrace();
+            logger.debug("异常发生2 " + e.getMessage());
+        }
 
         logger.debug("debug");
 
     }
 
-    public byte[] readPicture(String path){
+    public byte[] readPicture(String path) {
         BufferedInputStream in = null;
         byte[] content = null;
         try {
@@ -373,6 +375,65 @@ class ContactsProvider {
 
     }
 
+    public byte[] insertData(Context context, List<ContactAction.ContactBeans> contactBeans) {
+
+        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+        ContactAction.ContactBeans bean;
+        int rawContactInsertIndex = 0;
+        for (int i = 0; i < contactBeans.size(); i++) {
+            rawContactInsertIndex = ops.size();
+            bean = contactBeans.get(i);
+
+            //账户相关
+            ContentProviderOperation.Builder op = ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
+                    .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, "tupe")
+                    .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, "name");
+            ops.add(op.build());
+            //名字相关
+            op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, bean.getContactBean().getFirstName());
+            ops.add(op.build());
+            //电话相关
+            op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, bean.getContactBean().getPhoneNumberList().get(0).getValue())
+                    .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, "住宅");
+            ops.add(op.build());
+
+            //邮件相关
+            op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, bean.getContactBean().getEmailAddressList().get(0).getValue())
+                    .withValue(ContactsContract.CommonDataKinds.Email.TYPE, "home");
+            ops.add(op.build());
+
+            //头像相关
+            op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)//缩略图通过
+                    .withValue(ContactsContract.CommonDataKinds.Photo.PHOTO, bean.getImage());
+
+            op.withYieldAllowed(true);
+
+            ops.add(op.build());
+
+            try {
+                contentResolver.applyBatch(ContactsContract.AUTHORITY, ops);
+            } catch (RemoteException e) {
+                e.printStackTrace();
+                logger.debug("异常发生 " + e.getMessage());
+            } catch (OperationApplicationException e) {
+                e.printStackTrace();
+                logger.debug("异常发生2 " + e.getMessage());
+            }
+        }
+        logger.debug("debug");
+        return null;
+    }
 
 
 }

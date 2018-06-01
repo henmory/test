@@ -13,106 +13,106 @@ import java.util.ArrayList;
  *
  **/
 public class AddContactCommandToClientBean {
-    private String command;
-    ArrayList<Result> result;
-    Request request;
+    private String Command;
+    ArrayList<Result> Result;
+    Request Request;
 
     public AddContactCommandToClientBean() {
     }
 
     public String getCommand() {
-        return command;
+        return Command;
     }
 
     public void setCommand(String command) {
-        this.command = command;
+        Command = command;
     }
 
-    public ArrayList<Result> getResult() {
-        return result;
+    public ArrayList<AddContactCommandToClientBean.Result> getResult() {
+        return Result;
     }
 
-    public void setResult(ArrayList<Result> result) {
-        this.result = result;
+    public void setResult(ArrayList<AddContactCommandToClientBean.Result> result) {
+        Result = result;
     }
 
-    public Request getRequest() {
-        return request;
+    public AddContactCommandToClientBean.Request getRequest() {
+        return Request;
     }
 
-    public void setRequest(Request request) {
-        this.request = request;
+    public void setRequest(AddContactCommandToClientBean.Request request) {
+        Request = request;
     }
 
     @Override
     public String toString() {
         return "AddContactCommandToClientBean{" +
-                "command='" + command + '\'' +
-                ", result=" + result +
-                ", request=" + request +
+                "Command='" + Command + '\'' +
+                ", Result=" + Result +
+                ", Request=" + Request +
                 '}';
     }
 
     public static class Result {
-        private String oId;
-        private String nId;
-        private String state;
+        private String Oid;
+        private String Nid;
+        private String State;
 
         public Result() {
         }
 
-        public String getoId() {
-            return oId;
+        public String getOid() {
+            return Oid;
         }
 
-        public void setoId(String oId) {
-            this.oId = oId;
+        public void setOid(String oid) {
+            Oid = oid;
         }
 
-        public String getnId() {
-            return nId;
+        public String getNid() {
+            return Nid;
         }
 
-        public void setnId(String nId) {
-            this.nId = nId;
+        public void setNid(String nid) {
+            Nid = nid;
         }
 
         public String getState() {
-            return state;
+            return State;
         }
 
         public void setState(String state) {
-            this.state = state;
+            State = state;
         }
 
         @Override
         public String toString() {
             return "Result{" +
-                    "oId='" + oId + '\'' +
-                    ", nId='" + nId + '\'' +
-                    ", state='" + state + '\'' +
+                    "Oid='" + Oid + '\'' +
+                    ", Nid='" + Nid + '\'' +
+                    ", State='" + State + '\'' +
                     '}';
         }
     }
 
     public static class Request {
-        private String number;
+        private String Num;
 
         public Request() {
         }
 
-        public String getNumber() {
-            return number;
+        public String getNum() {
+            return Num;
         }
 
-        public void setNumber(String number) {
-            this.number = number;
+        public void setNum(String num) {
+            Num = num;
         }
 
         @Override
         public String toString() {
             return "Request{" +
-                    "number='" + number + '\'' +
+                    "Num='" + Num + '\'' +
                     '}';
         }
     }

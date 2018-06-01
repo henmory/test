@@ -16,7 +16,8 @@ import org.slf4j.LoggerFactory;
  *
  * Created by：henmory
  *
- * Description: 数据解析器，仅仅服务解析不同类型的数据
+ * Description: 数据解析器,根据逻辑设置下次收到的数据类型
+ *              按照目前PC逻辑，除了可以知道收到的数据类型之外还可以知道数据属于哪个动作
  *
  *
  **/

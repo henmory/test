@@ -168,7 +168,7 @@ class ServerSocketWrap {
         try {
             int len = bis.read(bytes);
             if (len > 0) {
-//                logger.debug("数据长度占得字节数为 " + len);
+                logger.debug("数据长度占得字节数为 " + len);
                 logger.debug("客户端发送的数据长度字节码为" + Arrays.toString(bytes));
                 dataLength = ByteOrderUtils.byteArrayToLong(bytes);//获取数据总长度
                 return dataLength;
@@ -218,9 +218,9 @@ class ServerSocketWrap {
             bis = new BufferedInputStream(inputStream);
 
             long dataLength = readDatasLengthFromBufferedInputStream();
-            logger.debug("客户端发送的数据总长度为  " + dataLength + " - " + BYTES_OF_DATA_SIZE + " = "  + ((int)dataLength - BYTES_OF_DATA_SIZE));
-            if (dataLength != BYTES_OF_DATA_SIZE && dataLength != -1) {
-                datas = readDatasFromBufferedInputStream(dataLength - BYTES_OF_DATA_SIZE);
+            logger.debug("客户端发送的数据总长度为  " + dataLength);
+            if (dataLength != -1) {
+                datas = readDatasFromBufferedInputStream(dataLength);
             } else {
                 logger.debug("读取数据的总长度发生错误");
             }
@@ -361,7 +361,7 @@ class ServerSocketWrap {
         }
         allDatasize = datas.length + BYTES_OF_DATA_SIZE;
         logger.debug("发送给客户端数据总长度为 " + allDatasize);
-        bytesOfLongLen = ByteOrderUtils.long2byte(allDatasize);
+        bytesOfLongLen = ByteOrderUtils.long2byte(datas.length);
         logger.debug("发送给客户端数据总长度转化为大端数据为 " + Arrays.toString(bytesOfLongLen));
 
         bytes = new byte[(int) allDatasize];

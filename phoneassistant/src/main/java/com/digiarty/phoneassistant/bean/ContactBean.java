@@ -1,6 +1,5 @@
 package com.digiarty.phoneassistant.bean;
 
-import java.util.Arrays;
 import java.util.List;
 
 /***
@@ -13,6 +12,7 @@ import java.util.List;
  *
  *
  **/
+@Deprecated
 public class ContactBean {
 
     private String key ;//联系人(本地联系人id与key对应)

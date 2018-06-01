@@ -3,6 +3,9 @@ package com.digiarty.phoneassistant.model.dataprovider;
 import android.content.Context;
 
 
+import com.digiarty.phoneassistant.bean.ContactBean;
+import com.digiarty.phoneassistant.model.dataparse.ContactAction;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +64,7 @@ public class ModelManager<T>  {
         return datas;
     }
 
-    public List<T> setDatas(Context context, ProviderDataType type){
+    public List<T> insertDatas(Context context, ProviderDataType type, T t){
 
         switch (type){
             case AUDIO:
@@ -79,8 +82,8 @@ public class ModelManager<T>  {
                 commonProvider = (CommonProvider<T>) new PicturesProvider(context);
                 break;
             case CONTACT:
-                logger.debug("开始获取数据，获取的数据类型为：CONTACT");
-                new ContactsProvider(context).test();
+                logger.debug("开始插入数据，获取的数据类型为：CONTACT");
+                new ContactsProvider(context).insertData(context, (List<ContactAction.ContactBeans>) t);
                 return null;
             default:
                 logger.debug("获取数据类型未知");

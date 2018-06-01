@@ -11,34 +11,34 @@ package com.digiarty.phoneassistant.model.bean.beanfromclient;
  *
  **/
 public class AddContactCommandFromClientBean {
-    private String command;
-    private String num;
+    private String Command;
+    private String Num;
 
     public AddContactCommandFromClientBean() {
     }
 
 
     public String getCommand() {
-        return command;
+        return Command;
     }
 
     public void setCommand(String command) {
-        this.command = command;
+        Command = command;
     }
 
     public String getNum() {
-        return num;
+        return Num;
     }
 
     public void setNum(String num) {
-        this.num = num;
+        Num = num;
     }
 
     @Override
     public String toString() {
         return "AddContactCommandFromClientBean{" +
-                "command='" + command + '\'' +
-                ", num='" + num + '\'' +
+                "Command='" + Command + '\'' +
+                ", Num='" + Num + '\'' +
                 '}';
     }
 }

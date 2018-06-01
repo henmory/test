@@ -1,28 +1,22 @@
 package com.digiarty.phoneassistant.nettest;
 
-import android.util.Base64;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.digiarty.phoneassistant.bean.ContactBean;
+import com.digiarty.phoneassistant.model.bean.beanfromclient.AddContactDataFromClientBean;
+import com.digiarty.phoneassistant.model.bean.beanfromclient.ContactBean;
 import com.digiarty.phoneassistant.utils.Base64Util;
 import com.digiarty.phoneassistant.utils.ByteOrderUtils;
-import com.digiarty.phoneassistant.utils.FileHelper;
-
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.InterruptedIOException;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -66,27 +60,28 @@ public class testPcClient {
             BufferedInputStream in = new BufferedInputStream(socket.getInputStream());
             boolean flag = true;
             while (flag) {
+
                 System.out.println("开始发送数据..................................");
-                byte[] datas = sendFile();
+                byte[] datas = sendCommand();
                 out.write(datas);
                 out.flush();
 
                 System.out.println("1 finish sending the data");
-//                System.out.println("开始读取数据..................................");
-//                String strFormsocket = readFromSocket(in);
-//                System.out.println("the data sent by server is: " + strFormsocket);
-                Thread.sleep(50000);
+                System.out.println("开始读取数据..................................");
+                String strFormsocket = readFromSocket(in);
+                System.out.println("the data sent by server is: " + strFormsocket);
+                Thread.sleep(5000);
 
-//                System.out.println("开始发送数据..................................");
-//                datas = sendData();
-//                System.out.println("发送的字符串为 " + new String(datas));
-//                out.write(datas);
-//                out.flush();
-//                Thread.sleep(3000);
-//
-//                System.out.println("开始读取数据..................................");
-//                strFormsocket = readFromSocket(in);
-//                System.out.println("the data sent by server is: " + strFormsocket);
+                System.out.println("开始发送数据..................................");
+                datas = sendData();
+                System.out.println("发送的字符串为 " + new String(datas));
+                out.write(datas);
+                out.flush();
+                Thread.sleep(3000);
+
+                System.out.println("开始读取数据..................................");
+                strFormsocket = readFromSocket(in);
+                System.out.println("the data sent by server is: " + strFormsocket);
 
             }
 
@@ -127,10 +122,10 @@ public class testPcClient {
     private static byte[] sendCommand() {
 
 
-        String data = "{\"command\":\"AddContacts\",\"num\":\"20\"}";
+        String data = "{\"Command\":\"AddContacts\",\"Num\":\"20\"}";
         byte[] bytes = data.getBytes(Charset.defaultCharset());
 
-        Long a = new Long(8 + bytes.length);
+        Long a = new Long(bytes.length);
         byte[] b  = ByteOrderUtils.long2byte(a);
 
         byte[] datas = new byte[bytes.length + b.length];
@@ -144,29 +139,6 @@ public class testPcClient {
         }
         System.out.println("数据字节码为 : " + Arrays.toString(datas));
         return datas;
-    }
-    public static class A{
-        String command;
-        List<ContactBean> contactBeans;
-
-        public A() {
-        }
-
-        public String getCommand() {
-            return command;
-        }
-
-        public void setCommand(String command) {
-            this.command = command;
-        }
-
-        public List<ContactBean> getContactBeans() {
-            return contactBeans;
-        }
-
-        public void setContactBeans(List<ContactBean> contactBeans) {
-            this.contactBeans = contactBeans;
-        }
     }
 
     public static byte[] readPicture(String path){
@@ -193,7 +165,10 @@ public class testPcClient {
     }
 
     private static byte[] sendData() {
-        A data = new A();
+
+        AddContactDataFromClientBean addContactDataFromClientBean = new AddContactDataFromClientBean();
+        addContactDataFromClientBean.setCommand("AddContacts");
+
         List<ContactBean> contactBeans = new ArrayList<>();
         ContactBean bean =  new ContactBean();
         bean.setCompanyName("company");
@@ -213,15 +188,16 @@ public class testPcClient {
         bean.setUrlList(null);
         bean.setRelatedNameList(null);
         bean.setPhoneNumberList(null);
-        contactBeans.add(bean);
+
         byte[] image = readPicture("/Users/henmory/Downloads/2.jpg");
         String str = Base64Util.encode(image);
         bean.setImage(str);
 
-        data.setCommand("AddContacts");
-        data.setContactBeans(contactBeans);
-        byte[] bytes = JSON.toJSONString(data, SerializerFeature.WriteMapNullValue).getBytes(Charset.defaultCharset());
-        Long a = new Long(8 + bytes.length);
+        contactBeans.add(bean);
+        addContactDataFromClientBean.setData(contactBeans);
+
+        byte[] bytes = JSON.toJSONString(addContactDataFromClientBean, SerializerFeature.WriteMapNullValue).getBytes(Charset.defaultCharset());
+        Long a = new Long(bytes.length);
         byte[] b  = ByteOrderUtils.long2byte(a);
 
         byte[] datas = new byte[bytes.length + b.length];
