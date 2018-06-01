@@ -11,7 +11,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.digiarty.phoneassistant.R;
 import com.digiarty.phoneassistant.activity.MyNotification;
-import com.digiarty.phoneassistant.net.NetTaskManager;
+import com.digiarty.phoneassistant.model.net.NetTaskManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

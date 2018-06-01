@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.digiarty.phoneassistant.activity.MyNotification;
 import com.digiarty.phoneassistant.log.FileLog;
-import com.digiarty.phoneassistant.net.NetTaskManager;
+import com.digiarty.phoneassistant.model.net.NetTaskManager;
 import com.digiarty.phoneassistant.sharedpreference.IPreference;
 
 
