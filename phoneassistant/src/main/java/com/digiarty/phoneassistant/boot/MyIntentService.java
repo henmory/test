@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.support.annotation.Nullable;
 
 import com.digiarty.phoneassistant.activity.MyNotification;
-import com.digiarty.phoneassistant.net.NetTaskManager;
+import com.digiarty.phoneassistant.model.net.NetTaskManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

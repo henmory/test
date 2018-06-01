@@ -18,7 +18,7 @@ public class ContactBean {
     private String key ;//联系人(本地联系人id与key对应)
 
     //照片
-    private byte[] image; //照片
+    private String image; //照片
 
     //姓名
     private String firstName ; //名称
@@ -123,11 +123,11 @@ public class ContactBean {
         this.key = key;
     }
 
-    public byte[] getImage() {
+    public String getImage() {
         return image;
     }
 
-    public void setImage(byte[] image) {
+    public void setImage(String image) {
         this.image = image;
     }
 
@@ -255,7 +255,7 @@ public class ContactBean {
     public String toString() {
         return "ContactBean{" +
                 "key='" + key + '\'' +
-                ", image=" + Arrays.toString(image) +
+                ", image=" + image +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", middleName='" + middleName + '\'' +

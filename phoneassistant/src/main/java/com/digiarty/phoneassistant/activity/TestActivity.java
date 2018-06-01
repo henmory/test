@@ -7,8 +7,8 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.digiarty.phoneassistant.R;
-import com.digiarty.phoneassistant.model.ModelManager;
-import com.digiarty.phoneassistant.model.ProviderDataType;
+import com.digiarty.phoneassistant.model.dataprovider.ModelManager;
+import com.digiarty.phoneassistant.model.dataprovider.ProviderDataType;
 
 
 

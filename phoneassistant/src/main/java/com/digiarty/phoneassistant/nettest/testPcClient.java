@@ -1,11 +1,20 @@
 package com.digiarty.phoneassistant.nettest;
 
+import android.util.Base64;
+
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.digiarty.phoneassistant.bean.ContactBean;
+import com.digiarty.phoneassistant.utils.Base64Util;
 import com.digiarty.phoneassistant.utils.ByteOrderUtils;
 import com.digiarty.phoneassistant.utils.FileHelper;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,6 +24,9 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 /**
@@ -54,16 +66,28 @@ public class testPcClient {
             BufferedInputStream in = new BufferedInputStream(socket.getInputStream());
             boolean flag = true;
             while (flag) {
-                byte[] datas = sendCommand();
+                System.out.println("开始发送数据..................................");
+                byte[] datas = sendFile();
                 out.write(datas);
                 out.flush();
 
                 System.out.println("1 finish sending the data");
-                String strFormsocket = readFromSocket(in);
-                System.out.println("the data sent by server is: " + strFormsocket);
-                System.out.println("=============================================");
+//                System.out.println("开始读取数据..................................");
+//                String strFormsocket = readFromSocket(in);
+//                System.out.println("the data sent by server is: " + strFormsocket);
+                Thread.sleep(50000);
 
-                
+//                System.out.println("开始发送数据..................................");
+//                datas = sendData();
+//                System.out.println("发送的字符串为 " + new String(datas));
+//                out.write(datas);
+//                out.flush();
+//                Thread.sleep(3000);
+//
+//                System.out.println("开始读取数据..................................");
+//                strFormsocket = readFromSocket(in);
+//                System.out.println("the data sent by server is: " + strFormsocket);
+
             }
 
         } catch (UnknownHostException e1) {
@@ -103,11 +127,11 @@ public class testPcClient {
     private static byte[] sendCommand() {
 
 
-        String data = "{\"command\": \"AddContacts\", \"num\":20}";
+        String data = "{\"command\":\"AddContacts\",\"num\":\"20\"}";
         byte[] bytes = data.getBytes(Charset.defaultCharset());
 
         Long a = new Long(8 + bytes.length);
-        byte[] b  = ByteOrderUtils.changeLongBytestoBigEndian(a);
+        byte[] b  = ByteOrderUtils.long2byte(a);
 
         byte[] datas = new byte[bytes.length + b.length];
         int i = 0;
@@ -118,46 +142,130 @@ public class testPcClient {
         for (; j < bytes.length; j++, i++) {
             datas[i] = bytes[j];
         }
+        System.out.println("数据字节码为 : " + Arrays.toString(datas));
         return datas;
+    }
+    public static class A{
+        String command;
+        List<ContactBean> contactBeans;
+
+        public A() {
+        }
+
+        public String getCommand() {
+            return command;
+        }
+
+        public void setCommand(String command) {
+            this.command = command;
+        }
+
+        public List<ContactBean> getContactBeans() {
+            return contactBeans;
+        }
+
+        public void setContactBeans(List<ContactBean> contactBeans) {
+            this.contactBeans = contactBeans;
+        }
+    }
+
+    public static byte[] readPicture(String path){
+        BufferedInputStream in = null;
+        byte[] content = null;
+        try {
+            in = new BufferedInputStream(new FileInputStream(path));
+            ByteArrayOutputStream out = new ByteArrayOutputStream(1024);
+
+            byte[] temp = new byte[1024];
+            int size = 0;
+            while ((size = in.read(temp)) != -1) {
+                out.write(temp, 0, size);
+            }
+            in.close();
+            content = out.toByteArray();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return content;
+
     }
 
     private static byte[] sendData() {
-        return null;
+        A data = new A();
+        List<ContactBean> contactBeans = new ArrayList<>();
+        ContactBean bean =  new ContactBean();
+        bean.setCompanyName("company");
+        bean.setDepartment("department");
+        bean.setLastName("henmory");
+        bean.setFirstName("han");
+        bean.setMiddleName("maohui");
+        bean.setJobTitle("engineer");
+        bean.setKey("123456");
+        bean.setNickname("hmh");
+        bean.setKey("key");
+        bean.setAddressList(null);
+        bean.setEmailAddressList(null);
+        bean.setEvent(null);
+        bean.setImList(null);
+        bean.setNotes("note");
+        bean.setUrlList(null);
+        bean.setRelatedNameList(null);
+        bean.setPhoneNumberList(null);
+        contactBeans.add(bean);
+        byte[] image = readPicture("/Users/henmory/Downloads/2.jpg");
+        String str = Base64Util.encode(image);
+        bean.setImage(str);
+
+        data.setCommand("AddContacts");
+        data.setContactBeans(contactBeans);
+        byte[] bytes = JSON.toJSONString(data, SerializerFeature.WriteMapNullValue).getBytes(Charset.defaultCharset());
+        Long a = new Long(8 + bytes.length);
+        byte[] b  = ByteOrderUtils.long2byte(a);
+
+        byte[] datas = new byte[bytes.length + b.length];
+        System.out.println("发送给android的数据大小为 " + a);
+
+        int i = 0;
+        int j = 0;
+        for (; i < b.length; i++) {
+            datas[i] = b[i];
+        }
+        for (; j < bytes.length; j++, i++) {
+            datas[i] = bytes[j];
+        }
+        System.out.println("发送的字节码为 " + Arrays.toString(datas));
+
+        return datas;
+
     }
 
     private static byte[] sendFile() {
-//        out.write("4".getBytes());
-//        out.flush();
-//        System.out.println("send file finish sending the CMD：");
-//
-//        /* 服务器反馈：准备接收 */
-//        String strFormsocket = readFromSocket(in);
-//        System.out.println("service ready receice data:UPDATE_CONTACTS:" + strFormsocket);
-//        byte[] filebytes = FileHelper.readFile("ucliulanqi.apk");
-//        System.out.println("fileszie = " + filebytes.length);
-//        /* 将整数转成4字节byte数组 */
-//        byte[] filelength = new byte[4];
-//        filelength = MyUtil.intToByte(filebytes.length);
-//        byte[] fileformat = null;
-//        fileformat = ".png".getBytes();
-//        System.out.println("fileformat length=" + fileformat.length);
-//        /* 字节流中前4字节为文件长度，4字节文件格式，以后是文件流 */
-//        /* 注意如果write里的byte[]超过socket的缓存，系统自动分包写过去，所以对方要循环写完 */
-////					out.write(filelength);
-//        out.flush();
-//        String strok1 = readFromSocket(in);
-//        System.out.println("service receive filelength :" + strok1);
-//
-//        System.out.println("write data to android");
-////					out.write(filebytes);
-//        out.flush();
-//        System.out.println("*********");
-//
-//        /* 服务器反馈：接收成功 */
-//        String strread = readFromSocket(in);
-//        System.out.println(" send data success:" + strread);
-//        System.out.println("=============================================");
-        return null;
+
+        /* 服务器反馈：准备接收 */
+        byte[] filebytes = readPicture("/Users/henmory/Downloads/20180601_114647.jpg");
+        System.out.println("发送文件的大小 = " + filebytes.length);
+
+        /* 将整数转成4字节byte数组 */
+        byte[] filelength = new byte[8];
+        filelength = ByteOrderUtils.long2byte(filebytes.length);
+        System.out.println("大小的字节码 = " + Arrays.toString(filelength));
+
+
+        byte[] datas = new byte[filebytes.length + 8];
+        int i = 0;
+        int j = 0;
+        for (; i < filelength.length; i++) {
+            datas[i] = filelength[i];
+        }
+        for (; j < filebytes.length; j++, i++) {
+            datas[i] = filebytes[j];
+        }
+        System.out.println("数据字节码为 : " + Arrays.toString(datas));
+        return datas;
     }
+
+
 }
 

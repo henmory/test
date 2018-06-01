@@ -12,7 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import com.digiarty.phoneassistant.R;
 import com.digiarty.phoneassistant.boot.GlobalApplication;
 import com.digiarty.phoneassistant.boot.MyIntentService;
-import com.digiarty.phoneassistant.net.ServerConfig;
+import com.digiarty.phoneassistant.model.net.ServerConfig;
 import com.digiarty.phoneassistant.presenter.PermissionManager;
 
 import org.slf4j.Logger;

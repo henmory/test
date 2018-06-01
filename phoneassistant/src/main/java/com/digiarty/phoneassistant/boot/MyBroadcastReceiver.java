@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.digiarty.phoneassistant.net.ServerConfig;
+import com.digiarty.phoneassistant.model.net.ServerConfig;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
