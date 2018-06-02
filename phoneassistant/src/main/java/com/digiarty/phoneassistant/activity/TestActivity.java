@@ -44,13 +44,12 @@ public class TestActivity extends AppCompatActivity implements ActivityCompat.On
         ContactAction.ContactBeans beans = new ContactAction.ContactBeans();
 
         ContactBean bean =  new ContactBean();
-        bean.setCompanyName("company");
-        bean.setDepartment("department");
-        bean.setLastName("henmory");
-        bean.setFirstName("han");
-        bean.setMiddleName("maohui");
+        bean.setCompanyName("digiarty");
+        bean.setDepartment("development");
+        bean.setLastName("111");
+        bean.setFirstName("111");
+        bean.setMiddleName("hen111mory");
         bean.setJobTitle("engineer");
-        bean.setKey("123456");
         bean.setNickname("hmh");
         bean.setKey("key");
 
@@ -67,24 +66,49 @@ public class TestActivity extends AppCompatActivity implements ActivityCompat.On
         bean.setAddressList(entities);
 
         ContactBean.ContactKeyValueEntity entity1 = new ContactBean.ContactKeyValueEntity();
+        List<ContactBean.ContactKeyValueEntity> entitie = new ArrayList<>();
+
         entity1.setType("home");
         entity1.setValue("han@gmail.com");
-        List<ContactBean.ContactKeyValueEntity> entitie = new ArrayList<>();
+        entitie.add(entity1);
+        entity1.setType("1");
+        entity1.setValue("han@163.com");
         entitie.add(entity1);
 
         bean.setEmailAddressList(entitie);
 
+        entity1.setType("结婚纪念日");
+        entity1.setValue("2017-08-29");
+        entitie.add(entity1);
         bean.setEvent(entitie);
 
         bean.setImList(entitie);
         bean.setNotes("note");
 
+
+        entity1.setType("www.digiarty.com");
+        entity1.setValue("");
+        entitie.add(entity1);
         bean.setUrlList(entitie);
 
+
+        entity1.setType("姐姐");
+        entity1.setValue("dan");
+        entitie.add(entity1);
+        entity1.setType("妻子");
+        entity1.setValue("qin");
+        entitie.add(entity1);
         bean.setRelatedNameList(entitie);
 
+        entity1.setType("home");
+        entity1.setValue("13488783238");
+        entitie.add(entity1);
+        entity1.setType("work");
+        entity1.setValue("17711353996");
+        entitie.add(entity1);
         bean.setPhoneNumberList(entitie);
-        byte[] image = FileHelper.readBytes(new File("/Users/henmory/Downloads/2.jpg"));
+
+        byte[] image = FileHelper.readBytes(new File("/storage/emulated/0/DCIM/1.png"));
         beans.setContactBean(bean);
         beans.setImage(image);
         contactBeans.add(beans);

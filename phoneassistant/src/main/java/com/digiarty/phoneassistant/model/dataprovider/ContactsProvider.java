@@ -1,6 +1,7 @@
 package com.digiarty.phoneassistant.model.dataprovider;
 
 import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
@@ -380,49 +381,193 @@ class ContactsProvider {
         ArrayList<ContentProviderOperation> ops = new ArrayList<>();
         ContactAction.ContactBeans bean;
         int rawContactInsertIndex = 0;
+
         for (int i = 0; i < contactBeans.size(); i++) {
             rawContactInsertIndex = ops.size();
             bean = contactBeans.get(i);
 
-            //账户相关
+            // TODO: 6/2/18 账户相关信息
+            //账户相关=======需要确认
             ContentProviderOperation.Builder op = ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
                     .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE, "tupe")
                     .withValue(ContactsContract.RawContacts.ACCOUNT_NAME, "name");
             ops.add(op.build());
+
+            // TODO: 6/2/18 图像原图
+            //头像相关
+            op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)//缩略图通过
+//                    .withValue(ContactsContract.CommonDataKinds.Photo.PHOTO_FILE_ID, bean.getImage())  //文件ID为实际图片id
+                    .withValue(ContactsContract.CommonDataKinds.Photo.PHOTO, bean.getImage());
+            ops.add(op.build());
+
+
             //名字相关
             op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                     .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
                     .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
-                    .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, bean.getContactBean().getFirstName());
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, bean.getContactBean().getFirstName())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.FAMILY_NAME, bean.getContactBean().getLastName())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.FULL_NAME_STYLE,bean.getContactBean().getFirstName())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.GIVEN_NAME,bean.getContactBean().getFirstName())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.MIDDLE_NAME,bean.getContactBean().getFirstName())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.PHONETIC_FAMILY_NAME,bean.getContactBean().getFirstName())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.PHONETIC_GIVEN_NAME,bean.getContactBean().getFirstName())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.PHONETIC_MIDDLE_NAME,bean.getContactBean().getFirstName())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.PHONETIC_NAME_STYLE,bean.getContactBean().getFirstName())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.PREFIX,bean.getContactBean().getFirstName())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredName.SUFFIX,bean.getContactBean().getFirstName());
             ops.add(op.build());
+
+            //公司相关
+            op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Organization.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Organization.COMPANY, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Organization.DEPARTMENT, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Organization.JOB_DESCRIPTION, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Organization.OFFICE_LOCATION, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Organization.PHONETIC_NAME, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Organization.PHONETIC_NAME_STYLE, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Organization.SYMBOL, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Organization.TITLE, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Organization.TYPE, 2);
+            ops.add(op.build());
+
+
             //电话相关
             op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                     .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
                     .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER, bean.getContactBean().getPhoneNumberList().get(0).getValue())
                     .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, bean.getContactBean().getPhoneNumberList().get(0).getValue())
-                    .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, "住宅");
+                    .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, 1);
             ops.add(op.build());
+
+
 
             //邮件相关
             op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                     .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
                     .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_TYPE)
                     .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, bean.getContactBean().getEmailAddressList().get(0).getValue())
-                    .withValue(ContactsContract.CommonDataKinds.Email.TYPE, "home");
+                    .withValue(ContactsContract.CommonDataKinds.Email.DISPLAY_NAME, bean.getContactBean().getEmailAddressList().get(0).getValue())
+                    .withValue(ContactsContract.CommonDataKinds.Email.TYPE, bean.getContactBean().getEmailAddressList().get(0).getType());
             ops.add(op.build());
 
-            //头像相关
+
+            //邮寄地址相关
             op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                     .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
-                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Photo.CONTENT_ITEM_TYPE)//缩略图通过
-                    .withValue(ContactsContract.CommonDataKinds.Photo.PHOTO, bean.getImage());
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredPostal.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.StructuredPostal.CITY, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredPostal.COUNTRY, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredPostal.FORMATTED_ADDRESS, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredPostal.NEIGHBORHOOD, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredPostal.POBOX, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredPostal.REGION, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredPostal.STREET, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.StructuredPostal.TYPE, 2);
+            ops.add(op.build());
+
+
+
+            //网址相关
+            op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Website.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Website.URL, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Website.TYPE, 2);
+            ops.add(op.build());
+
+
+            //事件相关
+            op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Event.START_DATE, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Event.TYPE, 2);
+            ops.add(op.build());
+
+
+
+            //注释相关
+            op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Note.NOTE, bean.getImage());
+            ops.add(op.build());
+
+            //IM相关
+            op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Im.CUSTOM_PROTOCOL, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Im.PROTOCOL, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Im.TYPE, 2);
+            ops.add(op.build());
+
+            //昵称相关
+            op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Nickname.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Nickname.NAME, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Nickname.TYPE, 2);
+            ops.add(op.build());
+
+
+            //关系相关
+            op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Relation.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Relation.NAME, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Relation.TYPE, 2);
+
+
+   /*
+
+             群组相关
+            op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Event.TYPE, 2);
+            ops.add(op.build());
+
+            //id相关
+            op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Identity.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Identity.IDENTITY, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Identity.NAMESPACE, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Event.TYPE, 2);
+            ops.add(op.build());
+
+            //地址相关
+            op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.SipAddress.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.SipAddress.SIP_ADDRESS, bean.getImage())
+                    .withValue(ContactsContract.CommonDataKinds.Event.TYPE, 2);
+            ops.add(op.build());
+
+           */
 
             op.withYieldAllowed(true);
 
             ops.add(op.build());
 
             try {
-                contentResolver.applyBatch(ContactsContract.AUTHORITY, ops);
+                ContentProviderResult[] results = contentResolver.applyBatch(ContactsContract.AUTHORITY, ops);
+                System.out.println("lenth = " + results.length);
+                for (int j = 0; j < results.length; j++){
+                    System.out.println(results[i].describeContents());
+                    System.out.println(results[i].toString());
+                }
             } catch (RemoteException e) {
                 e.printStackTrace();
                 logger.debug("异常发生 " + e.getMessage());
