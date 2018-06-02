@@ -6,6 +6,8 @@
 /.idea/workspace.xml
 /.idea/misc.xml
 /.idea/caches
+/.idea/*.xml
+/.idea
 .DS_Store
 /build
 /captures
