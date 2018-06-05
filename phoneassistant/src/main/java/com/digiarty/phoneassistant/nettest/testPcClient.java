@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.digiarty.phoneassistant.model.bean.beanfromclient.AddContactDataFromClientBean;
 import com.digiarty.phoneassistant.model.bean.beanfromclient.ContactBean;
+import com.digiarty.phoneassistant.model.dataparse.ContactAction;
 import com.digiarty.phoneassistant.utils.Base64Util;
 import com.digiarty.phoneassistant.utils.ByteOrderUtils;
 import java.io.BufferedInputStream;
@@ -59,25 +60,25 @@ public class testPcClient {
             BufferedOutputStream out = new BufferedOutputStream(socket.getOutputStream());
             BufferedInputStream in = new BufferedInputStream(socket.getInputStream());
             boolean flag = true;
+
+            System.out.println("开始发送命令..................................");
+            byte[] datas = sendCommand();
+            out.write(datas);
+            out.flush();
+
+            System.out.println("1 finish sending the data");
+            System.out.println("开始读取数据..................................");
+            String strFormsocket = readFromSocket(in);
+            System.out.println("the data sent by server is: " + strFormsocket);
+
             while (flag) {
-
-                System.out.println("开始发送数据..................................");
-                byte[] datas = sendCommand();
-                out.write(datas);
-                out.flush();
-
-                System.out.println("1 finish sending the data");
-                System.out.println("开始读取数据..................................");
-                String strFormsocket = readFromSocket(in);
-                System.out.println("the data sent by server is: " + strFormsocket);
-                Thread.sleep(5000);
 
                 System.out.println("开始发送数据..................................");
                 datas = sendData();
                 System.out.println("发送的字符串为 " + new String(datas));
                 out.write(datas);
                 out.flush();
-                Thread.sleep(3000);
+                Thread.sleep(5000);
 
                 System.out.println("开始读取数据..................................");
                 strFormsocket = readFromSocket(in);
@@ -122,7 +123,7 @@ public class testPcClient {
     private static byte[] sendCommand() {
 
 
-        String data = "{\"Command\":\"AddContacts\",\"Num\":\"20\"}";
+        String data = "{\"Command\":\"AddContacts\",\"Num\":\"5\"}";
         byte[] bytes = data.getBytes(Charset.defaultCharset());
 
         Long a = new Long(bytes.length);
@@ -169,32 +170,99 @@ public class testPcClient {
         AddContactDataFromClientBean addContactDataFromClientBean = new AddContactDataFromClientBean();
         addContactDataFromClientBean.setCommand("AddContacts");
 
-        List<ContactBean> contactBeans = new ArrayList<>();
-        ContactBean bean =  new ContactBean();
-        bean.setCompanyName("company");
-        bean.setDepartment("department");
-        bean.setLastName("henmory");
-        bean.setFirstName("han");
-        bean.setMiddleName("maohui");
-        bean.setJobTitle("engineer");
-        bean.setKey("123456");
-        bean.setNickname("hmh");
+        List<ContactBean> beanList = new ArrayList<>();
+        ContactBean bean = new ContactBean();
+        //设置key
         bean.setKey("key");
-        bean.setAddressList(null);
-        bean.setEmailAddressList(null);
-        bean.setEvent(null);
-        bean.setImList(null);
-        bean.setNotes("note");
-        bean.setUrlList(null);
-        bean.setRelatedNameList(null);
-        bean.setPhoneNumberList(null);
+
+        //设置图片
+//        byte[] image = FileHelper.readBytes(new File("/storage/emulated/0/DCIM/1.png"));
+//        beanWrap.setImage(image);
+
+        //设置名字
+        bean.setLastName("aaa");
+        bean.setFirstName("aaa");
+        bean.setMiddleName("hen111mory");
+
+        //设置组织
+        bean.setCompanyName("digiarty");
+        bean.setDepartment("development");
+        bean.setJobTitle("engineer");
+
+        //设置手机
+        List<ContactBean.ContactKeyValueEntity> phoneList = new ArrayList<>();
+        phoneList.add(new ContactBean.ContactKeyValueEntity(2+"", "13488783239"));
+        phoneList.add(new ContactBean.ContactKeyValueEntity(1+"", "1215644454565"));
+        bean.setPhoneNumberList(phoneList);
+
+        //设置电子邮箱
+        List<ContactBean.ContactKeyValueEntity> mailList = new ArrayList<>();
+        mailList.add(new ContactBean.ContactKeyValueEntity(2+"", "han@gmail.com"));
+        mailList.add(new ContactBean.ContactKeyValueEntity(1+"", "han@163.com"));
+        bean.setEmailAddressList(phoneList);
+
+        //设置地址
+        List<ContactBean.ContactAddressEntity> addressEntityList = new ArrayList<>();
+
+        ContactBean.ContactAddressEntity addressEntity = new ContactBean.ContactAddressEntity();
+        addressEntity.setCity("chengdu");
+        addressEntity.setCountry("china");
+        addressEntity.setPostalCode("20155");
+        addressEntity.setState("sichuan");
+        addressEntity.setStreet("tianfu 3th");
+        addressEntity.setType("home");
+        addressEntityList.add(addressEntity);
+
+        bean.setAddressList(addressEntityList);
+
+        //设置网址
+        List<ContactBean.ContactKeyValueEntity> urlList = new ArrayList<>();
+        urlList.add(new ContactBean.ContactKeyValueEntity(2+"", "www.baidu.com"));
+        urlList.add(new ContactBean.ContactKeyValueEntity(1+"", "www.digiarty.com"));
+        bean.setUrlList(urlList);
+
+        //设置事件
+        List<ContactBean.ContactKeyValueEntity> eventList = new ArrayList<>();
+        eventList.add(new ContactBean.ContactKeyValueEntity(2+"", "2018112456658"));
+        eventList.add(new ContactBean.ContactKeyValueEntity(1+"", "201811245665855555"));
+        bean.setEvent(eventList);
+
+
+        //设置注释 todo 与ios不同
+//        List<ContactBean.ContactKeyValueEntity> noteList = new ArrayList<>();
+//        noteList.add(new ContactBean.ContactKeyValueEntity(2+"", "注释1"));
+//        noteList.add(new ContactBean.ContactKeyValueEntity(1+"", "注释12"));
+//        bean.setNotes(noteList);
+        bean.setNotes("注释");
+
+        //设置im
+        List<ContactBean.ContactKeyValueEntity> IMList = new ArrayList<>();
+        IMList.add(new ContactBean.ContactKeyValueEntity(2+"", "qq15156465"));
+        IMList.add(new ContactBean.ContactKeyValueEntity(1+"", "gmail 456465"));
+        bean.setImList(IMList);
+
+        //设置昵称
+        bean.setNickname("hmh");
+
+        //设置关系
+        List<ContactBean.ContactKeyValueEntity> relationList = new ArrayList<>();
+        relationList.add(new ContactBean.ContactKeyValueEntity(2+"", "李四"));
+        relationList.add(new ContactBean.ContactKeyValueEntity(1+"", "张三"));
+        bean.setRelatedNameList(relationList);
+
+
+        beanList.add(bean);
+        beanList.add(bean);
+        addContactDataFromClientBean.setData(beanList);
+
+
+
+
 
         byte[] image = readPicture("/Users/henmory/Downloads/2.jpg");
         String str = Base64Util.encode(image);
         bean.setImage(str);
 
-        contactBeans.add(bean);
-        addContactDataFromClientBean.setData(contactBeans);
 
         byte[] bytes = JSON.toJSONString(addContactDataFromClientBean, SerializerFeature.WriteMapNullValue).getBytes(Charset.defaultCharset());
         Long a = new Long(bytes.length);

@@ -1,6 +1,11 @@
 package com.digiarty.phoneassistant.activity;
 
+import android.content.ContentProviderOperation;
+import android.content.ContentProviderResult;
+import android.content.OperationApplicationException;
 import android.os.Bundle;
+import android.os.RemoteException;
+import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -8,6 +13,7 @@ import android.widget.TextView;
 
 import com.digiarty.phoneassistant.R;
 import com.digiarty.phoneassistant.model.bean.beanfromclient.ContactBean;
+import com.digiarty.phoneassistant.model.bean.beantoclient.AddContactCommandToClientBean;
 import com.digiarty.phoneassistant.model.dataparse.ContactAction;
 import com.digiarty.phoneassistant.model.dataprovider.ModelManager;
 import com.digiarty.phoneassistant.model.dataprovider.ProviderDataType;
@@ -22,6 +28,7 @@ import java.util.List;
 public class TestActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
     private TextView textView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,83 +44,135 @@ public class TestActivity extends AppCompatActivity implements ActivityCompat.On
         System.out.println(modelManager.getDatas(this, ProviderDataType.CONTACT));
 
     }
+    public void deleteContactMessage(View view){
+        ArrayList<ContentProviderOperation> ops = new ArrayList<>();
+
+        ContentProviderOperation.Builder op = ContentProviderOperation.newDelete(ContactsContract.Data.CONTENT_URI)
+                .withSelection("raw_contact_id=?",new String[]{"1"});
+        ops.add(op.build());
+        op.withYieldAllowed(true);
+
+        ops.add(op.build());
+
+        try {
+            ContentProviderResult[] results = this.getContentResolver().applyBatch(ContactsContract.AUTHORITY, ops);
+            System.out.println("lenth = " + results.length);
+            for (int j = 0; j < results.length; j++) {
+                System.out.println(results[j].toString());
+            }
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+            System.out.println("异常发生 " + e.getMessage());
+        } catch (OperationApplicationException e) {
+            e.printStackTrace();
+            System.out.println("异常发生2 " + e.getMessage());
+        }
+    }
 
     public void insetContactMessage(View view) {
         ModelManager modelManager = ModelManager.getInstance();
-        List<ContactAction.ContactBeans> contactBeans = new ArrayList<>();
-        ContactAction.ContactBeans beans = new ContactAction.ContactBeans();
 
-        ContactBean bean =  new ContactBean();
-        bean.setCompanyName("digiarty");
-        bean.setDepartment("development");
-        bean.setLastName("111");
-        bean.setFirstName("111");
-        bean.setMiddleName("hen111mory");
-        bean.setJobTitle("engineer");
-        bean.setNickname("hmh");
-        bean.setKey("key");
+        List<ContactAction.ContactBeanWrap> contactBeans = new ArrayList<>();
 
-        ContactBean.ContactAddressEntity entity = new ContactBean.ContactAddressEntity();
-        entity.setCity("chengdu");
-        entity.setCountry("china");
-        entity.setPostalCode("20155");
-        entity.setState("sichuan");
-        entity.setStreet("tianfu 3th");
-        entity.setType("home");
-        List<ContactBean.ContactAddressEntity> entities = new ArrayList<>();
-        entities.add(entity);
-
-        bean.setAddressList(entities);
-
-        ContactBean.ContactKeyValueEntity entity1 = new ContactBean.ContactKeyValueEntity();
-        List<ContactBean.ContactKeyValueEntity> entitie = new ArrayList<>();
-
-        entity1.setType("home");
-        entity1.setValue("han@gmail.com");
-        entitie.add(entity1);
-        entity1.setType("1");
-        entity1.setValue("han@163.com");
-        entitie.add(entity1);
-
-        bean.setEmailAddressList(entitie);
-
-        entity1.setType("结婚纪念日");
-        entity1.setValue("2017-08-29");
-        entitie.add(entity1);
-        bean.setEvent(entitie);
-
-        bean.setImList(entitie);
-        bean.setNotes("note");
-
-
-        entity1.setType("www.digiarty.com");
-        entity1.setValue("");
-        entitie.add(entity1);
-        bean.setUrlList(entitie);
-
-
-        entity1.setType("姐姐");
-        entity1.setValue("dan");
-        entitie.add(entity1);
-        entity1.setType("妻子");
-        entity1.setValue("qin");
-        entitie.add(entity1);
-        bean.setRelatedNameList(entitie);
-
-        entity1.setType("home");
-        entity1.setValue("13488783238");
-        entitie.add(entity1);
-        entity1.setType("work");
-        entity1.setValue("17711353996");
-        entitie.add(entity1);
-        bean.setPhoneNumberList(entitie);
-
-        byte[] image = FileHelper.readBytes(new File("/storage/emulated/0/DCIM/1.png"));
-        beans.setContactBean(bean);
-        beans.setImage(image);
-        contactBeans.add(beans);
-
-
-        modelManager.insertDatas(this, ProviderDataType.CONTACT, contactBeans);
+        handleData(contactBeans);
+        System.out.println(contactBeans.size());
+        ArrayList<AddContactCommandToClientBean.Result> replies = (ArrayList<AddContactCommandToClientBean.Result>) modelManager.insertDatas(this, ProviderDataType.CONTACT, contactBeans);
+        for (int i = 0; i < replies.size(); i++){
+            System.out.println(replies.get(i));
+        }
     }
+
+    private void handleData(List<ContactAction.ContactBeanWrap> contactBeans) {
+
+
+
+        for (int i = 0; i < 1; i++){
+            ContactAction.ContactBeanWrap beanWrap1 = new ContactAction.ContactBeanWrap();
+            ContactBean bean = new ContactBean();
+            //设置key
+            bean.setKey("key" + i);
+
+            //设置图片
+//        byte[] image = FileHelper.readBytes(new File("/storage/emulated/0/DCIM/1.png"));
+//        beanWrap.setImage(image);
+
+            //设置名字
+            bean.setLastName("aaa");
+            bean.setFirstName("aaa");
+            bean.setMiddleName("hen111mory");
+
+            //设置组织
+            bean.setCompanyName("digiarty");
+            bean.setDepartment("development");
+            bean.setJobTitle("engineer");
+
+            //设置手机
+            List<ContactBean.ContactKeyValueEntity> phoneList = new ArrayList<>();
+            phoneList.add(new ContactBean.ContactKeyValueEntity(2+"", "13488783239"));
+            phoneList.add(new ContactBean.ContactKeyValueEntity(1+"", "1215644454565"));
+            bean.setPhoneNumberList(phoneList);
+
+            //设置电子邮箱
+            List<ContactBean.ContactKeyValueEntity> mailList = new ArrayList<>();
+            mailList.add(new ContactBean.ContactKeyValueEntity(2+"", "han@gmail.com"));
+            mailList.add(new ContactBean.ContactKeyValueEntity(1+"", "han@163.com"));
+            bean.setEmailAddressList(mailList);
+
+            //设置地址
+            List<ContactBean.ContactAddressEntity> addressEntityList = new ArrayList<>();
+
+            ContactBean.ContactAddressEntity addressEntity = new ContactBean.ContactAddressEntity();
+            addressEntity.setCity("chengdu");
+            addressEntity.setCountry("china");
+            addressEntity.setPostalCode("20155");
+            addressEntity.setState("sichuan");
+            addressEntity.setStreet("tianfu 3th");
+            addressEntity.setType("home");
+            addressEntityList.add(addressEntity);
+
+            bean.setAddressList(addressEntityList);
+
+            //设置网址
+            List<ContactBean.ContactKeyValueEntity> urlList = new ArrayList<>();
+            urlList.add(new ContactBean.ContactKeyValueEntity(2+"", "www.baidu.com"));
+            urlList.add(new ContactBean.ContactKeyValueEntity(1+"", "www.digiarty.com"));
+            bean.setUrlList(urlList);
+
+            //设置事件
+            List<ContactBean.ContactKeyValueEntity> eventList = new ArrayList<>();
+            eventList.add(new ContactBean.ContactKeyValueEntity(2+"", "2018112456658"));
+            eventList.add(new ContactBean.ContactKeyValueEntity(1+"", "201811245665855555"));
+            bean.setEvent(eventList);
+
+
+            //设置注释 todo 与ios不同
+//        List<ContactBean.ContactKeyValueEntity> noteList = new ArrayList<>();
+//        noteList.add(new ContactBean.ContactKeyValueEntity(2+"", "注释1"));
+//        noteList.add(new ContactBean.ContactKeyValueEntity(1+"", "注释12"));
+//        bean.setNotes(noteList);
+            bean.setNotes("注释");
+
+            //设置im
+            List<ContactBean.ContactKeyValueEntity> IMList = new ArrayList<>();
+            IMList.add(new ContactBean.ContactKeyValueEntity(2+"", "qq15156465"));
+            IMList.add(new ContactBean.ContactKeyValueEntity(1+"", "gmail 456465"));
+            bean.setImList(IMList);
+
+            //设置昵称
+            bean.setNickname("hmh");
+
+            //设置关系
+            List<ContactBean.ContactKeyValueEntity> relationList = new ArrayList<>();
+            relationList.add(new ContactBean.ContactKeyValueEntity(2+"", "李四"));
+            relationList.add(new ContactBean.ContactKeyValueEntity(1+"", "张三"));
+            bean.setRelatedNameList(relationList);
+
+            beanWrap1.setContactBean(bean);
+            contactBeans.add(beanWrap1);
+
+        }
+    }
+
+
 }

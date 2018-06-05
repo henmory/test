@@ -1,5 +1,7 @@
 package com.digiarty.phoneassistant.model.bean.beanfromclient;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 /***
  *
  * Created on：2018/5/31
@@ -11,7 +13,9 @@ package com.digiarty.phoneassistant.model.bean.beanfromclient;
  *
  **/
 public class AddContactCommandFromClientBean {
+    @JSONField(name = "Command")
     private String Command;
+    @JSONField(name = "Num")
     private String Num;
 
     public AddContactCommandFromClientBean() {

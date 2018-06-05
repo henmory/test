@@ -65,7 +65,7 @@ public class NetTaskManager {
         while (true) {
             if (task.serverSocket != null) {
                 logger.debug("android端服务器开启成功，准备开始新任务通知PC自己的端口号码");
-//                newTaskToSendAndroidServerPortForPCToForward(task.serverSocket.getLocalPort());
+                newTaskToSendAndroidServerPortForPCToForward(task.serverSocket.getLocalPort());
                 break;
             }
         }

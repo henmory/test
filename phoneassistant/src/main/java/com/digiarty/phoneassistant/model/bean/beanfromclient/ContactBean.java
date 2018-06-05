@@ -1,5 +1,7 @@
 package com.digiarty.phoneassistant.model.bean.beanfromclient;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,31 +17,50 @@ import java.util.List;
  **/
 public class ContactBean {
 
+    @JSONField(name = "Key")
     private String Key;//联系人(本地联系人id与key对应)
     //照片
+    @JSONField(name = "Image")
     private String Image; //照片
     //姓名
+    @JSONField(name = "FirstName")
     private String FirstName; //名称
+    @JSONField(name = "Prefix")
     private String Prefix;//前缀
+    @JSONField(name = "LastName")
     private String LastName; //姓
+    @JSONField(name = "Sufix")
     private String Sufix;//后缀
+    @JSONField(name = "MiddleName")
     private String MiddleName;
     //组织
+    @JSONField(name = "JobTitle")
     private String JobTitle;//职位
+    @JSONField(name = "CompanyName")
     private String CompanyName; //公司名
+    @JSONField(name = "Department")
     private String Department; //部门
     //电话列表
+    @JSONField(name = "PhoneNumberList")
     private List<ContactKeyValueEntity> PhoneNumberList;
     //邮箱列表
+    @JSONField(name = "EmailAddressList")
     private List<ContactKeyValueEntity> EmailAddressList;
     //群组[0]
+    @JSONField(name = "AddressList")
     private List<ContactAddressEntity> AddressList; //地址
+    @JSONField(name = "UrlList")
     private List<ContactKeyValueEntity> UrlList;//网址
+    @JSONField(name = "Event")
     private List<ContactKeyValueEntity> Event; //事件日期
+    @JSONField(name = "Notes")
     private String Notes;//注释
+    @JSONField(name = "ImList")
     private List<ContactKeyValueEntity> ImList;//即时通信账号
+    @JSONField(name = "Nickname")
     private String Nickname;//昵称
     //关系
+    @JSONField(name = "RelatedNameList")
     private List<ContactKeyValueEntity> RelatedNameList; //关系
 
     public ContactBean() {
@@ -232,11 +253,17 @@ public class ContactBean {
 
 
     public static class ContactAddressEntity {
+        @JSONField(name = "Type")
         private String Type;//类型
+        @JSONField(name = "Street")
         private String Street;//街道
+        @JSONField(name = "City")
         private String City; //城市
+        @JSONField(name = "State")
         private String State; //州
+        @JSONField(name = "PostalCode")
         private String PostalCode;//邮编
+        @JSONField(name = "Country")
         private String Country; //国家
 
         public ContactAddressEntity() {
@@ -304,11 +331,18 @@ public class ContactBean {
         }
     }
     public static class ContactKeyValueEntity {
+        @JSONField(name = "Type")
         private String Type;//类型
+        @JSONField(name = "Value")
         private String Value; //号码
 
 
         public ContactKeyValueEntity() {
+        }
+
+        public ContactKeyValueEntity(String type, String value) {
+            Type = type;
+            Value = value;
         }
 
         public String getType() {

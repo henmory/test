@@ -83,8 +83,7 @@ public class ModelManager<T>  {
                 break;
             case CONTACT:
                 logger.debug("开始插入数据，获取的数据类型为：CONTACT");
-                new ContactsProvider(context).insertData(context, (List<ContactAction.ContactBeans>) t);
-                return null;
+                return (List<T>) new ContactsProvider(context).insertData(context, (List<ContactAction.ContactBeanWrap>) t);
             default:
                 logger.debug("获取数据类型未知");
                 break;

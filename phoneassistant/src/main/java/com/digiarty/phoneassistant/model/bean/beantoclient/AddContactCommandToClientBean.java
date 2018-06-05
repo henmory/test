@@ -1,5 +1,7 @@
 package com.digiarty.phoneassistant.model.bean.beantoclient;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.util.ArrayList;
 
 /***
@@ -13,20 +15,23 @@ import java.util.ArrayList;
  *
  **/
 public class AddContactCommandToClientBean {
-    private String Command;
+//    @JSONField(name = "Command")
+//    private String Command;
+    @JSONField(name = "Result")
     ArrayList<Result> Result;
+    @JSONField(name = "Request")
     Request Request;
 
     public AddContactCommandToClientBean() {
     }
 
-    public String getCommand() {
-        return Command;
-    }
-
-    public void setCommand(String command) {
-        Command = command;
-    }
+//    public String getCommand() {
+//        return Command;
+//    }
+//
+//    public void setCommand(String command) {
+//        Command = command;
+//    }
 
     public ArrayList<AddContactCommandToClientBean.Result> getResult() {
         return Result;
@@ -47,15 +52,18 @@ public class AddContactCommandToClientBean {
     @Override
     public String toString() {
         return "AddContactCommandToClientBean{" +
-                "Command='" + Command + '\'' +
+//                "Command='" + Command + '\'' +
                 ", Result=" + Result +
                 ", Request=" + Request +
                 '}';
     }
 
     public static class Result {
+        @JSONField(name = "Oid")
         private String Oid;
+        @JSONField(name = "Nid")
         private String Nid;
+        @JSONField(name = "State")
         private String State;
 
         public Result() {
@@ -96,6 +104,7 @@ public class AddContactCommandToClientBean {
     }
 
     public static class Request {
+        @JSONField(name = "Num")
         private String Num;
 
         public Request() {

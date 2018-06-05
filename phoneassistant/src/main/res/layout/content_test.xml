@@ -26,4 +26,10 @@
         android:layout_height="wrap_content"
         android:text="插入联系人信息"
         android:onClick="insetContactMessage"/>
+    <Button
+        android:id="@+id/button_delete"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="删除联系人信息"
+        android:onClick="deleteContactMessage"/>
 </LinearLayout>
