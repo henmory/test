@@ -255,6 +255,8 @@ public class ContactBean {
     public static class ContactAddressEntity {
         @JSONField(name = "Type")
         private String Type;//类型
+        @JSONField(name = "Lable")
+        private String Lable;//自定义类型
         @JSONField(name = "Street")
         private String Street;//街道
         @JSONField(name = "City")
@@ -268,7 +270,13 @@ public class ContactBean {
 
         public ContactAddressEntity() {
         }
+        public String getLable() {
+            return Lable;
+        }
 
+        public void setLable(String lable) {
+            Lable = lable;
+        }
 
         public String getType() {
             return Type;
@@ -322,6 +330,7 @@ public class ContactBean {
         public String toString() {
             return "ContactAddressEntity{" +
                     "Type='" + Type + '\'' +
+                    ", Lable='" + Lable + '\'' +
                     ", Street='" + Street + '\'' +
                     ", City='" + City + '\'' +
                     ", State='" + State + '\'' +
@@ -330,12 +339,15 @@ public class ContactBean {
                     '}';
         }
     }
+
+    // TODO: 2018/6/5 添加label字段 
     public static class ContactKeyValueEntity {
         @JSONField(name = "Type")
         private String Type;//类型
         @JSONField(name = "Value")
         private String Value; //号码
-
+        @JSONField(name = "Lable")
+        private String lable;
 
         public ContactKeyValueEntity() {
         }
@@ -343,6 +355,12 @@ public class ContactBean {
         public ContactKeyValueEntity(String type, String value) {
             Type = type;
             Value = value;
+        }
+
+        public ContactKeyValueEntity(String type, String value, String lable) {
+            Type = type;
+            Value = value;
+            this.lable = lable;
         }
 
         public String getType() {
@@ -361,11 +379,20 @@ public class ContactBean {
             Value = value;
         }
 
+        public String getLable() {
+            return lable;
+        }
+
+        public void setLable(String lable) {
+            this.lable = lable;
+        }
+
         @Override
         public String toString() {
             return "ContactKeyValueEntity{" +
                     "Type='" + Type + '\'' +
                     ", Value='" + Value + '\'' +
+                    ", lable='" + lable + '\'' +
                     '}';
         }
     }

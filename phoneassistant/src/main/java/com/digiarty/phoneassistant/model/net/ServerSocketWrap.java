@@ -228,7 +228,7 @@ class ServerSocketWrap {
             logger.debug("inputStream 为空");
             return null;
         }
-        logger.debug("读取到PC端字节码为 " + Arrays.toString(datas));
+//        logger.debug("读取到PC端字节码为 " + Arrays.toString(datas));
         return datas;
     }
 

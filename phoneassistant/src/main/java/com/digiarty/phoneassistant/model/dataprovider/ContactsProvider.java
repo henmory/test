@@ -443,13 +443,20 @@ class ContactsProvider {
 
             //电话相关
             for (int j = 0; j < beanWrap.getContactBean().getPhoneNumberList().size(); j++) {
+
+                String phone = beanWrap.getContactBean().getPhoneNumberList().get(j).getValue();
+                String type = beanWrap.getContactBean().getPhoneNumberList().get(j).getType();
+                if (phone.length() == 0 || phone == null){
+                    continue;
+                }
                 op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
                         .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
 //                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE)
 //                    .withValue(ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER, beanWrap.getContactBean().getPhoneNumberList().get(0).getValue())
-                        .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, beanWrap.getContactBean().getPhoneNumberList().get(j).getValue())
-                        .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, beanWrap.getContactBean().getPhoneNumberList().get(j).getType());
+                        .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, phone)
+                        .withValue(ContactsContract.CommonDataKinds.Phone.LABEL, beanWrap.getContactBean().getPhoneNumberList().get(j).getLable())
+                        .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, type);
                 ops.add(op.build());
             }
 
@@ -462,6 +469,7 @@ class ContactsProvider {
 //                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_TYPE)
                         .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, beanWrap.getContactBean().getEmailAddressList().get(j).getValue())
                         .withValue(ContactsContract.CommonDataKinds.Email.DISPLAY_NAME, beanWrap.getContactBean().getEmailAddressList().get(j).getValue())
+                        .withValue(ContactsContract.CommonDataKinds.Email.LABEL, beanWrap.getContactBean().getEmailAddressList().get(j).getLable())
                         .withValue(ContactsContract.CommonDataKinds.Email.TYPE, beanWrap.getContactBean().getEmailAddressList().get(j).getType());
                 ops.add(op.build());
             }
@@ -480,6 +488,7 @@ class ContactsProvider {
                         .withValue(ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE, beanWrap.getContactBean().getAddressList().get(j).getPostalCode())
                         .withValue(ContactsContract.CommonDataKinds.StructuredPostal.REGION, beanWrap.getContactBean().getAddressList().get(j).getState())
                         .withValue(ContactsContract.CommonDataKinds.StructuredPostal.STREET, beanWrap.getContactBean().getAddressList().get(j).getStreet())
+                        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.LABEL, beanWrap.getContactBean().getAddressList().get(j).getLable())
                         .withValue(ContactsContract.CommonDataKinds.StructuredPostal.TYPE, beanWrap.getContactBean().getAddressList().get(j).getType());
                 ops.add(op.build());
             }
@@ -502,6 +511,7 @@ class ContactsProvider {
                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
                         .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE)
                         .withValue(ContactsContract.CommonDataKinds.Event.START_DATE, beanWrap.getContactBean().getEvent().get(j).getValue())
+                        .withValue(ContactsContract.CommonDataKinds.Event.LABEL, beanWrap.getContactBean().getEvent().get(j).getLable())
                         .withValue(ContactsContract.CommonDataKinds.Event.TYPE, beanWrap.getContactBean().getEvent().get(j).getType());
                 ops.add(op.build());
             }
@@ -519,9 +529,9 @@ class ContactsProvider {
                 op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
                         .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE)
-//                        .withValue(ContactsContract.CommonDataKinds.Im.CUSTOM_PROTOCOL, beanWrap.getContactBean().getImList().get(j).getValue())
-                        .withValue(ContactsContract.CommonDataKinds.Im.PROTOCOL, beanWrap.getContactBean().getImList().get(j).getValue())
-                        .withValue(ContactsContract.CommonDataKinds.Im.TYPE, beanWrap.getContactBean().getImList().get(j).getType());
+                        .withValue(ContactsContract.CommonDataKinds.Im.CUSTOM_PROTOCOL, beanWrap.getContactBean().getImList().get(j).getLable()) //自定义的时候 这里的值为定义的字段
+                        .withValue(ContactsContract.CommonDataKinds.Im.PROTOCOL, beanWrap.getContactBean().getImList().get(j).getType()) //-1 为自定义
+                        .withValue(ContactsContract.CommonDataKinds.Im.DATA, beanWrap.getContactBean().getImList().get(j).getValue());//这里存放值
                 ops.add(op.build());
             }
 
@@ -541,6 +551,7 @@ class ContactsProvider {
                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
                         .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Relation.CONTENT_ITEM_TYPE)
                         .withValue(ContactsContract.CommonDataKinds.Relation.NAME, beanWrap.getContactBean().getRelatedNameList().get(j).getValue())
+                        .withValue(ContactsContract.CommonDataKinds.Relation.LABEL, beanWrap.getContactBean().getRelatedNameList().get(j).getLable())
                         .withValue(ContactsContract.CommonDataKinds.Relation.TYPE, beanWrap.getContactBean().getRelatedNameList().get(j).getType());
 
             }

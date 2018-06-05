@@ -87,7 +87,7 @@ public class TestActivity extends AppCompatActivity implements ActivityCompat.On
 
 
 
-        for (int i = 0; i < 1; i++){
+        for (int i = 0; i < 2; i++){
             ContactAction.ContactBeanWrap beanWrap1 = new ContactAction.ContactBeanWrap();
             ContactBean bean = new ContactBean();
             //设置key
@@ -98,75 +98,77 @@ public class TestActivity extends AppCompatActivity implements ActivityCompat.On
 //        beanWrap.setImage(image);
 
             //设置名字
-            bean.setLastName("aaa");
-            bean.setFirstName("aaa");
-            bean.setMiddleName("hen111mory");
+            bean.setLastName("aaa" + i);
+            bean.setFirstName("aaa" + i);
+            bean.setMiddleName("hen111mory" + i);
 
             //设置组织
-            bean.setCompanyName("digiarty");
-            bean.setDepartment("development");
-            bean.setJobTitle("engineer");
+            bean.setCompanyName("digiarty" + i);
+            bean.setDepartment("development" + i);
+            bean.setJobTitle("engineer" + i);
 
             //设置手机
-            List<ContactBean.ContactKeyValueEntity> phoneList = new ArrayList<>();
-            phoneList.add(new ContactBean.ContactKeyValueEntity(2+"", "13488783239"));
-            phoneList.add(new ContactBean.ContactKeyValueEntity(1+"", "1215644454565"));
-            bean.setPhoneNumberList(phoneList);
-
-            //设置电子邮箱
-            List<ContactBean.ContactKeyValueEntity> mailList = new ArrayList<>();
-            mailList.add(new ContactBean.ContactKeyValueEntity(2+"", "han@gmail.com"));
-            mailList.add(new ContactBean.ContactKeyValueEntity(1+"", "han@163.com"));
-            bean.setEmailAddressList(mailList);
-
-            //设置地址
-            List<ContactBean.ContactAddressEntity> addressEntityList = new ArrayList<>();
-
-            ContactBean.ContactAddressEntity addressEntity = new ContactBean.ContactAddressEntity();
-            addressEntity.setCity("chengdu");
-            addressEntity.setCountry("china");
-            addressEntity.setPostalCode("20155");
-            addressEntity.setState("sichuan");
-            addressEntity.setStreet("tianfu 3th");
-            addressEntity.setType("home");
-            addressEntityList.add(addressEntity);
-
-            bean.setAddressList(addressEntityList);
-
-            //设置网址
-            List<ContactBean.ContactKeyValueEntity> urlList = new ArrayList<>();
-            urlList.add(new ContactBean.ContactKeyValueEntity(2+"", "www.baidu.com"));
-            urlList.add(new ContactBean.ContactKeyValueEntity(1+"", "www.digiarty.com"));
-            bean.setUrlList(urlList);
-
-            //设置事件
-            List<ContactBean.ContactKeyValueEntity> eventList = new ArrayList<>();
-            eventList.add(new ContactBean.ContactKeyValueEntity(2+"", "2018112456658"));
-            eventList.add(new ContactBean.ContactKeyValueEntity(1+"", "201811245665855555"));
-            bean.setEvent(eventList);
-
-
-            //设置注释 todo 与ios不同
-//        List<ContactBean.ContactKeyValueEntity> noteList = new ArrayList<>();
-//        noteList.add(new ContactBean.ContactKeyValueEntity(2+"", "注释1"));
-//        noteList.add(new ContactBean.ContactKeyValueEntity(1+"", "注释12"));
-//        bean.setNotes(noteList);
-            bean.setNotes("注释");
-
-            //设置im
+//            List<ContactBean.ContactKeyValueEntity> phoneList = new ArrayList<>();
+//            phoneList.add(new ContactBean.ContactKeyValueEntity(2+"", "13488783239"));
+//            phoneList.add(new ContactBean.ContactKeyValueEntity(1+"", "1215644454565"));
+//            phoneList.add(new ContactBean.ContactKeyValueEntity(0+"", "1215644454565", "我的"));
+//            bean.setPhoneNumberList(phoneList);
+//
+//            //设置电子邮箱
+//            List<ContactBean.ContactKeyValueEntity> mailList = new ArrayList<>();
+//            mailList.add(new ContactBean.ContactKeyValueEntity(2+"", "han@gmail.com"));
+//            mailList.add(new ContactBean.ContactKeyValueEntity(1+"", "han@163.com"));
+//            bean.setEmailAddressList(mailList);
+//
+//            //设置地址
+//            List<ContactBean.ContactAddressEntity> addressEntityList = new ArrayList<>();
+//
+//            ContactBean.ContactAddressEntity addressEntity = new ContactBean.ContactAddressEntity();
+//            addressEntity.setCity("chengdu");
+//            addressEntity.setCountry("china");
+//            addressEntity.setPostalCode("20155");
+//            addressEntity.setState("sichuan");
+//            addressEntity.setStreet("tianfu 3th");
+//            addressEntity.setType("home");
+//            addressEntityList.add(addressEntity);
+//
+//            bean.setAddressList(addressEntityList);
+//
+//            //设置网址
+//            List<ContactBean.ContactKeyValueEntity> urlList = new ArrayList<>();
+//            urlList.add(new ContactBean.ContactKeyValueEntity(2+"", "www.baidu.com"));
+//            urlList.add(new ContactBean.ContactKeyValueEntity(1+"", "www.digiarty.com"));
+//            bean.setUrlList(urlList);
+//
+//            //设置事件
+//            List<ContactBean.ContactKeyValueEntity> eventList = new ArrayList<>();
+//            eventList.add(new ContactBean.ContactKeyValueEntity(2+"", "2018112456658"));
+//            eventList.add(new ContactBean.ContactKeyValueEntity(1+"", "201811245665855555"));
+//            bean.setEvent(eventList);
+//
+//
+//            //设置注释 todo 与ios不同
+////        List<ContactBean.ContactKeyValueEntity> noteList = new ArrayList<>();
+////        noteList.add(new ContactBean.ContactKeyValueEntity(2+"", "注释1"));
+////        noteList.add(new ContactBean.ContactKeyValueEntity(1+"", "注释12"));
+////        bean.setNotes(noteList);
+//            bean.setNotes("注释");
+//
+//            //设置im
             List<ContactBean.ContactKeyValueEntity> IMList = new ArrayList<>();
-            IMList.add(new ContactBean.ContactKeyValueEntity(2+"", "qq15156465"));
-            IMList.add(new ContactBean.ContactKeyValueEntity(1+"", "gmail 456465"));
+            IMList.add(new ContactBean.ContactKeyValueEntity(1+"", "msn")); //msn
+            IMList.add(new ContactBean.ContactKeyValueEntity(4+"", "qq"));
+            IMList.add(new ContactBean.ContactKeyValueEntity(-1 +"","henmory", "微信"));
             bean.setImList(IMList);
-
-            //设置昵称
-            bean.setNickname("hmh");
-
-            //设置关系
-            List<ContactBean.ContactKeyValueEntity> relationList = new ArrayList<>();
-            relationList.add(new ContactBean.ContactKeyValueEntity(2+"", "李四"));
-            relationList.add(new ContactBean.ContactKeyValueEntity(1+"", "张三"));
-            bean.setRelatedNameList(relationList);
+//
+//            //设置昵称
+//            bean.setNickname("hmh");
+//
+//            //设置关系
+//            List<ContactBean.ContactKeyValueEntity> relationList = new ArrayList<>();
+//            relationList.add(new ContactBean.ContactKeyValueEntity(2+"", "李四"));
+//            relationList.add(new ContactBean.ContactKeyValueEntity(1+"", "张三"));
+//            bean.setRelatedNameList(relationList);
 
             beanWrap1.setContactBean(bean);
             contactBeans.add(beanWrap1);

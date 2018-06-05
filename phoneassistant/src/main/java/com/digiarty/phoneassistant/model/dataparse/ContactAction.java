@@ -47,6 +47,7 @@ public class ContactAction implements IAction {
     @Override
     public int parseCommand(String jsonString) {
         logger.debug("开始解析命令....... ");
+        long startTime = System.currentTimeMillis();
         try {
             commandFromClient = JSON.parseObject(jsonString, AddContactCommandFromClientBean.class);
             contactNum = Integer.parseInt(commandFromClient.getNum());
@@ -58,6 +59,8 @@ public class ContactAction implements IAction {
         if (null == commandFromClient) {
             return 0;
         }
+        long endTime = System.currentTimeMillis();
+        logger.debug("解析命令的时间差为 " + (endTime - startTime) + "ms");
         logger.debug("解析出来的数据为: " + commandFromClient.toString());
         return 1;
     }
@@ -107,6 +110,7 @@ public class ContactAction implements IAction {
     @Override
     public int parseDatas(String jsonString) {
         logger.debug("开始解析数据........ ");
+        long startTime = System.currentTimeMillis();
         try {
             AddContactDataFromClientBean dataFromClient = JSON.parseObject(jsonString, AddContactDataFromClientBean.class);
             for (int i = 0; i < dataFromClient.getData().size(); i++) {
@@ -122,6 +126,8 @@ public class ContactAction implements IAction {
         if (null == contactBeanWraps) {
             return 0;
         }
+        long endTime = System.currentTimeMillis();
+        logger.debug("解析数据的时间差为 " + (endTime - startTime) + "ms");
         logger.debug("解析出来的数据为: " + contactBeanWraps.toString());
         return 1;
     }
@@ -153,10 +159,15 @@ public class ContactAction implements IAction {
     public int doActionByDatas() {
         logger.debug("开始写联系人信息到手机上.............");
 
+        long startTime = System.currentTimeMillis();
+
         ModelManager manager = ModelManager.getInstance();
         ArrayList<AddContactCommandToClientBean.Result> replies = (ArrayList<AddContactCommandToClientBean.Result>) manager.insertDatas(GlobalApplication.getContext(), CONTACT, contactBeanWraps);
 
         alreadyReceivedContactNum += contactBeanWraps.size();
+
+        long endTime = System.currentTimeMillis();
+        logger.debug("写数据的时间差为 " + (endTime - startTime) + "ms");
 
         logger.debug("联系人数据写完，准备要下一波数据，并把本次操作结果返回");
         requestNextContactDataNumber(replies);
@@ -220,9 +231,9 @@ public class ContactAction implements IAction {
         @Override
         public String toString() {
             return "ContactBeanWrap{" +
-                    "contactBean=" + contactBean +
+                    "contactBean=" + contactBean /*+
                     ", image=" + Arrays.toString(image) +
-                    '}';
+                    '}'*/;
         }
     }
 
