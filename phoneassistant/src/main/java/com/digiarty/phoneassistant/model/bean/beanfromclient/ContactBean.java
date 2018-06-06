@@ -230,7 +230,7 @@ public class ContactBean {
     public String toString() {
         return "contactBeans{" +
                 "Key='" + Key + '\'' +
-                ", Image='" + Image + '\'' +
+                /*", Image='" + Image + '\'' +*/
                 ", FirstName='" + FirstName + '\'' +
                 ", Prefix='" + Prefix + '\'' +
                 ", LastName='" + LastName + '\'' +
@@ -255,8 +255,8 @@ public class ContactBean {
     public static class ContactAddressEntity {
         @JSONField(name = "Type")
         private String Type;//类型
-        @JSONField(name = "Lable")
-        private String Lable;//自定义类型
+        @JSONField(name = "Label")
+        private String Label;//自定义类型
         @JSONField(name = "Street")
         private String Street;//街道
         @JSONField(name = "City")
@@ -270,12 +270,13 @@ public class ContactBean {
 
         public ContactAddressEntity() {
         }
-        public String getLable() {
-            return Lable;
+
+        public String getLabel() {
+            return Label;
         }
 
-        public void setLable(String lable) {
-            Lable = lable;
+        public void setLabel(String label) {
+            Label = label;
         }
 
         public String getType() {
@@ -330,7 +331,7 @@ public class ContactBean {
         public String toString() {
             return "ContactAddressEntity{" +
                     "Type='" + Type + '\'' +
-                    ", Lable='" + Lable + '\'' +
+                    ", Label='" + Label + '\'' +
                     ", Street='" + Street + '\'' +
                     ", City='" + City + '\'' +
                     ", State='" + State + '\'' +
@@ -346,8 +347,8 @@ public class ContactBean {
         private String Type;//类型
         @JSONField(name = "Value")
         private String Value; //号码
-        @JSONField(name = "Lable")
-        private String lable;
+        @JSONField(name = "Label")
+        private String label;
 
         public ContactKeyValueEntity() {
         }
@@ -357,10 +358,10 @@ public class ContactBean {
             Value = value;
         }
 
-        public ContactKeyValueEntity(String type, String value, String lable) {
+        public ContactKeyValueEntity(String type, String value, String label) {
             Type = type;
             Value = value;
-            this.lable = lable;
+            this.label = label;
         }
 
         public String getType() {
@@ -379,12 +380,8 @@ public class ContactBean {
             Value = value;
         }
 
-        public String getLable() {
-            return lable;
-        }
-
-        public void setLable(String lable) {
-            this.lable = lable;
+        public String getLabel() {
+            return label;
         }
 
         @Override
@@ -392,8 +389,12 @@ public class ContactBean {
             return "ContactKeyValueEntity{" +
                     "Type='" + Type + '\'' +
                     ", Value='" + Value + '\'' +
-                    ", lable='" + lable + '\'' +
+                    ", label='" + label + '\'' +
                     '}';
+        }
+
+        public void setLabel(String label) {
+            this.label = label;
         }
     }
 }

@@ -25,7 +25,7 @@ public class DatasHandler implements IHandler{
 
     @Override
     public int parse(byte[] datas) {
-        logger.debug("收到的PC端数据为 " + new String(datas, 0, datas.length));
+//        logger.debug("收到的PC端数据为 " + new String(datas, 0, datas.length));
         String str = new String(datas, Charset.defaultCharset());
         if (str.contains(CommandKey.KEY_ADD_CONTACTS)) {
             action = new ContactAction();

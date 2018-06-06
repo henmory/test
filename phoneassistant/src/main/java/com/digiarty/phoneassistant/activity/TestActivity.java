@@ -87,7 +87,7 @@ public class TestActivity extends AppCompatActivity implements ActivityCompat.On
 
 
 
-        for (int i = 0; i < 2; i++){
+        for (int i = 0; i < 20; i++){
             ContactAction.ContactBeanWrap beanWrap1 = new ContactAction.ContactBeanWrap();
             ContactBean bean = new ContactBean();
             //设置key

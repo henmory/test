@@ -383,7 +383,7 @@ class ContactsProvider {
         List<AddContactCommandToClientBean.Result> replies =  new ArrayList<>(contactBeanWraps.size());
 
         ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-        ContactAction.ContactBeanWrap beanWrap;
+        ContactAction.ContactBeanWrap beanWrap = null;
         int rawContactInsertIndex = 0;
 
         logger.debug("添加联系人数量为 " + contactBeanWraps.size());
@@ -455,7 +455,7 @@ class ContactsProvider {
 //                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_TYPE)
 //                    .withValue(ContactsContract.CommonDataKinds.Phone.NORMALIZED_NUMBER, beanWrap.getContactBean().getPhoneNumberList().get(0).getValue())
                         .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, phone)
-                        .withValue(ContactsContract.CommonDataKinds.Phone.LABEL, beanWrap.getContactBean().getPhoneNumberList().get(j).getLable())
+                        .withValue(ContactsContract.CommonDataKinds.Phone.LABEL, beanWrap.getContactBean().getPhoneNumberList().get(j).getLabel())
                         .withValue(ContactsContract.CommonDataKinds.Phone.TYPE, type);
                 ops.add(op.build());
             }
@@ -469,7 +469,7 @@ class ContactsProvider {
 //                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Email.CONTENT_TYPE)
                         .withValue(ContactsContract.CommonDataKinds.Email.ADDRESS, beanWrap.getContactBean().getEmailAddressList().get(j).getValue())
                         .withValue(ContactsContract.CommonDataKinds.Email.DISPLAY_NAME, beanWrap.getContactBean().getEmailAddressList().get(j).getValue())
-                        .withValue(ContactsContract.CommonDataKinds.Email.LABEL, beanWrap.getContactBean().getEmailAddressList().get(j).getLable())
+                        .withValue(ContactsContract.CommonDataKinds.Email.LABEL, beanWrap.getContactBean().getEmailAddressList().get(j).getLabel())
                         .withValue(ContactsContract.CommonDataKinds.Email.TYPE, beanWrap.getContactBean().getEmailAddressList().get(j).getType());
                 ops.add(op.build());
             }
@@ -488,7 +488,7 @@ class ContactsProvider {
                         .withValue(ContactsContract.CommonDataKinds.StructuredPostal.POSTCODE, beanWrap.getContactBean().getAddressList().get(j).getPostalCode())
                         .withValue(ContactsContract.CommonDataKinds.StructuredPostal.REGION, beanWrap.getContactBean().getAddressList().get(j).getState())
                         .withValue(ContactsContract.CommonDataKinds.StructuredPostal.STREET, beanWrap.getContactBean().getAddressList().get(j).getStreet())
-                        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.LABEL, beanWrap.getContactBean().getAddressList().get(j).getLable())
+                        .withValue(ContactsContract.CommonDataKinds.StructuredPostal.LABEL, beanWrap.getContactBean().getAddressList().get(j).getLabel())
                         .withValue(ContactsContract.CommonDataKinds.StructuredPostal.TYPE, beanWrap.getContactBean().getAddressList().get(j).getType());
                 ops.add(op.build());
             }
@@ -511,7 +511,7 @@ class ContactsProvider {
                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
                         .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Event.CONTENT_ITEM_TYPE)
                         .withValue(ContactsContract.CommonDataKinds.Event.START_DATE, beanWrap.getContactBean().getEvent().get(j).getValue())
-                        .withValue(ContactsContract.CommonDataKinds.Event.LABEL, beanWrap.getContactBean().getEvent().get(j).getLable())
+                        .withValue(ContactsContract.CommonDataKinds.Event.LABEL, beanWrap.getContactBean().getEvent().get(j).getLabel())
                         .withValue(ContactsContract.CommonDataKinds.Event.TYPE, beanWrap.getContactBean().getEvent().get(j).getType());
                 ops.add(op.build());
             }
@@ -529,7 +529,7 @@ class ContactsProvider {
                 op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
                         .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Im.CONTENT_ITEM_TYPE)
-                        .withValue(ContactsContract.CommonDataKinds.Im.CUSTOM_PROTOCOL, beanWrap.getContactBean().getImList().get(j).getLable()) //自定义的时候 这里的值为定义的字段
+                        .withValue(ContactsContract.CommonDataKinds.Im.CUSTOM_PROTOCOL, beanWrap.getContactBean().getImList().get(j).getLabel()) //自定义的时候 这里的值为定义的字段
                         .withValue(ContactsContract.CommonDataKinds.Im.PROTOCOL, beanWrap.getContactBean().getImList().get(j).getType()) //-1 为自定义
                         .withValue(ContactsContract.CommonDataKinds.Im.DATA, beanWrap.getContactBean().getImList().get(j).getValue());//这里存放值
                 ops.add(op.build());
@@ -551,7 +551,7 @@ class ContactsProvider {
                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
                         .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Relation.CONTENT_ITEM_TYPE)
                         .withValue(ContactsContract.CommonDataKinds.Relation.NAME, beanWrap.getContactBean().getRelatedNameList().get(j).getValue())
-                        .withValue(ContactsContract.CommonDataKinds.Relation.LABEL, beanWrap.getContactBean().getRelatedNameList().get(j).getLable())
+                        .withValue(ContactsContract.CommonDataKinds.Relation.LABEL, beanWrap.getContactBean().getRelatedNameList().get(j).getLabel())
                         .withValue(ContactsContract.CommonDataKinds.Relation.TYPE, beanWrap.getContactBean().getRelatedNameList().get(j).getType());
 
             }
@@ -588,48 +588,64 @@ class ContactsProvider {
 
             ops.add(op.build());
 
-            AddContactCommandToClientBean.Result reply =  new AddContactCommandToClientBean.Result();
-            ContentProviderResult[] results = null;
-            try {
+        }
 
-                results = contentResolver.applyBatch(ContactsContract.AUTHORITY, ops);
+        ContentProviderResult[] results = null;
+        int items = ops.size() / contactBeanWraps.size();
 
-                System.out.println("插入数据项数为 = " + results.length);
+        try {
 
-                reply.setOid(beanWrap.getContactBean().getKey());
-                reply.setNid(results[0].uri.getLastPathSegment());
+            results = contentResolver.applyBatch(ContactsContract.AUTHORITY, ops);
+
+            logger.debug("每个联系人添加的项数为 " + items);
+
+            for (int i = 0; i < contactBeanWraps.size(); i++) {
+                AddContactCommandToClientBean.Result reply =  new AddContactCommandToClientBean.Result();
+
+                reply.setOid(contactBeanWraps.get(i).getContactBean().getKey());
+                reply.setNid(results[i * items].uri.getLastPathSegment());
                 reply.setState(1+"");
                 replies.add(reply);
-
-                logger.debug("数据key " + beanWrap.getContactBean().getKey() + " 写入成功");
-
-            } catch (RemoteException e) {
-                e.printStackTrace();
-
-                logger.debug("异常发生 " + e.getMessage());
-                reply.setOid(beanWrap.getContactBean().getKey());
-                reply.setState(0+"");
-                replies.add(reply);
-                logger.debug("数据key为 "  + beanWrap.getContactBean().getKey() + " 写入失败");
-
-                logger.debug("provider 数据写入失败");
-
-            } catch (OperationApplicationException e) {
-                e.printStackTrace();
-                logger.debug("异常发生2 " + e.getMessage());
-
-                reply.setOid(beanWrap.getContactBean().getKey());
-                reply.setState(0+"");
-                replies.add(reply);
-                logger.debug("数据key为 " + beanWrap.getContactBean().getKey() +  " 写入失败");
-
-                logger.debug("provider 数据写入失败");
+                logger.debug("数据key " + contactBeanWraps.get(i).getContactBean().getKey() + " 写入成功");
             }
+
+            logger.debug("provider 数据写入成功");
+
+        } catch (RemoteException e) {
+            e.printStackTrace();
+
+            logger.debug("异常发生 " + e.getMessage());
+
+            for (int i = 0; i < contactBeanWraps.size(); i++) {
+                AddContactCommandToClientBean.Result reply =  new AddContactCommandToClientBean.Result();
+
+                reply.setOid(contactBeanWraps.get(i).getContactBean().getKey());
+//                reply.setNid(results[i * items].uri.getLastPathSegment());
+                reply.setState(0+"");
+                replies.add(reply);
+                logger.debug("数据key " + contactBeanWraps.get(i).getContactBean().getKey() + " 写入失败");
+            }
+
+            logger.debug("provider 数据写入失败");
+
+        } catch (OperationApplicationException e) {
+            e.printStackTrace();
+            logger.debug("异常发生2 " + e.getMessage());
+
+            for (int i = 0; i < contactBeanWraps.size(); i++) {
+                AddContactCommandToClientBean.Result reply =  new AddContactCommandToClientBean.Result();
+
+                reply.setOid(contactBeanWraps.get(i).getContactBean().getKey());
+//                reply.setNid(results[i * items].uri.getLastPathSegment());
+                reply.setState(0+"");
+                replies.add(reply);
+                logger.debug("数据key " + contactBeanWraps.get(i).getContactBean().getKey() + " 写入失败");
+            }
+
+            logger.debug("provider 数据写入失败");
         }
-        logger.debug("provider 数据写入成功");
         return replies;
     }
-
 
 }
 

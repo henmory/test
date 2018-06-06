@@ -17,6 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.Boolean.FALSE;
 import static java.lang.Boolean.TRUE;
+import static java.lang.Boolean.logicalOr;
 
 /***
  *
@@ -35,7 +36,6 @@ class ListenPCConnectionTask implements ITask {
     ServerSocket serverSocket = null;
     @Override
     public void run() {
-
         Thread.currentThread().setName("监听pc端socket线程");
         logger.debug("线程id = " + Thread.currentThread().getId() + "的线程开始启动，监听socket连接");
 
