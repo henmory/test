@@ -165,10 +165,11 @@ public class TestActivity extends AppCompatActivity implements ActivityCompat.On
 //            bean.setNickname("hmh");
 //
 //            //设置关系
-//            List<ContactBean.ContactKeyValueEntity> relationList = new ArrayList<>();
-//            relationList.add(new ContactBean.ContactKeyValueEntity(2+"", "李四"));
-//            relationList.add(new ContactBean.ContactKeyValueEntity(1+"", "张三"));
-//            bean.setRelatedNameList(relationList);
+            List<ContactBean.ContactKeyValueEntity> relationList = new ArrayList<>();
+            relationList.add(new ContactBean.ContactKeyValueEntity(2+"", "李四"));
+            relationList.add(new ContactBean.ContactKeyValueEntity(1+"", "张三"));
+            relationList.add(new ContactBean.ContactKeyValueEntity(0+"", "王五", "狗友"));
+            bean.setRelatedNameList(relationList);
 
             beanWrap1.setContactBean(bean);
             contactBeans.add(beanWrap1);
