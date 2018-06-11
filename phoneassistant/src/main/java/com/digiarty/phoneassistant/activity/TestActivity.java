@@ -12,12 +12,11 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.digiarty.phoneassistant.R;
-import com.digiarty.phoneassistant.model.bean.beanfromclient.ContactBean;
-import com.digiarty.phoneassistant.model.bean.beantoclient.AddContactCommandToClientBean;
-import com.digiarty.phoneassistant.model.dataparse.ContactAction;
+import com.digiarty.phoneassistant.model.bean.ContactBean;
+import com.digiarty.phoneassistant.model.bean.ResponseToClientBean;
+import com.digiarty.phoneassistant.model.bean.ContactBeanWrap;
 import com.digiarty.phoneassistant.model.dataprovider.ModelManager;
 import com.digiarty.phoneassistant.model.dataprovider.ProviderDataType;
-import com.digiarty.phoneassistant.utils.Base64Util;
 import com.digiarty.phoneassistant.utils.FileHelper;
 
 import java.io.File;
@@ -73,29 +72,30 @@ public class TestActivity extends AppCompatActivity implements ActivityCompat.On
     public void insetContactMessage(View view) {
         ModelManager modelManager = ModelManager.getInstance();
 
-        List<ContactAction.ContactBeanWrap> contactBeans = new ArrayList<>();
-
-        handleData(contactBeans);
-        System.out.println(contactBeans.size());
-        ArrayList<AddContactCommandToClientBean.Result> replies = (ArrayList<AddContactCommandToClientBean.Result>) modelManager.insertDatas(this, ProviderDataType.CONTACT, contactBeans);
-        for (int i = 0; i < replies.size(); i++){
-            System.out.println(replies.get(i));
+        List<ContactBeanWrap> contactBeans = new ArrayList<>();
+        int k = 11;
+        while((k--) != 0){
+            handleData(contactBeans);
+            ArrayList<ResponseToClientBean.Result> replies = (ArrayList<ResponseToClientBean.Result>) modelManager.insertDatas(this, ProviderDataType.CONTACT, contactBeans);
+            for (int i = 0; i < replies.size(); i++){
+                System.out.println(replies.get(i));
+            }
+            contactBeans.clear();
         }
+
     }
 
-    private void handleData(List<ContactAction.ContactBeanWrap> contactBeans) {
+    private void handleData(List<ContactBeanWrap> contactBeans) {
 
-
-
-        for (int i = 0; i < 20; i++){
-            ContactAction.ContactBeanWrap beanWrap1 = new ContactAction.ContactBeanWrap();
+        for (int i = 0; i < 1; i++){
+            ContactBeanWrap beanWrap1 = new ContactBeanWrap();
             ContactBean bean = new ContactBean();
             //设置key
             bean.setKey("key" + i);
 
             //设置图片
-//        byte[] image = FileHelper.readBytes(new File("/storage/emulated/0/DCIM/1.png"));
-//        beanWrap.setImage(image);
+//            byte[] image = FileHelper.readBytes(new File("/storage/emulated/0/DCIM/Camera/1.png"));
+//            beanWrap1.setImage(image);
 
             //设置名字
             bean.setLastName("aaa" + i);
@@ -103,24 +103,24 @@ public class TestActivity extends AppCompatActivity implements ActivityCompat.On
             bean.setMiddleName("hen111mory" + i);
 
             //设置组织
-            bean.setCompanyName("digiarty" + i);
-            bean.setDepartment("development" + i);
-            bean.setJobTitle("engineer" + i);
-
-            //设置手机
+//            bean.setCompanyName("digiarty" + i);
+//            bean.setDepartment("development" + i);
+//            bean.setJobTitle("engineer" + i);
+//
+//            设置手机
 //            List<ContactBean.ContactKeyValueEntity> phoneList = new ArrayList<>();
 //            phoneList.add(new ContactBean.ContactKeyValueEntity(2+"", "13488783239"));
 //            phoneList.add(new ContactBean.ContactKeyValueEntity(1+"", "1215644454565"));
 //            phoneList.add(new ContactBean.ContactKeyValueEntity(0+"", "1215644454565", "我的"));
 //            bean.setPhoneNumberList(phoneList);
 //
-//            //设置电子邮箱
+//            设置电子邮箱
 //            List<ContactBean.ContactKeyValueEntity> mailList = new ArrayList<>();
 //            mailList.add(new ContactBean.ContactKeyValueEntity(2+"", "han@gmail.com"));
 //            mailList.add(new ContactBean.ContactKeyValueEntity(1+"", "han@163.com"));
 //            bean.setEmailAddressList(mailList);
 //
-//            //设置地址
+//            设置地址
 //            List<ContactBean.ContactAddressEntity> addressEntityList = new ArrayList<>();
 //
 //            ContactBean.ContactAddressEntity addressEntity = new ContactBean.ContactAddressEntity();
@@ -134,43 +134,43 @@ public class TestActivity extends AppCompatActivity implements ActivityCompat.On
 //
 //            bean.setAddressList(addressEntityList);
 //
-//            //设置网址
+//            设置网址
 //            List<ContactBean.ContactKeyValueEntity> urlList = new ArrayList<>();
 //            urlList.add(new ContactBean.ContactKeyValueEntity(2+"", "www.baidu.com"));
 //            urlList.add(new ContactBean.ContactKeyValueEntity(1+"", "www.digiarty.com"));
 //            bean.setUrlList(urlList);
 //
-//            //设置事件
+//            设置事件
 //            List<ContactBean.ContactKeyValueEntity> eventList = new ArrayList<>();
 //            eventList.add(new ContactBean.ContactKeyValueEntity(2+"", "2018112456658"));
 //            eventList.add(new ContactBean.ContactKeyValueEntity(1+"", "201811245665855555"));
 //            bean.setEvent(eventList);
 //
 //
-//            //设置注释 todo 与ios不同
-////        List<ContactBean.ContactKeyValueEntity> noteList = new ArrayList<>();
-////        noteList.add(new ContactBean.ContactKeyValueEntity(2+"", "注释1"));
-////        noteList.add(new ContactBean.ContactKeyValueEntity(1+"", "注释12"));
-////        bean.setNotes(noteList);
+//            设置注释 todo 与ios不同
+//        List<ContactBean.ContactKeyValueEntity> noteList = new ArrayList<>();
+//        noteList.add(new ContactBean.ContactKeyValueEntity(2+"", "注释1"));
+//        noteList.add(new ContactBean.ContactKeyValueEntity(1+"", "注释12"));
+//        bean.setNotes(noteList);
 //            bean.setNotes("注释");
 //
-//            //设置im
-            List<ContactBean.ContactKeyValueEntity> IMList = new ArrayList<>();
-            IMList.add(new ContactBean.ContactKeyValueEntity(1+"", "msn")); //msn
-            IMList.add(new ContactBean.ContactKeyValueEntity(4+"", "qq"));
-            IMList.add(new ContactBean.ContactKeyValueEntity(-1 +"","henmory", "微信"));
-            bean.setImList(IMList);
+//            设置im
+//            List<ContactBean.ContactKeyValueEntity> IMList = new ArrayList<>();
+//            IMList.add(new ContactBean.ContactKeyValueEntity(1+"", "msn")); //msn
+//            IMList.add(new ContactBean.ContactKeyValueEntity(4+"", "qq"));
+//            IMList.add(new ContactBean.ContactKeyValueEntity(-1 +"","henmory", "微信"));
+//            bean.setImList(IMList);
 //
-//            //设置昵称
+//            设置昵称
 //            bean.setNickname("hmh");
 //
-//            //设置关系
-            List<ContactBean.ContactKeyValueEntity> relationList = new ArrayList<>();
-            relationList.add(new ContactBean.ContactKeyValueEntity(2+"", "李四"));
-            relationList.add(new ContactBean.ContactKeyValueEntity(1+"", "张三"));
-            relationList.add(new ContactBean.ContactKeyValueEntity(0+"", "王五", "狗友"));
-            bean.setRelatedNameList(relationList);
-
+//            设置关系
+//            List<ContactBean.ContactKeyValueEntity> relationList = new ArrayList<>();
+//            relationList.add(new ContactBean.ContactKeyValueEntity(2+"", "李四"));
+//            relationList.add(new ContactBean.ContactKeyValueEntity(1+"", "张三"));
+//            relationList.add(new ContactBean.ContactKeyValueEntity(0+"", "王五", "狗友"));
+//            bean.setRelatedNameList(relationList);
+//
             beanWrap1.setContactBean(bean);
             contactBeans.add(beanWrap1);
 

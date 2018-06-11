@@ -1,9 +1,5 @@
 package com.digiarty.phoneassistant.model.dataparse;
 
-import com.alibaba.fastjson.JSON;
-import com.digiarty.phoneassistant.model.bean.beanfromclient.AddContactCommandFromClientBean;
-import com.digiarty.phoneassistant.model.bean.beanfromclient.AddContactDataFromClientBean;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,7 +13,7 @@ import org.slf4j.LoggerFactory;
  *
  *
  **/
-public class PictureAction implements IAction{
+class PictureAction implements IAction{
     private static Logger logger = LoggerFactory.getLogger(PictureAction.class);
 
     @Override
@@ -25,7 +21,7 @@ public class PictureAction implements IAction{
         logger.debug("开始解析命令....... ");
         try {
             logger.debug("客服端发送同步图片的请求 ");
-//            commandFromClient = JSON.parseObject(jsonString, AddContactCommandFromClientBean.class);
+//            commandFromClient = JSON.parseObject(jsonString, CommandFromClientBean.class);
         } catch (Exception e) {
             logger.debug("解析数据出现异常 " + e.getMessage());
             return 0;

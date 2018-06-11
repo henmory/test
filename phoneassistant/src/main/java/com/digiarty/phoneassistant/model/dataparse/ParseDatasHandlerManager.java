@@ -76,6 +76,9 @@ public class ParseDatasHandlerManager implements IShortConnectionTask {
         byte[] data = handler.reply();
         handler.setNextReceivedDataType();
 
+        if (data.length == 0){
+            logger.debug("");
+        }
         reply.setDatas(data);
         reply.setNextReceicedDataType(dataType);//注意这里的参数
         return reply;

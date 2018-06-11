@@ -33,6 +33,10 @@ import static java.lang.Boolean.logicalOr;
 class ShortConnectionTask implements ITask {
 
     private static Logger logger = LoggerFactory.getLogger(ListenPCConnectionTask.class);
+    private ServerSocketWrap socketWrap;
+
+
+
     private Socket shortSocket;
     private InputStream inputStream;
     private OutputStream outputStream;
@@ -40,9 +44,15 @@ class ShortConnectionTask implements ITask {
     private NetDataType type;
     private IShortConnectionTask taskInterface;
 
+
     ShortConnectionTask(Socket socket) {
         shortSocket = socket;
         type = COMMAND; //默认接收的数据类型
+        socketWrap = new ServerSocketWrap();
+    }
+
+    public Socket getShortSocket() {
+        return shortSocket;
     }
 
     public NetDataType getType() {
@@ -81,8 +91,8 @@ class ShortConnectionTask implements ITask {
             logger.debug("==================================================开始接收数据==================================================");
             byte[] datas = readDatasFromPCAndPrepareDatasToPC(inputStream, type);
             if (null == datas){
-                logger.debug("发生错误，读取pc端数据为空,发送-1给客户端");
-                datas = new byte[]{-1};
+                logger.debug("发生错误，读取pc端数据为空,可能网络已经断开，或者解析数据出现错误");
+                break;
             }
             logger.debug("==================================================开始发送数据==================================================");
             logger.debug("发送给客户端的数据字节码为 " + Arrays.toString(datas));
@@ -135,22 +145,22 @@ class ShortConnectionTask implements ITask {
     }
 
     private void setcachedFilePath(String path) {
-        ServerSocketWrap.setCachedFilePath(path);
+        socketWrap.setCachedFilePath(path);
     }
 
     private byte[] readDatasFromPC(InputStream inputStream, NetDataType type) {
 
         if (type.equals(NetDataType.COMMAND)) {
             logger.debug("接收的数据类型为 " + "COMMAND");
-            return ServerSocketWrap.readCommandFromInputStream(inputStream);
+            return socketWrap.readCommandFromInputStream(inputStream);
         } else if (type.equals(NetDataType.JSONOBJECT)) {
             logger.debug("接收的数据类型为 " + "JSONOBJECT");
-            return ServerSocketWrap.readCommandFromInputStream(inputStream);
+            return socketWrap.readCommandFromInputStream(inputStream);
         } else if (type.equals(NetDataType.FILE)) {
             logger.debug("接收的数据类型为 " + "FILE");
             setcachedFilePath(AndroidStorage.ExternalStorage.getCacheDirPath(GlobalApplication.getContext()) + "/1.jpg");
-            System.out.println("图片缓存路径" + ServerSocketWrap.getCachedFilePath());
-            return ServerSocketWrap.readFilesFromInputStream(inputStream);
+            System.out.println("图片缓存路径" + socketWrap.getCachedFilePath());
+            return socketWrap.readFilesFromInputStream(inputStream);
         } else {
             logger.debug("无效的数据类型");
             return null;
@@ -160,7 +170,7 @@ class ShortConnectionTask implements ITask {
 
 
     private boolean writeResponseToPC(OutputStream outputStream, byte[] datas) {
-        return ServerSocketWrap.writeDatasToOutputStream(outputStream, datas);
+        return socketWrap.writeDatasToOutputStream(outputStream, datas);
     }
 
     private void notifyNetManagerCommunicationTaskGetInOutStreamError() {
@@ -168,7 +178,7 @@ class ShortConnectionTask implements ITask {
         Message message = Message.obtain();
         message.what = NetTaskManager.MSG_NOTIFY_NET_MANAGER_COMMUNICATION_TASK_GET_INOUT_STREAM_ERROR;
         message.setTarget(NetTaskManager.handler);
-        message.obj = shortSocket;
+        message.obj = this;
         NetTaskManager.handler.sendMessage(message);
     }
 
@@ -177,7 +187,7 @@ class ShortConnectionTask implements ITask {
         Message message = Message.obtain();
         message.what = NetTaskManager.MSG_NOTIFY_NET_MANAGER_COMMUNICATION_TASK_DESTPRY;
         message.setTarget(NetTaskManager.handler);
-        message.obj = shortSocket;
+        message.obj = this;
         NetTaskManager.handler.sendMessage(message);
 
     }
@@ -197,7 +207,7 @@ class ShortConnectionTask implements ITask {
     private void closeSocketOfCommunicating() {
         socketFlag = FALSE;
         closeInputOutPutStread();
-        ServerSocketWrap.closeSocket(shortSocket);
+        socketWrap.closeSocket(shortSocket);
     }
 
     @Override

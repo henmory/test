@@ -3,8 +3,7 @@ package com.digiarty.phoneassistant.model.dataprovider;
 import android.content.Context;
 
 
-import com.digiarty.phoneassistant.bean.ContactBean;
-import com.digiarty.phoneassistant.model.dataparse.ContactAction;
+import com.digiarty.phoneassistant.model.bean.ContactBeanWrap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,7 +82,7 @@ public class ModelManager<T>  {
                 break;
             case CONTACT:
                 logger.debug("开始插入数据，获取的数据类型为：CONTACT");
-                return (List<T>) new ContactsProvider(context).insertData(context, (List<ContactAction.ContactBeanWrap>) t);
+                return (List<T>) new ContactsProvider(context).insertData(context, (List<ContactBeanWrap>) t);
             default:
                 logger.debug("获取数据类型未知");
                 break;

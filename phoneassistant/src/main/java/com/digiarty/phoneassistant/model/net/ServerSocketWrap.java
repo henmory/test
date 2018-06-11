@@ -38,18 +38,19 @@ import java.util.Arrays;
  **/
 class ServerSocketWrap {
 
-    private static Logger logger = LoggerFactory.getLogger(ServerSocketWrap.class);
-    private static BufferedInputStream bis;
-    private static BufferedOutputStream bos;
-    private static ByteArrayOutputStream outWriter; //数据缓存到字节数组中
-    private static FileOutputStream fileOutputStream;//文件缓存到文件里
+    private /*static*/ Logger logger = LoggerFactory.getLogger(ServerSocketWrap.class);
+    private /*static*/ BufferedInputStream bis;
+    private /*static*/ BufferedOutputStream bos;
+//    private byte[]  objectBuffer;
+    private /*static*/ ByteArrayOutputStream outWriter; //数据缓存到字节数组中
+    private /*static*/ FileOutputStream fileOutputStream;//文件缓存到文件里
 
     //数据长度的字节数====协议定死的
     private static final int BYTES_OF_DATA_SIZE = 8;
     private static final int CACHED_SIZE = 1024 * 8; //8K
 
 
-    //    public static String cachedFilePath = null;//缓存文件路径
+    //    public /*static*/ String cachedFilePath = null;//缓存文件路径
     private static String cachedFilePath = AndroidStorage.InternalStorage.getFilesDir(GlobalApplication.getContext()).getAbsolutePath();//缓存文件路径
 
     public static String getCachedFilePath() {
@@ -64,7 +65,7 @@ class ServerSocketWrap {
      * 创建socket部分
      */
 
-    public static Socket createSocket(String hostIp, int port) {
+    public /*static*/ Socket createSocket(String hostIp, int port) {
         try {
             logger.debug("ip = " + hostIp);
             logger.debug("port = " + port);
@@ -80,7 +81,7 @@ class ServerSocketWrap {
         return null;
     }
 
-    public static ServerSocket createSocketForListen(int port) {
+    public /*static*/ ServerSocket createSocketForListen(int port) {
 
         ServerSocket serverSocket;
         try {
@@ -98,13 +99,13 @@ class ServerSocketWrap {
         return serverSocket;
     }
 
-    private static void getServerSocketInformationCreatedBySystemDefault(ServerSocket serverSocket) {
+    private /*static*/ void getServerSocketInformationCreatedBySystemDefault(ServerSocket serverSocket) {
         int port = serverSocket.getLocalPort();
         ServerConfig.AndroidConfig.setServerPort(port);
     }
 
 
-    public static Socket listenAndCreatSocketForNewConnection(ServerSocket serverSocket) {
+    public /*static*/ Socket listenAndCreatSocketForNewConnection(ServerSocket serverSocket) {
 
         Socket socket;
         try {
@@ -132,7 +133,7 @@ class ServerSocketWrap {
      * @param is 输入流
      * @return 字节数组
      */
-    private static byte[] readTickBytesFromInputStream(InputStream is) {
+    private /*static*/ byte[] readTickBytesFromInputStream(InputStream is) {
         byte[] bytes;
 
         try {
@@ -144,7 +145,7 @@ class ServerSocketWrap {
                 bytes = Arrays.copyOf(cbuf, len);
                 logger.debug("读取数据成功, 长度为 " + len);
             } else {
-                logger.debug("读取数据长度为-1");
+                logger.debug("读取数据长度为 " + len);
                 return null;
             }
 
@@ -161,7 +162,7 @@ class ServerSocketWrap {
     }
 
 
-    private static long readDatasLengthFromBufferedInputStream() {
+    private /*static*/ long readDatasLengthFromBufferedInputStream() {
         byte[] bytes = new byte[BYTES_OF_DATA_SIZE];
         long dataLength;
 
@@ -184,27 +185,38 @@ class ServerSocketWrap {
         }
     }
 
-    private static byte[] readDatasFromBufferedInputStream(long dataLength) {
+    private /*static*/ byte[] readDatasFromBufferedInputStream(long dataLength) {
         byte[] bytes;
         byte[] cached = new byte[CACHED_SIZE];
         int readLenAlready = 0;
         int readlenNow;
-
-        outWriter = new ByteArrayOutputStream();
+//        int count = 0;
+        outWriter = new ByteArrayOutputStream((int) dataLength);
         try {
             logger.debug("数据读取中.....");
             while ((readlenNow = bis.read(cached)) != -1) {
                 readLenAlready += readlenNow;
                 logger.debug("目前读取的数据长度为 " + readLenAlready);
-                outWriter.write(cached);
+
+//                for (int k = 0; k < readlenNow; k++){
+//                    if (cached[k] == 0){
+//                        count++;
+//                    }
+//                }
+//                logger.debug("cached中 0的个数为 " + count);
+//                outWriter.write(cached);  //读取数据没有满的时候，实际上已经把后面0的数据写进入了
+                outWriter.write(cached, 0, readlenNow);
+
                 if (readLenAlready == dataLength) {
+                    logger.debug("正常退出，数据读取完成，不再读取数据");
                     break;
                 }
             }
+            logger.debug("不再读取数据，已经读取的数据长度为 " + readLenAlready);
             outWriter.flush();
             bytes = outWriter.toByteArray();
             outWriter.close();
-            return Arrays.copyOf(bytes, (int)dataLength);
+            return bytes;
         } catch (Exception e) {
             e.printStackTrace();
             logger.debug("读取socket数据异常" + e.getMessage());
@@ -212,7 +224,7 @@ class ServerSocketWrap {
         }
     }
 
-    public static byte[] readCommandFromInputStream(InputStream inputStream) {
+    public /*static*/ byte[] readCommandFromInputStream(InputStream inputStream) {
         byte[] datas = null;
         if (null != inputStream) {
             bis = new BufferedInputStream(inputStream);
@@ -228,11 +240,28 @@ class ServerSocketWrap {
             logger.debug("inputStream 为空");
             return null;
         }
-//        logger.debug("读取到PC端字节码为 " + Arrays.toString(datas));
+        if (null != datas){
+            logger.debug("读取到PC端字节码长度为 " + datas.length);
+        }
+        //测试添加
+        if (true){
+            if (null == datas){
+                logger.debug("收到客户端数据为空");
+            }else{
+                for (int i = 0; i < datas.length; i++){
+                    if (0 == (int) (datas[i])){
+                        logger.debug("数据为 0 的数组索引值为 " + i);
+                    }
+                }
+            }
+
+        }else{
+            logger.debug("读取到PC端字节码为 " + Arrays.toString(datas));
+        }
         return datas;
     }
 
-    public static byte[] readTickFromInputStream(InputStream inputStream) {
+    public /*static*/ byte[] readTickFromInputStream(InputStream inputStream) {
         byte[] datas;
 
         if (null != inputStream) {
@@ -245,7 +274,7 @@ class ServerSocketWrap {
     }
 
     //返回文件名称
-    private static byte[] readFilesFromBufferedInputStream(long dataLength) {
+    private /*static*/ byte[] readFilesFromBufferedInputStream(long dataLength) {
         byte[] cached = new byte[CACHED_SIZE];
         int readLenAlready = 0;
         int readlenNow;
@@ -256,8 +285,9 @@ class ServerSocketWrap {
             while ((readlenNow = bis.read(cached)) != -1) {
                 readLenAlready += readlenNow;
                 logger.debug("目前读取的数据长度为 " + readLenAlready);
-                fileOutputStream.write(cached);
+                fileOutputStream.write(cached, 0, readlenNow);
                 if (readLenAlready == dataLength) {
+                    logger.debug("正常退出，数据读取完成，不再读取数据");
                     break;
                 }
             }
@@ -277,7 +307,7 @@ class ServerSocketWrap {
     }
 
 
-    public static byte[] readFilesFromInputStream(InputStream inputStream) {
+    public /*static*/ byte[] readFilesFromInputStream(InputStream inputStream) {
 
         byte[] fileName;
         if (null != inputStream) {
@@ -315,7 +345,7 @@ class ServerSocketWrap {
      * @param os   输出流
      * @param text 字节数组
      */
-    private static boolean writeBytes(OutputStream os, byte[] text) {
+    private /*static*/ boolean writeBytes(OutputStream os, byte[] text) {
         if (text == null) {
             return false;
         }
@@ -330,7 +360,7 @@ class ServerSocketWrap {
      * @param off    数组起始下标
      * @param lenght 长度
      */
-    private static boolean writeBytes(OutputStream os, byte[] text, int off, int lenght) {
+    private /*static*/ boolean writeBytes(OutputStream os, byte[] text, int off, int lenght) {
         try {
             bos = new BufferedOutputStream(os);
             bos.write(text, off, lenght);
@@ -347,11 +377,11 @@ class ServerSocketWrap {
     }
 
 
-    public static boolean writeTickToOutputStream(OutputStream outputStream, byte[] datas) {
+    public /*static*/ boolean writeTickToOutputStream(OutputStream outputStream, byte[] datas) {
         return writeBytes(outputStream, datas);
     }
 
-    public static boolean writeDatasToOutputStream(OutputStream outputStream, byte[] datas) {
+    public /*static*/ boolean writeDatasToOutputStream(OutputStream outputStream, byte[] datas) {
         byte[] bytes;
         long allDatasize;
         byte[] bytesOfLongLen;
@@ -388,7 +418,7 @@ class ServerSocketWrap {
      */
 
 
-    public static void closeSocket(Socket socket) {
+    public /*static*/ void closeSocket(Socket socket) {
 
         if (socket != null) {
             if (socket.isClosed()) {
@@ -407,7 +437,7 @@ class ServerSocketWrap {
         closeInputOutPutStream();
     }
 
-    public static void closeListenSocket(ServerSocket socket) {
+    public /*static*/ void closeListenSocket(ServerSocket socket) {
 
         if (socket != null) {
             if (socket.isClosed()) {
@@ -424,7 +454,7 @@ class ServerSocketWrap {
         }
     }
 
-    private static void closeInputOutPutStream() {
+    private /*static*/ void closeInputOutPutStream() {
         if (bis != null) {
             try {
                 bis.close();
@@ -457,7 +487,7 @@ class ServerSocketWrap {
         }
     }
 
-    public static void main(String[] args) throws JSONException {
+    public /*static*/ void main(String[] args) throws JSONException {
 
 //        long len1 =  8 ;
 //        byte[] bytesoflen = ByteOrderUtils.changeLongBytestoBigEndian(len1);

@@ -1,4 +1,4 @@
-package com.digiarty.phoneassistant.model.bean.beanfromclient;
+package com.digiarty.phoneassistant.model.bean;
 
 import com.alibaba.fastjson.annotation.JSONField;
 

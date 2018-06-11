@@ -30,6 +30,11 @@ class LongConnectionTask implements ITask {
     private InputStream inputStream;
     private OutputStream outputStream;
     private Boolean socketFlag = FALSE;
+    private ServerSocketWrap socketWrap;
+
+    public LongConnectionTask() {
+        socketWrap = new ServerSocketWrap();
+    }
 
     @Override
     public void run() {
@@ -95,7 +100,7 @@ class LongConnectionTask implements ITask {
 
 
         //服务器IP地址其实是本机的127.0.0.1 端口实际是adbd监听的端口,该端口是pc端调用reverse时，adbd监听的
-        longSocket = ServerSocketWrap.createSocket(ServerConfig.ADBDConfig.getADBDIp(), ServerConfig.ADBDConfig.getADBDPort());
+        longSocket = socketWrap.createSocket(ServerConfig.ADBDConfig.getADBDIp(), ServerConfig.ADBDConfig.getADBDPort());
         if (null == longSocket){
             logger.debug("创建长连接socket失败");
             return null;
@@ -132,11 +137,11 @@ class LongConnectionTask implements ITask {
     }
 
     private byte[] readDatasFromPC(InputStream inputStream){
-        return ServerSocketWrap.readTickFromInputStream(inputStream);
+        return socketWrap.readTickFromInputStream(inputStream);
     }
 
     private boolean writeDatasToPC(OutputStream outputStream,byte[] datas){
-        return ServerSocketWrap.writeTickToOutputStream(outputStream, datas);
+        return socketWrap.writeTickToOutputStream(outputStream, datas);
     }
 
     private void notifyNetTaskManagerLongConnectionTaskCreateFail(){
@@ -176,7 +181,7 @@ class LongConnectionTask implements ITask {
     private void closeSocketOfLongConnect(){
         socketFlag = FALSE;
         closeInputOutPutStread();
-        ServerSocketWrap.closeSocket(longSocket);
+        socketWrap.closeSocket(longSocket);
     }
 
     @Override

@@ -1,10 +1,10 @@
-package com.digiarty.phoneassistant.model.bean.beanfromclient;
+package com.digiarty.phoneassistant.model.bean;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
 /***
  *
- * Created on：2018/5/31
+ * Created on：2018/6/7
  *
  * Created by：henmory
  *
@@ -12,13 +12,13 @@ import com.alibaba.fastjson.annotation.JSONField;
  *
  *
  **/
-public class AddContactCommandFromClientBean {
+public class CommandFromClientBean {
     @JSONField(name = "Command")
     private String Command;
     @JSONField(name = "Num")
     private String Num;
 
-    public AddContactCommandFromClientBean() {
+    public CommandFromClientBean() {
     }
 
 
@@ -40,7 +40,7 @@ public class AddContactCommandFromClientBean {
 
     @Override
     public String toString() {
-        return "AddContactCommandFromClientBean{" +
+        return "CommandFromClientBean{" +
                 "Command='" + Command + '\'' +
                 ", Num='" + Num + '\'' +
                 '}';

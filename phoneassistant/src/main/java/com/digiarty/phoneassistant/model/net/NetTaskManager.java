@@ -30,10 +30,10 @@ public class NetTaskManager {
 
     private static Logger logger = LoggerFactory.getLogger(NetTaskManager.class);
 
-    private ExecutorService mExecutorService = null; //线程池
-    static List<Socket> socketPool /*= Collections.synchronizedList(new ArrayList<Socket>())*/; //socket连接池
+    private static ExecutorService mExecutorService = null; //线程池
+    private static List<Socket> socketPool /*= Collections.synchronizedList(new ArrayList<Socket>())*/; //socket连接池
 
-    private List<ITask> tasks /*= Collections.synchronizedList(new ArrayList<ITask>())*/;//任务池
+    private static List<ITask> tasks /*= Collections.synchronizedList(new ArrayList<ITask>())*/;//任务池
     static NetManagerHandler handler = null;
 
 
@@ -68,6 +68,7 @@ public class NetTaskManager {
                 newTaskToSendAndroidServerPortForPCToForward(task.serverSocket.getLocalPort());
                 break;
             }
+            logger.debug("等待android服务端创建,成功后发送端口信息......");
         }
 
         Looper.loop();
@@ -159,7 +160,10 @@ public class NetTaskManager {
                     break;
                 case MSG_NOTIFY_NET_MANAGER_COMMUNICATION_TASK_GET_INOUT_STREAM_ERROR:
                 case MSG_NOTIFY_NET_MANAGER_COMMUNICATION_TASK_DESTPRY:
-                    socketPool.remove(msg.obj);
+                    logger.debug("网络管理器清理短连接资源");
+                    ShortConnectionTask connectionTask = (ShortConnectionTask) msg.obj;
+                    tasks.remove(connectionTask);
+                    socketPool.remove(connectionTask.getShortSocket());
                     break;
                 default:
                     break;

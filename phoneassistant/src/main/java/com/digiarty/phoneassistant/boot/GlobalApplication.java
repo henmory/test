@@ -10,6 +10,7 @@ import com.digiarty.phoneassistant.activity.MyNotification;
 import com.digiarty.phoneassistant.log.FileLog;
 import com.digiarty.phoneassistant.model.net.NetTaskManager;
 import com.digiarty.phoneassistant.sharedpreference.IPreference;
+import com.facebook.stetho.Stetho;
 
 
 /***
@@ -65,6 +66,7 @@ public class GlobalApplication extends Application {
         MyNotification.createNotificationChannelForGlobalApplication(this);
         context = this;
         initSharedPreference();
+        initDebugTool();
     }
 
 
@@ -119,7 +121,13 @@ public class GlobalApplication extends Application {
         mainHandler.sendMessage(message);
     }
 
-
+    private void initDebugTool(){
+        Stetho.initialize(
+                Stetho.newInitializerBuilder(this)
+                        .enableDumpapp(Stetho.defaultDumperPluginsProvider(this))
+                        .enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this))
+                        .build());
+    }
 
 
 

@@ -23,7 +23,7 @@ import java.nio.charset.Charset;
  *
  *
  **/
-public class FileHandler implements IHandler{
+class FileHandler implements IHandler{
     private static Logger logger = LoggerFactory.getLogger(FileHandler.class);
     private IAction action;
 

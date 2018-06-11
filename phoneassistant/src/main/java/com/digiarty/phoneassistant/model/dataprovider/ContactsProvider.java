@@ -3,19 +3,22 @@ package com.digiarty.phoneassistant.model.dataprovider;
 import android.content.ContentProviderOperation;
 import android.content.ContentProviderResult;
 import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.OperationApplicationException;
+import android.content.res.AssetFileDescriptor;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.provider.ContactsContract;
+import android.system.ErrnoException;
+import android.system.Os;
 
 import com.digiarty.phoneassistant.bean.ContactBean;
 import com.digiarty.phoneassistant.bean.ContactReadBean;
-import com.digiarty.phoneassistant.model.bean.beanfromclient.AddContactDataFromClientBean;
-import com.digiarty.phoneassistant.model.bean.beantoclient.AddContactCommandToClientBean;
-import com.digiarty.phoneassistant.model.dataparse.ContactAction;
+import com.digiarty.phoneassistant.model.bean.ResponseToClientBean;
+import com.digiarty.phoneassistant.model.bean.ContactBeanWrap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,6 +28,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,7 +49,7 @@ class ContactsProvider {
     // 获取用来操作数据的类的对象，对联系人的基本操作都是使用这个对象
     private ContentResolver contentResolver;
     private List<ContactReadBean> contactReadBeans = new ArrayList<>();
-    private ContractsString contractsString = new ContractsString();
+    private ContactsString contactsString = new ContactsString();
 
     public ContactsProvider(Context context) {
         contentResolver = context.getContentResolver();
@@ -54,12 +59,11 @@ class ContactsProvider {
         return getContactsDatasFromContactsApplication();
     }
 
-    private static class ContractsString {
+    private static class ContactsString {
 
         //contact table
         public Uri CONTACT_URI = ContactsContract.Contacts.CONTENT_URI;//contacts table
         public String TCONTACT_ID = ContactsContract.Contacts._ID;//id
-        public String TCONTACT_RAW_CONTACT_ID = ContactsContract.Contacts.NAME_RAW_CONTACT_ID;//raw contact id
         public String TCONTACT_HAS_PHONE_NUMBER = ContactsContract.Contacts.HAS_PHONE_NUMBER;
 
         //raw contact table
@@ -69,7 +73,6 @@ class ContactsProvider {
 
         //data table
         public Uri DATA_URI = ContactsContract.CommonDataKinds.Phone.CONTENT_URI;//data table
-        public String TDATA_ID = ContactsContract.CommonDataKinds.Phone._ID;// id
         public String TDATA_CONTACT_ID = ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID;// raw contact id
         public String TDATA_PHONE_NUM = ContactsContract.CommonDataKinds.Phone.NUMBER;
         public String TDATA_PHONE_TYPE = ContactsContract.CommonDataKinds.Phone.TYPE;
@@ -89,7 +92,7 @@ class ContactsProvider {
             // 游标初始指向查询结果的第一条记录的上方，执行moveToNext函数会判断,下一条记录是否存在，如果存在，指向下一条记录。否则，返回false。
             while (cursor.moveToNext()) {
 
-                String contact_id = cursor.getString(cursor.getColumnIndex(contractsString.TCONTACT_ID));
+                String contact_id = cursor.getString(cursor.getColumnIndex(contactsString.TCONTACT_ID));
                 logger.debug("contact_id = " + contact_id);
 
                 //从RawContract表中获取RawContactId
@@ -97,7 +100,7 @@ class ContactsProvider {
                 logger.debug("rawContactId = " + rawContactId);
 
                 //从contact表中获取是否有电话号码标志
-                if (Integer.parseInt(cursor.getString(cursor.getColumnIndex(contractsString.TCONTACT_HAS_PHONE_NUMBER))) > 0) {
+                if (Integer.parseInt(cursor.getString(cursor.getColumnIndex(contactsString.TCONTACT_HAS_PHONE_NUMBER))) > 0) {
                     ContactReadBean bean = getOneItemDataFromDataTable(rawContactId);
                     contactReadBeans.add(bean);
                 } else {
@@ -116,8 +119,8 @@ class ContactsProvider {
 
     private Cursor getContactIdCursorFromContactsTable() {
         // 查询contacts表的所有记录===返回id跟是否有电话号码列
-        String[] projection = new String[]{contractsString.TCONTACT_ID, contractsString.TCONTACT_HAS_PHONE_NUMBER};
-        Cursor cursor = contentResolver.query(contractsString.CONTACT_URI, projection, null, null, null);
+        String[] projection = new String[]{contactsString.TCONTACT_ID, contactsString.TCONTACT_HAS_PHONE_NUMBER};
+        Cursor cursor = contentResolver.query(contactsString.CONTACT_URI, projection, null, null, null);
         if (null == cursor) {
             logger.debug("获取联系人Contract游标为空");
             return null;
@@ -130,10 +133,10 @@ class ContactsProvider {
         String rawContactId;
 
         // 获取RawContacts表的游标
-        String selection = contractsString.TRAW_CONTACT_ID + "=?";
+        String selection = contactsString.TRAW_CONTACT_ID + "=?";
         String[] selectionArgs = new String[]{rawContactIdInContactTable};
-        String[] projection = new String[]{contractsString.TRAW_ID};
-        Cursor rawContactCur = contentResolver.query(contractsString.RAW_CONTACT_URI, projection, selection, selectionArgs, null);
+        String[] projection = new String[]{contactsString.TRAW_ID};
+        Cursor rawContactCur = contentResolver.query(contactsString.RAW_CONTACT_URI, projection, selection, selectionArgs, null);
         if (null == rawContactCur) {
             logger.debug("获取联系人RawContacts游标为空");
             return null;
@@ -142,7 +145,7 @@ class ContactsProvider {
         // 该查询结果一般只返回一条记录，所以我们直接让游标指向第一条记录
         if (rawContactCur.moveToFirst()) {
             // 读取第一条记录的RawContacts._ID列的值
-            rawContactId = rawContactCur.getString(rawContactCur.getColumnIndex(contractsString.TRAW_ID));
+            rawContactId = rawContactCur.getString(rawContactCur.getColumnIndex(contactsString.TRAW_ID));
         } else {
             rawContactCur.close();
             return null;
@@ -158,11 +161,10 @@ class ContactsProvider {
         ContactReadBean contactReadBean = new ContactReadBean();
 
         // 根据查询RAW_CONTACT_ID查询该联系人的号码
-        String[] projection = new String[]{};
-        String selection = contractsString.TDATA_CONTACT_ID + "=?";
+        String selection = contactsString.TDATA_CONTACT_ID + "=?";
         String[] selectionArgs = new String[]{rawContactId};
 
-        Cursor phoneCurosr = contentResolver.query(contractsString.DATA_URI, null, selection, selectionArgs, null);
+        Cursor phoneCurosr = contentResolver.query(contactsString.DATA_URI, null, selection, selectionArgs, null);
         if (null == phoneCurosr) {
             logger.debug("获取联系人Data游标为空");
             return null;
@@ -171,13 +173,17 @@ class ContactsProvider {
         while (phoneCurosr.moveToNext()) {
 
             // 获取号码
-            String number = phoneCurosr.getString(phoneCurosr.getColumnIndex(contractsString.TDATA_PHONE_NUM));
+            String number = phoneCurosr.getString(phoneCurosr.getColumnIndex(contactsString.TDATA_PHONE_NUM));
 
             // 获取号码类型
-            int type = phoneCurosr.getInt(phoneCurosr.getColumnIndex(contractsString.TDATA_PHONE_TYPE));
+            int type = phoneCurosr.getInt(phoneCurosr.getColumnIndex(contactsString.TDATA_PHONE_TYPE));
             if (null != number) {
                 contactReadBean.setPhoneNumber(number);
             }
+
+            System.out.println("photo id = " + phoneCurosr.getInt(phoneCurosr.getColumnIndex(ContactsContract.CommonDataKinds.Photo.PHOTO_FILE_ID)));
+//            System.out.println("photo id = " + phoneCurosr.getInt(phoneCurosr.getColumnIndex(ContactsContract.CommonDataKinds.Photo.PHOTO_THUMBNAIL_URI)));
+            System.out.println("photo id = " + phoneCurosr.getString(phoneCurosr.getColumnIndex(ContactsContract.CommonDataKinds.Photo.PHOTO_URI)));
             contactReadBean.setPhoneType(type);
         }
         phoneCurosr.close();
@@ -188,7 +194,7 @@ class ContactsProvider {
     private void insertOneContactBean(ContactBean bean) {
 
         //通过字段_id在raw_contacts表中查询目前通讯录含有多少条联系人，然后在已有的联系人数目上+1就是要插入联系人的_id.
-        Cursor cursor = contentResolver.query(contractsString.RAW_CONTACT_URI, new String[]{"_id"}, null, null, null);
+        Cursor cursor = contentResolver.query(contactsString.RAW_CONTACT_URI, new String[]{"_id"}, null, null, null);
         if (null == cursor) {
             logger.debug("获取联系人Contract游标为空");
             return;
@@ -198,32 +204,32 @@ class ContactsProvider {
         ContentValues values = new ContentValues();
 //        insertOneContactBeanInRawContactTable(values,num);
         values.put("contact_id", num);
-        contentResolver.insert(contractsString.RAW_CONTACT_URI, values);
+        contentResolver.insert(contactsString.RAW_CONTACT_URI, values);
         values.clear();
 
         values.put("data1", "二五");
         values.put("mimetype", "vnd.android.cursor.item/name");
         values.put("raw_contact_id", num);
-        contentResolver.insert(contractsString.DATA_URI, values);
+        contentResolver.insert(contactsString.DATA_URI, values);
         values.clear();
 
         values.put("data1", "12345678901");
         values.put("mimetype", "vnd.android.cursor.item/phone_v2");
         values.put("raw_contact_id", num);
-        contentResolver.insert(contractsString.DATA_URI, values);
+        contentResolver.insert(contactsString.DATA_URI, values);
         values.clear();
 
         values.put("data1", "1234@haha.com");
         values.put("mimetype", "vnd.android.cursor.item/email_v2");
         values.put("raw_contact_id", num);
-        contentResolver.insert(contractsString.DATA_URI, values);
+        contentResolver.insert(contactsString.DATA_URI, values);
         cursor.close();
     }
 
     private int findContactsNumber(Cursor cursor) {
         int num = 1;
         if (cursor.moveToLast()) {
-            int id = cursor.getColumnIndex(contractsString.TRAW_ID);
+            int id = cursor.getColumnIndex(contactsString.TRAW_ID);
             num = id + 1;
         }
 
@@ -232,7 +238,7 @@ class ContactsProvider {
 
     private void insertOneContactBeanInRawContactTable(ContentValues values, int num) {
         values.put("contact_id", num);
-        contentResolver.insert(contractsString.RAW_CONTACT_URI, values);
+        contentResolver.insert(contactsString.RAW_CONTACT_URI, values);
         values.clear();
 
     }
@@ -378,13 +384,42 @@ class ContactsProvider {
 
     }
 
-    public List<AddContactCommandToClientBean.Result> insertData(Context context, List<ContactAction.ContactBeanWrap> contactBeanWraps) {
 
-        List<AddContactCommandToClientBean.Result> replies =  new ArrayList<>(contactBeanWraps.size());
+//    public InputStream openDisplayPhoto(long photoFileId) {
+//        Uri displayPhotoUri = ContentUris.withAppendedId(ContactsContract.DisplayPhoto.CONTENT_URI, photoFileId);
+//        try {
+//            AssetFileDescriptor fd = contentResolver.openAssetFileDescriptor(displayPhotoUri, "r");
+//            return fd.createInputStream();
+//        } catch (IOException e) {
+//            return null;
+//        }
+//    }
+//
+    //写原图方法
+    private long writeDisplayPhoto(long rawContactId, byte[] photo) {
+        Uri rawContactPhotoUri = Uri.withAppendedPath(ContentUris.withAppendedId(contactsString.RAW_CONTACT_URI, rawContactId),
+                ContactsContract.RawContacts.DisplayPhoto.CONTENT_DIRECTORY);
+        System.out.println("path = " + rawContactPhotoUri.toString());
+        try {
+            AssetFileDescriptor fd = contentResolver.openAssetFileDescriptor(rawContactPhotoUri, "rw");
+            OutputStream os = fd.createOutputStream();
+            os.write(photo);
+            os.close();
+            fd.close();
+        } catch (IOException e) {
+            // Handle error cases.
+        }
+
+        return 0;
+    }
+
+    public List<ResponseToClientBean.Result> insertData(Context context, List<ContactBeanWrap> contactBeanWraps) {
+
+        List<ResponseToClientBean.Result> replies = new ArrayList<>(contactBeanWraps.size());
 
         ArrayList<ContentProviderOperation> ops = new ArrayList<>();
-        ContactAction.ContactBeanWrap beanWrap = null;
-        int rawContactInsertIndex = 0;
+        ContactBeanWrap beanWrap;
+        int rawContactInsertIndex;
 
         logger.debug("添加联系人数量为 " + contactBeanWraps.size());
 
@@ -446,7 +481,7 @@ class ContactsProvider {
 
                 String phone = beanWrap.getContactBean().getPhoneNumberList().get(j).getValue();
                 String type = beanWrap.getContactBean().getPhoneNumberList().get(j).getType();
-                if (phone.length() == 0 || phone == null){
+                if (phone.length() == 0 || phone == null) {
                     continue;
                 }
                 op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
@@ -518,11 +553,11 @@ class ContactsProvider {
 
 
             //注释相关
-                op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
-                        .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
-                        .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE)
-                        .withValue(ContactsContract.CommonDataKinds.Note.NOTE, beanWrap.getContactBean().getNotes());
-                ops.add(op.build());
+            op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                    .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
+                    .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Note.CONTENT_ITEM_TYPE)
+                    .withValue(ContactsContract.CommonDataKinds.Note.NOTE, beanWrap.getContactBean().getNotes());
+            ops.add(op.build());
 
             //IM相关
             for (int j = 0; j < beanWrap.getContactBean().getImList().size(); j++) {
@@ -536,12 +571,10 @@ class ContactsProvider {
             }
 
 
-
             //关系相关
-            System.out.println("size = " + beanWrap.getContactBean().getRelatedNameList().size());
             for (int j = 0; j < beanWrap.getContactBean().getRelatedNameList().size(); j++) {
 
-                op = ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                op = ContentProviderOperation.newUpdate(ContactsContract.Data.CONTENT_URI)
                         .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, rawContactInsertIndex)
                         .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Relation.CONTENT_ITEM_TYPE)
                         .withValue(ContactsContract.CommonDataKinds.Relation.NAME, beanWrap.getContactBean().getRelatedNameList().get(j).getValue())
@@ -591,22 +624,24 @@ class ContactsProvider {
             ops.add(op.build());
 
         }
-
+        logger.debug("数据组装完毕，准备批量写入");
         ContentProviderResult[] results = null;
         int items = ops.size() / contactBeanWraps.size();
 
         try {
 
-            results = contentResolver.applyBatch(ContactsContract.AUTHORITY, ops);
-
             logger.debug("每个联系人添加的项数为 " + items);
 
+            results = contentResolver.applyBatch(ContactsContract.AUTHORITY, ops);
+            logger.debug("写入结果的项数为 " + results.length);
+
+
             for (int i = 0; i < contactBeanWraps.size(); i++) {
-                AddContactCommandToClientBean.Result reply =  new AddContactCommandToClientBean.Result();
+                ResponseToClientBean.Result reply = new ResponseToClientBean.Result();
 
                 reply.setOid(contactBeanWraps.get(i).getContactBean().getKey());
                 reply.setNid(results[i * items].uri.getLastPathSegment());
-                reply.setState(1+"");
+                reply.setState(1 + "");
                 replies.add(reply);
                 logger.debug("数据key " + contactBeanWraps.get(i).getContactBean().getKey() + " 写入成功");
             }
@@ -619,11 +654,11 @@ class ContactsProvider {
             logger.debug("异常发生 " + e.getMessage());
 
             for (int i = 0; i < contactBeanWraps.size(); i++) {
-                AddContactCommandToClientBean.Result reply =  new AddContactCommandToClientBean.Result();
+                ResponseToClientBean.Result reply = new ResponseToClientBean.Result();
 
                 reply.setOid(contactBeanWraps.get(i).getContactBean().getKey());
 //                reply.setNid(results[i * items].uri.getLastPathSegment());
-                reply.setState(0+"");
+                reply.setState(0 + "");
                 replies.add(reply);
                 logger.debug("数据key " + contactBeanWraps.get(i).getContactBean().getKey() + " 写入失败");
             }
@@ -635,11 +670,11 @@ class ContactsProvider {
             logger.debug("异常发生2 " + e.getMessage());
 
             for (int i = 0; i < contactBeanWraps.size(); i++) {
-                AddContactCommandToClientBean.Result reply =  new AddContactCommandToClientBean.Result();
+                ResponseToClientBean.Result reply = new ResponseToClientBean.Result();
 
                 reply.setOid(contactBeanWraps.get(i).getContactBean().getKey());
 //                reply.setNid(results[i * items].uri.getLastPathSegment());
-                reply.setState(0+"");
+                reply.setState(0 + "");
                 replies.add(reply);
                 logger.debug("数据key " + contactBeanWraps.get(i).getContactBean().getKey() + " 写入失败");
             }

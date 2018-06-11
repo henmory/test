@@ -1,4 +1,4 @@
-package com.digiarty.phoneassistant.model.bean.beantoclient;
+package com.digiarty.phoneassistant.model.bean;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
@@ -14,7 +14,7 @@ import java.util.ArrayList;
  *
  *
  **/
-public class AddContactCommandToClientBean {
+public class ResponseToClientBean {
 //    @JSONField(name = "Command")
 //    private String Command;
     @JSONField(name = "Result")
@@ -22,7 +22,7 @@ public class AddContactCommandToClientBean {
     @JSONField(name = "Request")
     Request Request;
 
-    public AddContactCommandToClientBean() {
+    public ResponseToClientBean() {
     }
 
 //    public String getCommand() {
@@ -33,25 +33,25 @@ public class AddContactCommandToClientBean {
 //        Command = command;
 //    }
 
-    public ArrayList<AddContactCommandToClientBean.Result> getResult() {
+    public ArrayList<ResponseToClientBean.Result> getResult() {
         return Result;
     }
 
-    public void setResult(ArrayList<AddContactCommandToClientBean.Result> result) {
+    public void setResult(ArrayList<ResponseToClientBean.Result> result) {
         Result = result;
     }
 
-    public AddContactCommandToClientBean.Request getRequest() {
+    public ResponseToClientBean.Request getRequest() {
         return Request;
     }
 
-    public void setRequest(AddContactCommandToClientBean.Request request) {
+    public void setRequest(ResponseToClientBean.Request request) {
         Request = request;
     }
 
     @Override
     public String toString() {
-        return "AddContactCommandToClientBean{" +
+        return "ResponseToClientBean{" +
 //                "Command='" + Command + '\'' +
                 ", Result=" + Result +
                 ", Request=" + Request +

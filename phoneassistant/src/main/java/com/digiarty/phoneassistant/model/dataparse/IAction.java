@@ -10,7 +10,7 @@ package com.digiarty.phoneassistant.model.dataparse;
  *
  *
  **/
-public interface IAction {
+interface IAction {
     int parseCommand(String jsonString);
     int doActionByCommand();
     String replyByCommand();

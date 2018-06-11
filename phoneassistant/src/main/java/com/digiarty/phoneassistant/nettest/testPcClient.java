@@ -2,8 +2,7 @@ package com.digiarty.phoneassistant.nettest;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.digiarty.phoneassistant.model.bean.beanfromclient.AddContactDataFromClientBean;
-import com.digiarty.phoneassistant.model.bean.beanfromclient.ContactBean;
+import com.digiarty.phoneassistant.model.bean.ContactBean;
 import com.digiarty.phoneassistant.model.dataparse.ContactAction;
 import com.digiarty.phoneassistant.utils.Base64Util;
 import com.digiarty.phoneassistant.utils.ByteOrderUtils;
@@ -167,7 +166,7 @@ public class testPcClient {
 
     private static byte[] sendData() {
 
-        AddContactDataFromClientBean addContactDataFromClientBean = new AddContactDataFromClientBean();
+        ContactAction.AddContactDataFromClientBean addContactDataFromClientBean = new ContactAction.AddContactDataFromClientBean();
         addContactDataFromClientBean.setCommand("AddContacts");
 
         List<ContactBean> beanList = new ArrayList<>();

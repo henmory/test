@@ -10,7 +10,7 @@ package com.digiarty.phoneassistant.model.dataparse;
  *
  *
  **/
-public interface IHandler {
+interface IHandler {
     int parse(byte[] datas);
     int doAction();
     byte[] reply();

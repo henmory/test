@@ -63,7 +63,7 @@
             <!-- 窗口索引最小值 -->
             <minIndex>1</minIndex>
             <!-- 窗口索引最大值 -->
-            <maxIndex>1</maxIndex>
+            <maxIndex>5</maxIndex>
 
         </rollingPolicy>
 

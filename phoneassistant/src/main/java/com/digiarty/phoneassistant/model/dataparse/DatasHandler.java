@@ -15,7 +15,7 @@ import java.nio.charset.Charset;
  *
  *
  **/
-public class DatasHandler implements IHandler{
+class DatasHandler implements IHandler{
     private static Logger logger = LoggerFactory.getLogger(DatasHandler.class);
     private IAction action;
 
@@ -31,6 +31,8 @@ public class DatasHandler implements IHandler{
             action = new ContactAction();
         }else{
             logger.debug("解析数据失败,无效action");
+//            logger.debug("失败的字节码为 " + datas);
+            logger.debug("失败的数据为 " + str);
             return 0;
         }
         return action.parseDatas(str);

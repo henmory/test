@@ -34,6 +34,12 @@ class ListenPCConnectionTask implements ITask {
     private static Logger logger = LoggerFactory.getLogger(ListenPCConnectionTask.class);
     private Boolean socketFlag = FALSE;
     ServerSocket serverSocket = null;
+    private ServerSocketWrap socketWrap;
+
+    public ListenPCConnectionTask() {
+        socketWrap = new ServerSocketWrap();
+    }
+
     @Override
     public void run() {
         Thread.currentThread().setName("监听pc端socket线程");
@@ -75,12 +81,12 @@ class ListenPCConnectionTask implements ITask {
 
     private ServerSocket createServerSocketWaitingForPCToConnect() {
         //本地应用程序需要监听的端口，客户端往这个端口发送数据
-        return serverSocket = ServerSocketWrap.createSocketForListen(ServerConfig.AndroidConfig.getServerPort());
+        return serverSocket = socketWrap.createSocketForListen(ServerConfig.AndroidConfig.getServerPort());
     }
 
     private Socket listenPCConnectAndCreateNewSocketForPCConnection(ServerSocket serverSocket) {
 
-        Socket socketToCommunicateWithPC = ServerSocketWrap.listenAndCreatSocketForNewConnection(serverSocket);
+        Socket socketToCommunicateWithPC = socketWrap.listenAndCreatSocketForNewConnection(serverSocket);
 
         if (socketToCommunicateWithPC != null) {
             logger.debug("出现新的PC连接,为其创建新的socket");
@@ -118,7 +124,7 @@ class ListenPCConnectionTask implements ITask {
 
     private void closeListenSocket(ServerSocket serverSocket) {
         socketFlag = FALSE;
-        ServerSocketWrap.closeListenSocket(serverSocket);
+        socketWrap.closeListenSocket(serverSocket);
     }
 
     @Override
